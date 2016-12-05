@@ -5,7 +5,7 @@ function (callback) {window.setTimeout(callback, 10000 / 60)};
 
 
 (function init(){
-  var canvas = document.getElementById("MyCanvas");
+  var canvas = document.getElementById("canvas");
   context = canvas.getContext('2d');
   game = new GameBox();
   ball = new Ball();
