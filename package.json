@@ -10,12 +10,16 @@
     "type": "git",
     "url": "git+https://github.com/lauraweston/pong.git"
   },
-  "author": "",
+  "author": "Team Pong",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/lauraweston/pong/issues"
   },
   "homepage": "https://github.com/lauraweston/pong#readme",
+
+  "dependencies": {
+    "express": "^4.14.0"
+  },
   "devDependencies": {
     "jasmine": "^2.5.2"
   }
