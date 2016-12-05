@@ -1,5 +1,5 @@
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext('2d');
+// var canvas = document.getElementById('canvas');
+// var context = canvas.getContext('2d');
 
 function Paddle(context, x, y) {
   this.context = context;
@@ -19,25 +19,25 @@ Paddle.prototype.update = function(value) {
   this.y += value;
 };
 
-var paddle1 = new Paddle(context, 550, 150);
-
-function draw(paddle) {
-  context.clearRect(0, 0, 600, 400);
-  paddle.draw();
-}
-
-var FPS = 30;
-setInterval(function() {
-  update(paddle1);
-  draw(paddle1);
-}, 1000/FPS);
+// var paddle1 = new Paddle(context, 550, 150);
+//
+// function draw(paddle) {
+//   context.clearRect(0, 0, 600, 400);
+//   paddle.draw();
+// }
+//
+// var FPS = 30;
+// setInterval(function() {
+//   update(paddle1);
+//   draw(paddle1);
+// }, 1000/FPS);
 
 function update(paddle) {
   if (keydown.up) {
-    paddle.update(-1);
+    paddle.update(-5);
   }
   if (keydown.down) {
-    paddle.update(1);
+    paddle.update(5);
   }
 }
 
