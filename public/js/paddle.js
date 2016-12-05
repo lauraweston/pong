@@ -15,6 +15,10 @@ Paddle.prototype.draw = function() {
   this.context.fillRect(this.x, this.y, this.width, this.height);
 };
 
+Paddle.prototype.update = function(value) {
+  this.y += value;
+};
+
 var paddle1 = new Paddle(context, 550, 150);
 
 function draw(paddle) {
@@ -30,9 +34,11 @@ setInterval(function() {
 
 function update(paddle) {
   if (keydown.up) {
-    paddle.y--;
+    paddle.update(-1);
   }
   if (keydown.down) {
-    paddle.y++;
+    paddle.update(1);
   }
 }
+
+module.exports = Paddle;
