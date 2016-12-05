@@ -15,20 +15,24 @@ Paddle.prototype.draw = function() {
   this.context.fillRect(this.x, this.y, this.width, this.height);
 };
 
-var paddle1 = new Paddle(context, 965, 0);
-// var paddle2 = new Paddle(contex, 0, 0);
+var paddle1 = new Paddle(context, 550, 150);
 
 function draw(paddle) {
+  context.clearRect(0, 0, 600, 400);
   paddle.draw();
 }
 
 var FPS = 30;
 setInterval(function() {
-  // update();
+  update(paddle1);
   draw(paddle1);
 }, 1000/FPS);
 
-// function update() {
-//   if ()
-//
-// }
+function update(paddle) {
+  if (keydown.up) {
+    paddle.y--;
+  }
+  if (keydown.down) {
+    paddle.y++;
+  }
+}
