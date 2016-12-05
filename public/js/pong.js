@@ -1,10 +1,16 @@
-function init(){
+var animate = window.requestAnimationFrame ||
+window.webkitRequestAnimationFrame ||
+window.mozRequestAnimationFrame ||
+function (callback) {window.setTimeout(callback, 10000 / 60)};
+
+
+(function init(){
   var canvas = document.getElementById("MyCanvas");
   context = canvas.getContext('2d');
   game = new GameBox();
   ball = new Ball();
   animate(play);
-};
+})();
 
 function play(){
   draw()
@@ -20,8 +26,3 @@ var draw = function(){
 var update = function(){
   ball.update()
 }
-
-var animate = window.requestAnimationFrame ||
-window.webkitRequestAnimationFrame ||
-window.mozRequestAnimationFrame ||
-function (callback) {window.setTimeout(callback, 10000 / 60)};
