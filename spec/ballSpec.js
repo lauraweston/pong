@@ -39,19 +39,19 @@ describe("Ball", function(){
        })
      })
 
-     describe("restes if ball passes through paddle side", function(){
+     describe("resets if ball passes through paddle side", function(){
 
        beforeEach(function(){
          for(var i = 0; i < 900;  i++) {
          gameBall.update()}
        })
 
-     it("resets x and y coordinates when paddel fails(at the moment always)", function(){
+     it("resets x and y coordinates when paddle fails(at the moment always)", function(){
        expect(gameBall.x).toEqual(300)
        expect(gameBall.y).toEqual(200)
        });
 
-     it("restes x and y coordinates when paddel fails(at the moment always)", function(){
+     it("resets x and y coordinates when paddle fails(at the moment always)", function(){
        expect(gameBall.xSpeed).toEqual(-3)
        expect(gameBall.ySpeed).toEqual(0)
      })
