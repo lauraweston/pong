@@ -46,9 +46,10 @@
 
 	var GameBox = __webpack_require__(1);
 	var Ball = __webpack_require__(2);
-	var Paddle = __webpack_require__(3);
-	var keydown = __webpack_require__(4);
-	__webpack_require__(5);
+	var Player = __webpack_require__(3);
+	var Paddle = __webpack_require__(4);
+	var keydown = __webpack_require__(5);
+	__webpack_require__(6);
 
 	var animate = window.requestAnimationFrame ||
 	window.webkitRequestAnimationFrame ||
@@ -62,6 +63,8 @@
 	  ball = new Ball();
 	  paddle1 = new Paddle(570, 150);
 	  paddle2 = new Paddle(15, 150);
+	  player1 = new Player(paddle1);
+	  player2 = new Player(paddle2);
 	  animate(play);
 	})();
 
@@ -76,13 +79,14 @@
 	  ball.draw();
 	  paddle1.draw();
 	  paddle2.draw();
+	  player1.draw();
+	  player2.draw();
 	}
 
 	var update = function(){
 	  ball.update(paddle1, paddle2);
 	  updatePaddle1(paddle1);
 	  updatePaddle2(paddle2);
-
 	}
 
 	function updatePaddle1(paddle) {
@@ -177,6 +181,26 @@
 /* 3 */
 /***/ function(module, exports) {
 
+	function Player (paddle) {
+	  this.score = 0;
+	  this.paddle = paddle;
+	};
+
+	Player.prototype.increaseScore = function() {
+	  this.score++;
+	};
+
+	Player.prototype.draw = function() {
+	  context.fillText(this.score, this.paddle.x, 15);
+	};
+
+	module.exports = Player;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
 	function Paddle(x, y) {
 	  this.color = "white";
 	  this.width = 15;
@@ -202,7 +226,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	 window.keydown = {};
@@ -224,7 +248,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	/*

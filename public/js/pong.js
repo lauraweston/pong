@@ -1,5 +1,6 @@
 var GameBox = require('./gameBox.js');
 var Ball = require('./ball.js');
+var Player = require('./player.js');
 var Paddle = require('./paddle.js');
 var keydown = require('./../../lib/key_status.js');
 require('./../../lib/jquery.hotkeys.js');
@@ -16,6 +17,8 @@ function (callback) {window.setTimeout(callback, 10000 / 60)};
   ball = new Ball();
   paddle1 = new Paddle(570, 150);
   paddle2 = new Paddle(15, 150);
+  player1 = new Player(paddle1);
+  player2 = new Player(paddle2);
   animate(play);
 })();
 
@@ -30,13 +33,14 @@ var draw = function(){
   ball.draw();
   paddle1.draw();
   paddle2.draw();
+  player1.draw();
+  player2.draw();
 }
 
 var update = function(){
-  ball.update(paddle1, paddle2);
+  ball.update(player1.paddle, player2.paddle);
   updatePaddle1(paddle1);
   updatePaddle2(paddle2);
-
 }
 
 function updatePaddle1(paddle) {

@@ -15,4 +15,8 @@ describe("Player", function() {
   it("has a paddle", function () {
     expect(player.paddle).toEqual(paddle);
   });
+  it("increases the score", function() {
+    player.increaseScore();
+    expect(player.score).toEqual(1);
+  });
 });
