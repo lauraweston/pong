@@ -29,19 +29,19 @@ describe("Ball", function(){
   describe("changes course when hits wall", function(){
 
     beforeEach(function(){
-      for(var i = 0; i < 200;  i++) {
+      for(var i = 0; i < 210;  i++) {
         gameBall.update(paddle1, paddle2);
       }
     });
 
   it("changes course when it hits a wall", function(){
-    expect(gameBall.x).toEqual(240);
-    expect(gameBall.y).toEqual(384);
+    expect(gameBall.x).toEqual(330);
+    expect(gameBall.y).toEqual(40);
   });
 
   it("changes course when it hits a wall", function(){
-    expect(gameBall.xSpeed).toEqual(-3);
-    expect(gameBall.ySpeed).toEqual(-2);
+    expect(gameBall.xSpeed).toEqual(3);
+    expect(gameBall.ySpeed).toEqual(2);
   });
 
   });

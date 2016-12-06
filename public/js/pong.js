@@ -14,8 +14,8 @@ function (callback) {window.setTimeout(callback, 10000 / 60)};
   context = canvas.getContext('2d');
   game = new GameBox();
   ball = new Ball();
-  paddle1 = new Paddle(context, 570, 150);
-  paddle2 = new Paddle(context, 15, 150);
+  paddle1 = new Paddle(570, 150);
+  paddle2 = new Paddle(15, 150);
   animate(play);
 })();
 

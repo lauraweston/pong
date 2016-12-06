@@ -60,8 +60,8 @@
 	  context = canvas.getContext('2d');
 	  game = new GameBox();
 	  ball = new Ball();
-	  paddle1 = new Paddle(context, 570, 150);
-	  paddle2 = new Paddle(context, 15, 150);
+	  paddle1 = new Paddle(570, 150);
+	  paddle2 = new Paddle(15, 150);
 	  animate(play);
 	})();
 
@@ -177,8 +177,7 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	function Paddle(context, x, y) {
-	  this.context = context;
+	function Paddle(x, y) {
 	  this.color = "white";
 	  this.width = 15;
 	  this.height = 70;
@@ -188,8 +187,8 @@
 	}
 
 	Paddle.prototype.draw = function() {
-	  this.context.fillStyle = this.color;
-	  this.context.fillRect(this.x, this.y, this.width, this.height);
+	  context.fillStyle = this.color;
+	  context.fillRect(this.x, this.y, this.width, this.height);
 	};
 
 	Paddle.prototype.moveDown = function() {

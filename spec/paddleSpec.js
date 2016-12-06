@@ -1,10 +1,9 @@
 const Paddle = require('../public/js/paddle');
-var canvas;
 var paddle;
 
 describe("Paddle", function() {
   beforeEach(function () {
-    paddle = new Paddle(canvas, 550, 150);
+    paddle = new Paddle(550, 150);
   });
 
   it("is constructed with an x property", function () {
@@ -26,13 +25,13 @@ describe("Paddle", function() {
   });
 
   it("does not move beyond upper end of canvas", function() {
-    paddle = new Paddle(canvas, 550, 0);
+    paddle = new Paddle(550, 0);
     paddle.moveUp();
     expect(paddle.y).toEqual(0);
   });
 
   it("does not move beyond lower end of canvas", function() {
-    paddle = new Paddle(canvas, 550, 330);
+    paddle = new Paddle(550, 330);
     paddle.moveDown();
     expect(paddle.y).toEqual(330);
   });
