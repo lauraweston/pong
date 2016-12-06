@@ -8,7 +8,7 @@ function (callback) {window.setTimeout(callback, 10000 / 60)};
   context = canvas.getContext('2d');
   game = new GameBox();
   ball = new Ball();
-  paddle1 = new Paddle(context, 550, 150);
+  paddle1 = new Paddle(context, 570, 150);
   animate(play);
 })();
 
@@ -31,10 +31,10 @@ var update = function(){
 
 
 function updatePaddle(paddle) {
-  if (keydown.up) {
-    paddle.update(-5);
-  }
   if (keydown.down) {
-    paddle.update(5);
+    paddle.moveDown();
+  }
+  if (keydown.up) {
+    paddle.moveUp();
   }
 }

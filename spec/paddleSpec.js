@@ -16,12 +16,25 @@ describe("Paddle", function() {
   });
 
   it("moves down", function() {
-    paddle.update(5);
+    paddle.moveDown();
     expect(paddle.y).toEqual(155);
   });
 
   it("moves up on", function() {
-    paddle.update(-5);
+    paddle.moveUp();
     expect(paddle.y).toEqual(145);
   });
+
+  it("does not move beyond upper end of canvas", function() {
+    paddle = new Paddle(canvas, 550, 0);
+    paddle.moveUp();
+    expect(paddle.y).toEqual(0);
+  });
+
+  it("does not move beyond lower end of canvas", function() {
+    paddle = new Paddle(canvas, 550, 330);
+    paddle.moveDown();
+    expect(paddle.y).toEqual(330);
+  });
+
 });
