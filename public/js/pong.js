@@ -1,3 +1,9 @@
+var GameBox = require('./gameBox.js');
+var Ball = require('./ball.js');
+var Paddle = require('./paddle.js');
+var keydown = require('./../../lib/key_status.js');
+require('./../../lib/jquery.hotkeys.js');
+
 var animate = window.requestAnimationFrame ||
 window.webkitRequestAnimationFrame ||
 window.mozRequestAnimationFrame ||

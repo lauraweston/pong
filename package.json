@@ -4,6 +4,7 @@
   "description": "Real time multiplayer pong game",
   "main": "index.js",
   "scripts": {
+    "start": "webpack --config webpack.config.js",
     "test": "jasmine"
   },
   "repository": {
@@ -16,11 +17,11 @@
     "url": "https://github.com/lauraweston/pong/issues"
   },
   "homepage": "https://github.com/lauraweston/pong#readme",
-
   "dependencies": {
     "express": "^4.14.0"
   },
   "devDependencies": {
-    "jasmine": "^2.5.2"
+    "jasmine": "^2.5.2",
+    "webpack": "^1.13.3"
   }
 }

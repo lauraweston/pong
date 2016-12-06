@@ -8,3 +8,5 @@ GameBox.prototype.draw = function(){
   context.fill();
   context.closePath();
 };
+
+module.exports = GameBox;
