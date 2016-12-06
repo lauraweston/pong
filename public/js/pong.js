@@ -38,7 +38,7 @@ var draw = function(){
 }
 
 var update = function(){
-  ball.update(player1.paddle, player2.paddle);
+  ball.update(player1, player2);
   updatePaddle1(paddle1);
   updatePaddle2(paddle2);
 }
