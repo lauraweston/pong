@@ -13,9 +13,12 @@ var Ball = function(){
     context.fill();
   };
 
-  Ball.prototype.update = function(){
+  Ball.prototype.update = function(paddle){
     this.x += this.xSpeed;
     this.y += this.ySpeed;
+    if(this.x === paddle.x && (this.y >= paddle.y && this.y <= (paddle.y + paddle.height))) {
+      this.xSpeed = -this.xSpeed;
+    }
 
     if(this.y <= 0) { // hits top
         this.ySpeed = -this.ySpeed;

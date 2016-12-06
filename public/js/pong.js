@@ -25,8 +25,8 @@ var draw = function(){
 }
 
 var update = function(){
-  ball.update();
-  updatePaddle(paddle1)
+  ball.update(paddle1);
+  updatePaddle(paddle1);
 }
 
 
