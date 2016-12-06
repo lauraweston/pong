@@ -20,7 +20,7 @@ describe("Paddle", function() {
     expect(paddle.y).toEqual(155);
   });
 
-  it("moves up on", function() {
+  it("moves up", function() {
     paddle.moveUp();
     expect(paddle.y).toEqual(145);
   });

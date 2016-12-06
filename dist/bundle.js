@@ -116,9 +116,9 @@
 
 	var Ball = function(){
 	  this.x = 300
-	  this.y = 200
-	  this.xSpeed = -3
-	  this.ySpeed = 0
+	  this.y = 20
+	  this.xSpeed = 3
+	  this.ySpeed = 2
 	};
 
 	  Ball.prototype.draw = function(){
@@ -132,6 +132,7 @@
 	  Ball.prototype.update = function(paddle){
 	    this.x += this.xSpeed;
 	    this.y += this.ySpeed;
+
 	    if(this.x === paddle.x && (this.y >= paddle.y && this.y <= (paddle.y + paddle.height))) {
 	      this.xSpeed = -this.xSpeed;
 	    }
@@ -150,9 +151,9 @@
 
 	  Ball.prototype.reset = function(){
 	    this.x = 300
-	    this.y = 200
-	    this.xSpeed = -3
-	    this.ySpeed = 0
+	    this.y = 20
+	    this.xSpeed = 3
+	    this.ySpeed = 2
 	  };
 	};
 	module.exports = Ball
