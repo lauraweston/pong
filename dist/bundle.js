@@ -61,6 +61,7 @@
 	  game = new GameBox();
 	  ball = new Ball();
 	  paddle1 = new Paddle(context, 570, 150);
+	  paddle2 = new Paddle(context, 15, 150);
 	  animate(play);
 	})();
 
@@ -74,19 +75,30 @@
 	  game.draw();
 	  ball.draw();
 	  paddle1.draw();
+	  paddle2.draw();
 	}
 
 	var update = function(){
-	  ball.update(paddle1);
-	  updatePaddle(paddle1);
+	  ball.update(paddle1, paddle2);
+	  updatePaddle1(paddle1);
+	  updatePaddle2(paddle2);
+
 	}
 
-
-	function updatePaddle(paddle) {
+	function updatePaddle1(paddle) {
 	  if (keydown.down) {
 	    paddle.moveDown();
 	  }
 	  if (keydown.up) {
+	    paddle.moveUp();
+	  }
+	}
+
+	function updatePaddle2(paddle) {
+	  if (keydown.ctrl) {
+	    paddle.moveDown();
+	  }
+	  if (keydown.shift) {
 	    paddle.moveUp();
 	  }
 	}
@@ -129,11 +141,15 @@
 	    context.fill();
 	  };
 
-	  Ball.prototype.update = function(paddle){
+	  Ball.prototype.update = function(paddle1, paddle2){
 	    this.x += this.xSpeed;
 	    this.y += this.ySpeed;
 
-	    if(this.x === paddle.x && (this.y >= paddle.y && this.y <= (paddle.y + paddle.height))) {
+	    if(this.x === paddle1.x && (this.y >= paddle1.y && this.y <= (paddle1.y + paddle1.height))) {
+	      this.xSpeed = -this.xSpeed;
+	    }
+
+	    if(this.x === (paddle2.x + paddle2.width) && (this.y >= paddle2.y && this.y <= (paddle2.y + paddle2.height))) {
 	      this.xSpeed = -this.xSpeed;
 	    }
 
@@ -141,22 +157,20 @@
 	        this.ySpeed = -this.ySpeed;
 	      } else if(this.y > 400) { // hits bottom
 	        this.ySpeed = -this.ySpeed;
-	      } else if(this.x <= 0){
-	          this.xSpeed = -this.xSpeed;
 	      }
 	    // paddle fails
-	    if(this.x >= 600) {
-	      this.reset()
+	    if(this.x >= 600 || this.x <= 0) {
+	      this.reset();
 	    }
 
 	  Ball.prototype.reset = function(){
-	    this.x = 300
-	    this.y = 20
-	    this.xSpeed = 3
-	    this.ySpeed = 2
+	    this.x = 300;
+	    this.y = 20;
+	    this.xSpeed = 3;
+	    this.ySpeed = 2;
 	  };
 	};
-	module.exports = Ball
+	module.exports = Ball;
 
 
 /***/ },

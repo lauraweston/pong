@@ -15,6 +15,7 @@ function (callback) {window.setTimeout(callback, 10000 / 60)};
   game = new GameBox();
   ball = new Ball();
   paddle1 = new Paddle(context, 570, 150);
+  paddle2 = new Paddle(context, 15, 150);
   animate(play);
 })();
 
@@ -28,19 +29,30 @@ var draw = function(){
   game.draw();
   ball.draw();
   paddle1.draw();
+  paddle2.draw();
 }
 
 var update = function(){
-  ball.update(paddle1);
-  updatePaddle(paddle1);
+  ball.update(paddle1, paddle2);
+  updatePaddle1(paddle1);
+  updatePaddle2(paddle2);
+
 }
 
-
-function updatePaddle(paddle) {
+function updatePaddle1(paddle) {
   if (keydown.down) {
     paddle.moveDown();
   }
   if (keydown.up) {
+    paddle.moveUp();
+  }
+}
+
+function updatePaddle2(paddle) {
+  if (keydown.ctrl) {
+    paddle.moveDown();
+  }
+  if (keydown.shift) {
     paddle.moveUp();
   }
 }

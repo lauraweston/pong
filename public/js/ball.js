@@ -13,11 +13,15 @@ var Ball = function(){
     context.fill();
   };
 
-  Ball.prototype.update = function(paddle){
+  Ball.prototype.update = function(paddle1, paddle2){
     this.x += this.xSpeed;
     this.y += this.ySpeed;
 
-    if(this.x === paddle.x && (this.y >= paddle.y && this.y <= (paddle.y + paddle.height))) {
+    if(this.x === paddle1.x && (this.y >= paddle1.y && this.y <= (paddle1.y + paddle1.height))) {
+      this.xSpeed = -this.xSpeed;
+    }
+
+    if(this.x === (paddle2.x + paddle2.width) && (this.y >= paddle2.y && this.y <= (paddle2.y + paddle2.height))) {
       this.xSpeed = -this.xSpeed;
     }
 
@@ -25,11 +29,9 @@ var Ball = function(){
         this.ySpeed = -this.ySpeed;
       } else if(this.y > 400) { // hits bottom
         this.ySpeed = -this.ySpeed;
-      } else if(this.x <= 0){
-          this.xSpeed = -this.xSpeed;
       }
     // paddle fails
-    if(this.x >= 600) {
+    if(this.x >= 600 || this.x <= 0) {
       this.reset();
     }
 

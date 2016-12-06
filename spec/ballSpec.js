@@ -6,7 +6,8 @@ describe("Ball", function(){
   var paddle;
   beforeEach(function(){
     gameBall = new Ball();
-    paddle = new Paddle(canvas, 570, 150);
+    paddle1 = new Paddle(canvas, 570, 150);
+    paddle2 = new Paddle(canvas, 15, 150);
   });
 
   it("has a x, y coordinates", function(){
@@ -20,7 +21,7 @@ describe("Ball", function(){
   });
 
   it("has a x, y coordinates that change on update by 3px", function(){
-    gameBall.update(paddle);
+    gameBall.update(paddle1, paddle2);
     expect(gameBall.x).toEqual(303);
     expect(gameBall.y).toEqual(22);
   });
@@ -28,30 +29,30 @@ describe("Ball", function(){
   describe("changes course when hits wall", function(){
 
     beforeEach(function(){
-      for(var i = 0; i < 101;  i++) {
-        gameBall.update(paddle);
+      for(var i = 0; i < 200;  i++) {
+        gameBall.update(paddle1, paddle2);
       }
     });
 
-    it("changed x and y coordinates when it hits left side", function(){
-      expect(gameBall.x).toEqual(537);
-      expect(gameBall.y).toEqual(222);
-    });
-
-    it("changed x and y speed when it hits left side", function(){
-      expect(gameBall.xSpeed).toEqual(-3);
-      expect(gameBall.ySpeed).toEqual(2);
-    });
+  it("changes course when it hits a wall", function(){
+    expect(gameBall.x).toEqual(240);
+    expect(gameBall.y).toEqual(384);
   });
 
-  describe("changes course when hits paddle", function() {
-    it("changes x and y coordinates when it hits the paddle", function() {
+  it("changes course when it hits a wall", function(){
+    expect(gameBall.xSpeed).toEqual(-3);
+    expect(gameBall.ySpeed).toEqual(-2);
+  });
 
+  });
+
+  describe("changes course when hits right paddle", function() {
+    it("changes x and y coordinates when it hits the paddle", function() {
       for(var i = 0; i < 290;  i++) {
-        gameBall.update(paddle);
+        gameBall.update(paddle1, paddle2);
       }
       expect(gameBall.xSpeed).toEqual(3);
-      expect(gameBall.ySpeed).toEqual(-2);
+      expect(gameBall.ySpeed).toEqual(2);
     });
   });
 
@@ -60,7 +61,7 @@ describe("Ball", function(){
 
     beforeEach(function(){
       for(var i = 0; i < 900;  i++) {
-        gameBall.update(paddle2);
+        gameBall.update(paddle2, paddle2);
       }
     });
 
