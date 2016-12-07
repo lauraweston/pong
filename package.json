@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/lauraweston/pong#readme",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "socket.io": "^1.7.1"
   },
   "devDependencies": {
     "jasmine": "^2.5.2",
