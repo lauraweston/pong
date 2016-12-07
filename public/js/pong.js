@@ -1,3 +1,4 @@
+var GameController = require('./gameController.js');
 var GameBox = require('./gameBox.js');
 var Ball = require('./ball.js');
 var Player = require('./player.js');
@@ -19,6 +20,7 @@ function (callback) {window.setTimeout(callback, 10000 / 60)};
   paddle2 = new Paddle(15, 150);
   player1 = new Player(paddle1);
   player2 = new Player(paddle2);
+  gameController = new GameController(ball, game, player1, player2);
   animate(play);
 })();
 
@@ -29,34 +31,10 @@ function play(){
 }
 
 var draw = function(){
-  game.draw();
-  ball.draw();
-  paddle1.draw();
-  paddle2.draw();
-  player1.draw();
-  player2.draw();
-}
+  gameController.drawGame();
+};
 
 var update = function(){
-  ball.update(player1, player2);
-  updatePaddle1(paddle1);
-  updatePaddle2(paddle2);
-}
-
-function updatePaddle1(paddle) {
-  if (keydown.down) {
-    paddle.moveDown();
-  }
-  if (keydown.up) {
-    paddle.moveUp();
-  }
-}
-
-function updatePaddle2(paddle) {
-  if (keydown.ctrl) {
-    paddle.moveDown();
-  }
-  if (keydown.shift) {
-    paddle.moveUp();
-  }
-}
+  gameController.update();
+  gameController.movePaddle();
+};

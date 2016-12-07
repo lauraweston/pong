@@ -44,12 +44,13 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var GameBox = __webpack_require__(1);
-	var Ball = __webpack_require__(2);
-	var Player = __webpack_require__(3);
-	var Paddle = __webpack_require__(4);
-	var keydown = __webpack_require__(5);
-	__webpack_require__(6);
+	var GameController = __webpack_require__(1);
+	var GameBox = __webpack_require__(2);
+	var Ball = __webpack_require__(3);
+	var Player = __webpack_require__(4);
+	var Paddle = __webpack_require__(5);
+	var keydown = __webpack_require__(6);
+	__webpack_require__(7);
 
 	var animate = window.requestAnimationFrame ||
 	window.webkitRequestAnimationFrame ||
@@ -65,6 +66,7 @@
 	  paddle2 = new Paddle(15, 150);
 	  player1 = new Player(paddle1);
 	  player2 = new Player(paddle2);
+	  gameController = new GameController(ball, game, player1, player2);
 	  animate(play);
 	})();
 
@@ -75,49 +77,107 @@
 	}
 
 	var draw = function(){
-	  game.draw();
-	  ball.draw();
-	  paddle1.draw();
-	  paddle2.draw();
-	  player1.draw();
-	  player2.draw();
-	}
+	  gameController.drawGame();
+	};
 
 	var update = function(){
-	  ball.update(player1, player2);
-	  updatePaddle1(paddle1);
-	  updatePaddle2(paddle2);
-	}
-
-	function updatePaddle1(paddle) {
-	  if (keydown.down) {
-	    paddle.moveDown();
-	  }
-	  if (keydown.up) {
-	    paddle.moveUp();
-	  }
-	}
-
-	function updatePaddle2(paddle) {
-	  if (keydown.ctrl) {
-	    paddle.moveDown();
-	  }
-	  if (keydown.shift) {
-	    paddle.moveUp();
-	  }
-	}
+	  gameController.update();
+	  gameController.movePaddle();
+	};
 
 
 /***/ },
 /* 1 */
 /***/ function(module, exports) {
 
+	var GameController = function(ball, gamebox, player1, player2){
+	  this.ball = ball;
+	  this.gameBox = gamebox;
+	  this.player1 = player1;
+	  this.player2 = player2;
+	};
+
+	  GameController.prototype.ballHitsPaddle = function(){
+	    if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
+	      ball.bouncePaddle();
+	    }
+	    if(this.ball.x > this.player2.paddle.x && this.ball.x < (this.player2.paddle.x + this.player2.paddle.width) && (this.ball.y >= this.player2.paddle.y && this.ball.y <= (this.player2.paddle.y + this.player2.paddle.height))) {
+	      ball.bouncePaddle();
+	    }
+	  };
+
+	  GameController.prototype.ballHitsWall = function(){
+	    if(this.ball.y <= this.gameBox.y || this.ball.y > this.gameBox.height) {
+	      ball.bounceWall();
+	    }
+	  };
+
+	  GameController.prototype.ballGoesOutOfPlay = function(){
+	    if (this.ball.x >= this.gameBox.width) {
+	      this.player2.increaseScore();
+	      this.ball.reset();
+	    } else if (this.ball.x <= this.gameBox.x) {
+	      this.player1.increaseScore();
+	      this.ball.reset();
+	    }
+	  };
+
+	  GameController.prototype.update = function(){
+	    this.ballHitsWall();
+	    this.ballHitsPaddle();
+	    this.ballGoesOutOfPlay()
+	    this.ball.update();
+	  };
+
+	  GameController.prototype.drawGame = function(){
+	    this.gameBox.draw();
+	    this.ball.draw();
+	    this.player1.paddle.draw();
+	    this.player2.paddle.draw();
+	    this.player1.draw();
+	    this.player2.draw();
+	  };
+
+	  GameController.prototype.movePaddle = function(){
+	    updatePaddle1();
+	    updatePaddle2();
+	  };
+
+	  var updatePaddle1 = function() {
+	    if (keydown.down) {
+	      this.player1.paddle.moveDown();
+	    }
+	    if (keydown.up) {
+	      this.player1.paddle.moveUp();
+	    }
+	  };
+
+	  var updatePaddle2 = function() {
+	    if (keydown.ctrl) {
+	      this.player2.paddle.moveDown();
+	    }
+	    if (keydown.shift) {
+	      this.player2.paddle.moveUp();
+	    }
+	  };
+
+	  module.exports = GameController;
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
 	function GameBox(){
+	  this.height = 400;
+	  this.width= 600;
+	  this.x = 0;
+	  this.y = 0;
 	};
 
 	GameBox.prototype.draw = function(){
 	  context.beginPath();
-	  context.rect(0, 0, 600, 400)
+	  context.rect(this.x, this.y, this.width, this.height)
 	  context.fillStyle = "black";
 	  context.fill();
 	  context.closePath();
@@ -127,7 +187,7 @@
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	var Ball = function(){
@@ -145,31 +205,18 @@
 	  context.fill();
 	};
 
-	Ball.prototype.update = function(player1, player2){
+
+	Ball.prototype.bouncePaddle = function(){
+	  this.xSpeed = -this.xSpeed;
+	};
+
+	Ball.prototype.bounceWall = function(){
+	  this.ySpeed = -this.ySpeed;
+	};
+
+	Ball.prototype.update = function(){
 	  this.x += this.xSpeed;
 	  this.y += this.ySpeed;
-
-	  if(this.x === player1.paddle.x && (this.y >= player1.paddle.y && this.y <= (player1.paddle.y + player1.paddle.height))) {
-	    this.xSpeed = -this.xSpeed;
-	  }
-
-	  if(this.x === (player2.paddle.x + player2.paddle.width) && (this.y >= player2.paddle.y && this.y <= (player2.paddle.y + player2.paddle.height))) {
-	    this.xSpeed = -this.xSpeed;
-	  }
-
-	  if(this.y <= 0) { // hits top
-	    this.ySpeed = -this.ySpeed;
-	  } else if(this.y > 400) { // hits bottom
-	    this.ySpeed = -this.ySpeed;
-	  }
-	  // paddle fails
-	  if(this.x >= 600) {
-	    player2.increaseScore();
-	    this.reset();
-	  } else if (this.x <= 0)  {
-	    player1.increaseScore();
-	    this.reset();
-	  }
 	};
 
 	Ball.prototype.reset = function(){
@@ -182,7 +229,7 @@
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	function Player (paddle) {
@@ -202,7 +249,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	function Paddle(x, y) {
@@ -230,7 +277,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	 window.keydown = {};
@@ -252,7 +299,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	/*
