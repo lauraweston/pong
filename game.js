@@ -42,6 +42,7 @@ function setEventHandlers () {
 
 (function init() {
   players = [];
+  console.log(server);
   socket = io.listen(server);
   setEventHandlers();
 })();
