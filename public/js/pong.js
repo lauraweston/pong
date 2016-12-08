@@ -1,11 +1,11 @@
 var socket;
 var localPlayer;
-var remotePlayers = [];
+var opponent;
 var ball;
 var context;
 var canvas;
 var gameBox;
-var gameController
+var gameController;
 var GameController = require('./gameController.js');
 var GameBox = require('./gameBox.js');
 var Ball = require('./ball.js');
@@ -26,34 +26,20 @@ function init(){
   ball = new Ball(context);
   socket = io.connect('http://localhost:3000');
   setEventHandlers();
-  setUpGame();
 };
 
 function onSocketConnected() {
-  console.log("Connected to socket server")
-  socket.emit("new player", {x: localPlayer.paddle.getX(), y: localPlayer.paddle.getY()});
+  console.log("Connected to socket server");
 }
 
 function onSocketDisconnect() {
 	console.log("Disconnected from socket server");
 };
 
-function onNewPlayer(data) {
-  console.log("New Player has connected: "+data.id);
-  var newPaddle = new Paddle(15,150, context);
-  var newPlayer = new Player(newPaddle, context);
-  newPlayer.id = data.id;
-  remotePlayers.push(newPlayer);
-}
-
 function onMovePlayer(data) {
-  var movePlayer = playerById(data.id)
-  movePlayer.paddle.setY(data.y)
-}
-
-function onRemovePlayer(data){
-  var removePlayer = playerById(data.id)
-  remotePlayers.splice(remotePlayers.indexOf(removePlayer), 1);
+  if(data.id === opponent.id) {
+    opponent.paddle.setY(data.y);
+  }
 }
 
 function setEventHandlers() {
@@ -61,34 +47,38 @@ function setEventHandlers() {
 	socket.on("connect", onSocketConnected);
 	// Socket disconnection
 	socket.on("disconnect", onSocketDisconnect);
-	// New player message received
-	socket.on("new player", onNewPlayer);
 	// Player move message received
 	socket.on("move player", onMovePlayer);
-	// Player removed message received
-	socket.on("remove player", onRemovePlayer);
 
-  socket.on("start game", startGame)
+  socket.on("start game", startGame);
 };
 
-function startGame(){
-  var newPlayer = remotePlayers[0]
-  gameController = new GameController(ball, gameBox, localPlayer, newPlayer);
-  animate(gameStart);
+function myId() {
+  return socket.io.engine.id;
 }
 
-function setUpGame(){
-  var x;
-  var y = 150;
-  var x = 570;
-  var paddle = new Paddle(x, y, context);
-  localPlayer = new Player(paddle, context);
+function startGame(gameData){
+  console.log("Starting game:");
+  for(var i= 0; i < gameData.players.length; i++) {
+    var player = gameData.players[i];
+    var paddle = new Paddle(player.x, player.y, context);
+    if(player.id === myId()) {
+      localPlayer = new Player(paddle, context);
+      localPlayer.id = myId();
+    } else {
+      opponent = new Player(paddle, context);
+      opponent.id = player.id;
+    }
+  }
+  gameController = new GameController(ball, gameBox, localPlayer, opponent);
+
+  animate(gameLoop);
 }
 
-function gameStart(){
+function gameLoop(){
   update();
   draw();
-  animate(gameStart);
+  animate(gameLoop);
 }
 
 var draw = function(){
@@ -99,22 +89,12 @@ var update = function(){
   gameController.update();
   if (keydown.down) {
     localPlayer.paddle.moveDown();
-    socket.emit("move player", {y: localPlayer.paddle.getY()})
+    socket.emit("move player", {y: localPlayer.paddle.getY()});
     }
   if (keydown.up) {
     localPlayer.paddle.moveUp();
-    socket.emit("move player", {y: localPlayer.paddle.getY()})
+    socket.emit("move player", {y: localPlayer.paddle.getY()});
     }
   };
-
-function playerById(id) {
-	var i;
-	for (i = 0; i < remotePlayers.length; i++) {
-		if (remotePlayers[i].id == id)
-			return remotePlayers[i];
-	};
-
-	return false;
-};
 
 init();

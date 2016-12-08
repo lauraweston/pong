@@ -23,10 +23,11 @@ Paddle.prototype.getX = function() {
   return this.x;
 }
 
-function Player(paddle) {
+function Player(paddle, id, isOnLeft) {
   this.score = 0;
   this.paddle = paddle;
-  this.id;
+  this.id = id;
+  this.isOnLeft = isOnLeft;
 };
 
 Player.prototype.setScore = function(newScore) {
