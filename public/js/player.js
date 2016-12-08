@@ -1,5 +1,6 @@
 function Player (paddle, context) {
   this.score = 0;
+  this.id
   this.paddle = paddle;
   this.context = context;
 };

@@ -65,20 +65,28 @@
 	window.mozRequestAnimationFrame ||
 	function (callback) {window.setTimeout(callback, 10000 / 60)};
 
-
 	function init(){
 	  canvas = document.getElementById("canvas");
 	  context = canvas.getContext('2d');
 	  gameBox = new GameBox(context);
 	  ball = new Ball(context);
-	  socket = io("http://localhost", {port: 3000}); //documentation different from tutorial
+	  socket = io.connect('http://localhost:3000');
+	  var x;
+	  var y = 150;
+	  if (remotePlayers.length === 0) {
+	    x = 570;
+	  } else {
+	    x = 15;
+	  }
+	  var paddle = new Paddle(x, y);
+	  localPlayer = new Player(paddle, context);
 	  setEventHandlers();
 	  setUpGame();
 	};
 
 	function onSocketConnected() {
 	  console.log("Connected to socket server")
-	  socket.emit("New Player", {x: localPlayer.paddle.getX(), y: localPlayer.paddle.getY()});
+	  socket.emit("new player", {x: localPlayer.paddle.getX(), y: localPlayer.paddle.getY()});
 	}
 
 	function onSocketDisconnect() {
@@ -86,19 +94,19 @@
 	};
 
 	function onNewPlayer(data) {
-	  console.log("New Player connected: "+data.id);
 	  console.log(data)
-	  console.log(data.getX())
-	  var newPaddle = new Paddle(data.getX(), data.getY());
-	  var newPlayer = new Player(newPaddle);
+	  console.log("New Player has connected: "+data.id);
+	  var newPaddle = new Paddle(data.x, data.y);
+	  var newPlayer = new Player(newPaddle, context);
+	  console.log(newPlayer)
 	  newPlayer.id = data.id;
 	  remotePlayers.push(newPlayer);
+	  console.log(remotePlayers)
 	}
 
 	function onMovePlayer(data) {
 	  var movePlayer = playerById(data.id)
-
-	  movePlayer.setY(data.y)
+	  movePlayer.paddle.setY(data.y)
 	}
 
 	function onRemovePlayer(data){
@@ -122,23 +130,15 @@
 	function setUpGame(){
 	  gameBox.draw();
 	  ball.draw();
-	  var x;
-	  var y = 150;
-	  if (remotePlayers.length === 0) {
-	    x = 570;
-	  } else {
-	    x = 15;
-	  }
-	  var paddle = new Paddle(x, y);
-	  localPlayer = new Player(paddle, context);
-	  if (remotePlayers.length === 1) {
+	  animate(gameStart);
+
+	  if (remotePlayers.length >= 1) {
 	  var newPlayer = remotePlayers[0]
-	  gameController = new GameController(ball, game, localPlayer, newPlayer);
-	  animate(gameStart())
 	}
 	}
 
 	function gameStart(){
+	  gameController = new GameController(ball, gameBox, localPlayer, newPlayer);
 	  draw();
 	  update();
 	  animate(gameStart);
@@ -152,11 +152,11 @@
 	  gameController.update();
 	  if (keydown.down) {
 	    localPlayer.paddle.moveDown();
-	    socket.emit("movePlayer", {y: localPlayer.paddle.getY()})
+	    socket.emit("move player", {y: localPlayer.paddle.getY()})
 	    }
 	  if (keydown.up) {
 	    localPlayer.paddle.moveUp();
-	    socket.emit("movePlayer", {y: localPlayer.paddle.getY()})
+	    socket.emit("move player", {y: localPlayer.paddle.getY()})
 	    }
 	  };
 
@@ -301,6 +301,7 @@
 
 	function Player (paddle, context) {
 	  this.score = 0;
+	  this.id
 	  this.paddle = paddle;
 	  this.context = context;
 	};
