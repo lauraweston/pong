@@ -26,8 +26,6 @@ function init(){
   gameBox = new GameBox(context);
   ball = new Ball(context);
   socket = io("http://localhost", {port: 3000}); //documentation different from tutorial
-  var paddle = new Paddle(x, y);
-  localPlayer = new Player(paddle, context);
   setEventHandlers();
   setUpGame();
 };
@@ -85,6 +83,8 @@ function setUpGame(){
   } else {
     x = 15;
   }
+  var paddle = new Paddle(x, y);
+  localPlayer = new Player(paddle, context);
   if (remotePlayers.length === 1) {
   var newPlayer = remotePlayers[0]
   gameController = new GameController(ball, game, localPlayer, newPlayer);
