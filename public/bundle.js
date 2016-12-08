@@ -71,15 +71,6 @@
 	  gameBox = new GameBox(context);
 	  ball = new Ball(context);
 	  socket = io.connect('http://localhost:3000');
-	  var x;
-	  var y = 150;
-	  if (remotePlayers.length === 0) {
-	    x = 570;
-	  } else {
-	    x = 15;
-	  }
-	  var paddle = new Paddle(x, y);
-	  localPlayer = new Player(paddle, context);
 	  setEventHandlers();
 	  setUpGame();
 	};
@@ -94,14 +85,11 @@
 	};
 
 	function onNewPlayer(data) {
-	  console.log(data)
 	  console.log("New Player has connected: "+data.id);
-	  var newPaddle = new Paddle(data.x, data.y);
+	  var newPaddle = new Paddle(15,150, context);
 	  var newPlayer = new Player(newPaddle, context);
-	  console.log(newPlayer)
 	  newPlayer.id = data.id;
 	  remotePlayers.push(newPlayer);
-	  console.log(remotePlayers)
 	}
 
 	function onMovePlayer(data) {
@@ -125,22 +113,27 @@
 		socket.on("move player", onMovePlayer);
 		// Player removed message received
 		socket.on("remove player", onRemovePlayer);
+
+	  socket.on("start game", startGame)
 	};
 
-	function setUpGame(){
-	  gameBox.draw();
-	  ball.draw();
-	  animate(gameStart);
-
-	  if (remotePlayers.length >= 1) {
+	function startGame(){
 	  var newPlayer = remotePlayers[0]
+	  gameController = new GameController(ball, gameBox, localPlayer, newPlayer);
+	  animate(gameStart);
 	}
+
+	function setUpGame(){
+	  var x;
+	  var y = 150;
+	  var x = 570;
+	  var paddle = new Paddle(x, y, context);
+	  localPlayer = new Player(paddle, context);
 	}
 
 	function gameStart(){
-	  gameController = new GameController(ball, gameBox, localPlayer, newPlayer);
-	  draw();
 	  update();
+	  draw();
 	  animate(gameStart);
 	}
 
@@ -186,16 +179,16 @@
 
 	  GameController.prototype.ballHitsPaddle = function(){
 	    if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
-	      ball.bouncePaddle();
+	      this.ball.bouncePaddle();
 	    }
 	    if(this.ball.x > this.player2.paddle.x && this.ball.x < (this.player2.paddle.x + this.player2.paddle.width) && (this.ball.y >= this.player2.paddle.y && this.ball.y <= (this.player2.paddle.y + this.player2.paddle.height))) {
-	      ball.bouncePaddle();
+	      this.ball.bouncePaddle();
 	    }
 	  };
 
 	  GameController.prototype.ballHitsWall = function(){
 	    if(this.ball.y <= this.gameBox.y || this.ball.y > this.gameBox.height) {
-	      ball.bounceWall();
+	      this.ball.bounceWall();
 	    }
 	  };
 
@@ -330,18 +323,19 @@
 /* 5 */
 /***/ function(module, exports) {
 
-	function Paddle(x, y) {
+	function Paddle(x, y, context) {
 	  this.color = "white";
 	  this.width = 15;
 	  this.height = 70;
 	  this.x = x;
 	  this.y = y;
 	  this.ySpeed = 5;
+	  this.context = context
 	}
 
 	Paddle.prototype.draw = function() {
-	  context.fillStyle = this.color;
-	  context.fillRect(this.x, this.y, this.width, this.height);
+	  this.context.fillStyle = this.color;
+	  this.context.fillRect(this.x, this.y, this.width, this.height);
 	};
 
 	Paddle.prototype.moveDown = function() {

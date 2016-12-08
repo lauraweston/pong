@@ -1,15 +1,16 @@
-function Paddle(x, y) {
+function Paddle(x, y, context) {
   this.color = "white";
   this.width = 15;
   this.height = 70;
   this.x = x;
   this.y = y;
   this.ySpeed = 5;
+  this.context = context
 }
 
 Paddle.prototype.draw = function() {
-  context.fillStyle = this.color;
-  context.fillRect(this.x, this.y, this.width, this.height);
+  this.context.fillStyle = this.color;
+  this.context.fillRect(this.x, this.y, this.width, this.height);
 };
 
 Paddle.prototype.moveDown = function() {

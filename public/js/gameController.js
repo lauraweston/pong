@@ -7,16 +7,16 @@ var GameController = function(ball, gamebox, player1, player2){
 
   GameController.prototype.ballHitsPaddle = function(){
     if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
-      ball.bouncePaddle();
+      this.ball.bouncePaddle();
     }
     if(this.ball.x > this.player2.paddle.x && this.ball.x < (this.player2.paddle.x + this.player2.paddle.width) && (this.ball.y >= this.player2.paddle.y && this.ball.y <= (this.player2.paddle.y + this.player2.paddle.height))) {
-      ball.bouncePaddle();
+      this.ball.bouncePaddle();
     }
   };
 
   GameController.prototype.ballHitsWall = function(){
     if(this.ball.y <= this.gameBox.y || this.ball.y > this.gameBox.height) {
-      ball.bounceWall();
+      this.ball.bounceWall();
     }
   };
 

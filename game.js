@@ -30,7 +30,7 @@ function onNewPlayer(data) {
   var newPlayer = new Player(newPaddle);
   newPlayer.id = this.id;
 
-  this.broadcast.emit("new player", {id: newPlayer.id, y: newPlayer.paddle.getY(), x: newPlayer.paddle.getX()});
+  this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.paddle.getX(), y: newPlayer.paddle.getY()});
 
   var existingPlayer;
 
@@ -39,6 +39,11 @@ function onNewPlayer(data) {
     this.emit("new player",  {id: existingPlayer.id, x: existingPlayer.paddle.getX(), y: existingPlayer.paddle.getY()});
   }
   players.push(newPlayer);
+
+  if (players.length === 2) {
+    this.broadcast.emit("start game");
+    this.emit("start game");
+  }
 };
 
 function onMovePlayer(data) {
@@ -47,8 +52,9 @@ function onMovePlayer(data) {
 	this.broadcast.emit("move player", {id: movePlayer.id, y: movePlayer.paddle.getY()});
 };
 
+
 function onSocketConnection(client) {
-   util.log("New player has connected: "+client.id);
+   util.log("New player has connected: "+ client.id);
    client.on("disconnect", onClientDisconnect);
    client.on("new player", onNewPlayer);
    client.on("move player", onMovePlayer);
