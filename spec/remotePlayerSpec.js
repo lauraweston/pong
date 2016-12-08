@@ -21,11 +21,11 @@ describe('remotePlayer', function() {
   });
 
   it("sets y coordinates of paddle", function() {
-    paddle.setPosition(155);
+    paddle.setY(155);
     expect(paddle.y).toEqual(155);
   });
 
   it("gets y coordinates of paddle", function() {
-    expect(paddle.getPosition()).toEqual(150);
+    expect(paddle.getY()).toEqual(150);
   });
 });
