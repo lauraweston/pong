@@ -7,12 +7,20 @@ function Paddle(x, y) {
   this.ySpeed = 5;
 };
 
-Paddle.prototype.setPosition = function(position) {
-  this.y = position;
+Paddle.prototype.setY = function(y) {
+  this.y = y;
 }
 
-Paddle.prototype.getPosition = function() {
+Paddle.prototype.setX = function(x) {
+  this.x = x;
+}
+
+Paddle.prototype.getY = function() {
   return this.y;
+}
+
+Paddle.prototype.getX = function() {
+  return this.x;
 }
 
 function Player(paddle) {

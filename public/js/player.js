@@ -1,6 +1,7 @@
-function Player (paddle) {
+function Player (paddle, context) {
   this.score = 0;
   this.paddle = paddle;
+  this.context = context;
 };
 
 Player.prototype.increaseScore = function() {
@@ -8,7 +9,16 @@ Player.prototype.increaseScore = function() {
 };
 
 Player.prototype.draw = function() {
-  context.fillText(this.score, this.paddle.x, 15);
+  this.context.fillText(this.score, this.paddle.x, 15);
 };
+
+Player.prototype.setScore = function(newScore) {
+  this.score = newScore;
+};
+
+Player.prototype.getScore = function() {
+  return this.score;
+};
+
 
 module.exports = Player;

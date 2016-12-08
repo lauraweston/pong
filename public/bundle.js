@@ -44,6 +44,14 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var socket;
+	var localPlayer;
+	var remotePlayers = [];
+	var ball;
+	var context;
+	var canvas;
+	var gameBox;
+	var gameController
 	var GameController = __webpack_require__(1);
 	var GameBox = __webpack_require__(2);
 	var Ball = __webpack_require__(3);
@@ -57,23 +65,83 @@
 	window.mozRequestAnimationFrame ||
 	function (callback) {window.setTimeout(callback, 10000 / 60)};
 
-	(function init(){
-	  var canvas = document.getElementById("canvas");
-	  context = canvas.getContext('2d');
-	  game = new GameBox();
-	  ball = new Ball();
-	  paddle1 = new Paddle(570, 150);
-	  paddle2 = new Paddle(15, 150);
-	  player1 = new Player(paddle1);
-	  player2 = new Player(paddle2);
-	  gameController = new GameController(ball, game, player1, player2);
-	  animate(play);
-	})();
 
-	function play(){
+	function init(){
+	  canvas = document.getElementById("canvas");
+	  context = canvas.getContext('2d');
+	  gameBox = new GameBox(context);
+	  ball = new Ball(context);
+	  socket = io("http://localhost", {port: 3000}); //documentation different from tutorial
+	  setEventHandlers();
+	  setUpGame();
+	};
+
+	function onSocketConnected() {
+	  console.log("Connected to socket server")
+	  socket.emit("New Player", {x: localPlayer.paddle.getX(), y: localPlayer.paddle.getY()});
+	}
+
+	function onSocketDisconnect() {
+		console.log("Disconnected from socket server");
+	};
+
+	function onNewPlayer(data) {
+	  console.log("New Player connected: "+data.id);
+	  console.log(data)
+	  console.log(data.getX())
+	  var newPaddle = new Paddle(data.getX(), data.getY());
+	  var newPlayer = new Player(newPaddle);
+	  newPlayer.id = data.id;
+	  remotePlayers.push(newPlayer);
+	}
+
+	function onMovePlayer(data) {
+	  var movePlayer = playerById(data.id)
+
+	  movePlayer.setY(data.y)
+	}
+
+	function onRemovePlayer(data){
+	  var removePlayer = playerById(data.id)
+	  remotePlayers.splice(remotePlayers.indexOf(removePlayer), 1);
+	}
+
+	function setEventHandlers() {
+		// Socket connection successful
+		socket.on("connect", onSocketConnected);
+		// Socket disconnection
+		socket.on("disconnect", onSocketDisconnect);
+		// New player message received
+		socket.on("new player", onNewPlayer);
+		// Player move message received
+		socket.on("move player", onMovePlayer);
+		// Player removed message received
+		socket.on("remove player", onRemovePlayer);
+	};
+
+	function setUpGame(){
+	  gameBox.draw();
+	  ball.draw();
+	  var x;
+	  var y = 150;
+	  if (remotePlayers.length === 0) {
+	    x = 570;
+	  } else {
+	    x = 15;
+	  }
+	  var paddle = new Paddle(x, y);
+	  localPlayer = new Player(paddle, context);
+	  if (remotePlayers.length === 1) {
+	  var newPlayer = remotePlayers[0]
+	  gameController = new GameController(ball, game, localPlayer, newPlayer);
+	  animate(gameStart())
+	}
+	}
+
+	function gameStart(){
 	  draw();
 	  update();
-	  animate(play);
+	  animate(gameStart);
 	}
 
 	var draw = function(){
@@ -82,8 +150,27 @@
 
 	var update = function(){
 	  gameController.update();
-	  gameController.movePaddle();
+	  if (keydown.down) {
+	    localPlayer.paddle.moveDown();
+	    socket.emit("movePlayer", {y: localPlayer.paddle.getY()})
+	    }
+	  if (keydown.up) {
+	    localPlayer.paddle.moveUp();
+	    socket.emit("movePlayer", {y: localPlayer.paddle.getY()})
+	    }
+	  };
+
+	function playerById(id) {
+		var i;
+		for (i = 0; i < remotePlayers.length; i++) {
+			if (remotePlayers[i].id == id)
+				return remotePlayers[i];
+		};
+
+		return false;
 	};
+
+	init();
 
 
 /***/ },
@@ -138,28 +225,6 @@
 	    this.player2.draw();
 	  };
 
-	  GameController.prototype.movePaddle = function(){
-	    updatePaddle1();
-	    updatePaddle2();
-	  };
-
-	  var updatePaddle1 = function() {
-	    if (keydown.down) {
-	      this.player1.paddle.moveDown();
-	    }
-	    if (keydown.up) {
-	      this.player1.paddle.moveUp();
-	    }
-	  };
-
-	  var updatePaddle2 = function() {
-	    if (keydown.ctrl) {
-	      this.player2.paddle.moveDown();
-	    }
-	    if (keydown.shift) {
-	      this.player2.paddle.moveUp();
-	    }
-	  };
 
 	  module.exports = GameController;
 
@@ -168,7 +233,8 @@
 /* 2 */
 /***/ function(module, exports) {
 
-	function GameBox(){
+	function GameBox(context){
+	  this.context = context;
 	  this.height = 400;
 	  this.width= 600;
 	  this.x = 0;
@@ -176,11 +242,11 @@
 	};
 
 	GameBox.prototype.draw = function(){
-	  context.beginPath();
-	  context.rect(this.x, this.y, this.width, this.height)
-	  context.fillStyle = "black";
-	  context.fill();
-	  context.closePath();
+	  this.context.beginPath();
+	  this.context.rect(this.x, this.y, this.width, this.height)
+	  this.context.fillStyle = "black";
+	  this.context.fill();
+	  this.context.closePath();
 	};
 
 	module.exports = GameBox;
@@ -190,19 +256,20 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	var Ball = function(){
+	var Ball = function(context){
 	  this.x = 300
 	  this.y = 20
 	  this.xSpeed = 3
 	  this.ySpeed = 2
+	  this.context = context
 	};
 
 	Ball.prototype.draw = function(){
-	  context.beginPath();
-	  context.arc(this.x,this.y,7,0,Math.PI*2,true)
-	  context.fillStyle = "white";
-	  context.closePath();
-	  context.fill();
+	  this.context.beginPath();
+	  this.context.arc(this.x,this.y,7,0,Math.PI*2,true)
+	  this.context.fillStyle = "white";
+	  this.context.closePath();
+	  this.context.fill();
 	};
 
 
@@ -232,9 +299,10 @@
 /* 4 */
 /***/ function(module, exports) {
 
-	function Player (paddle) {
+	function Player (paddle, context) {
 	  this.score = 0;
 	  this.paddle = paddle;
+	  this.context = context;
 	};
 
 	Player.prototype.increaseScore = function() {
@@ -242,8 +310,17 @@
 	};
 
 	Player.prototype.draw = function() {
-	  context.fillText(this.score, this.paddle.x, 15);
+	  this.context.fillText(this.score, this.paddle.x, 15);
 	};
+
+	Player.prototype.setScore = function(newScore) {
+	  this.score = newScore;
+	};
+
+	Player.prototype.getScore = function() {
+	  return this.score;
+	};
+
 
 	module.exports = Player;
 
@@ -273,6 +350,23 @@
 	Paddle.prototype.moveUp = function(value) {
 	  if (this.y > 0) {this.y -= this.ySpeed}
 	};
+
+	Paddle.prototype.setY = function(y) {
+	  this.y = y;
+	}
+
+	Paddle.prototype.setX = function(x) {
+	  this.x = x;
+	}
+
+	Paddle.prototype.getY = function() {
+	  return this.y;
+	}
+
+	Paddle.prototype.getX = function() {
+	  return this.x;
+	}
+
 	module.exports = Paddle;
 
 

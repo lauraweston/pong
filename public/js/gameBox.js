@@ -1,4 +1,5 @@
-function GameBox(){
+function GameBox(context){
+  this.context = context;
   this.height = 400;
   this.width= 600;
   this.x = 0;
@@ -6,11 +7,11 @@ function GameBox(){
 };
 
 GameBox.prototype.draw = function(){
-  context.beginPath();
-  context.rect(this.x, this.y, this.width, this.height)
-  context.fillStyle = "black";
-  context.fill();
-  context.closePath();
+  this.context.beginPath();
+  this.context.rect(this.x, this.y, this.width, this.height)
+  this.context.fillStyle = "black";
+  this.context.fill();
+  this.context.closePath();
 };
 
 module.exports = GameBox;

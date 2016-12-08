@@ -19,4 +19,21 @@ Paddle.prototype.moveDown = function() {
 Paddle.prototype.moveUp = function(value) {
   if (this.y > 0) {this.y -= this.ySpeed}
 };
+
+Paddle.prototype.setY = function(y) {
+  this.y = y;
+}
+
+Paddle.prototype.setX = function(x) {
+  this.x = x;
+}
+
+Paddle.prototype.getY = function() {
+  return this.y;
+}
+
+Paddle.prototype.getX = function() {
+  return this.x;
+}
+
 module.exports = Paddle;
