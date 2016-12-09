@@ -3,16 +3,16 @@ var path = require("path");
 var app = express();
 var server = require('http').Server(app);
 var util = require('util');
-var io = require('socket.io');
-var Player = require("./remotePlayer").Player;
-var Paddle = require("./remotePaddle").Paddle;
+var io = require('socket.io')
+var Player = require("./src/remotePlayer").Player;
+var Paddle = require("./src/remotePaddle").Paddle;
 
 var socket;
 var players;
 
 server.listen(3000);
 
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/pong.html');
