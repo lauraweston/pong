@@ -47,7 +47,7 @@
 	var socket;
 	var localPlayer;
 	var opponent;
-	var ball;
+	var localBall;
 	var context;
 	var canvas;
 	var gameBox;
@@ -69,12 +69,10 @@
 	  canvas = document.getElementById("canvas");
 	  context = canvas.getContext('2d');
 	  gameBox = new GameBox(context);
-	  ball = new Ball(context);
+	  // localBall = new Ball(context);
 	  socket = io.connect('http://localhost:3000');
 	  setEventHandlers();
 	};
-	init();
-
 
 	var signDiv = document.getElementById('signDiv');
 	var play = document.getElementById('signIn');
@@ -100,14 +98,18 @@
 	  }
 	}
 
+	function onServerMovesBall(data) {
+	  localBall.setCoordinates(data);
+	}
+
 	function setEventHandlers() {
 		// Socket connection successful
 		socket.on("connect", onSocketConnected);
 		// Socket disconnection
 		socket.on("disconnect", onSocketDisconnect);
 		// Player move message received
-		socket.on("move player", onMovePlayer);
-
+		socket.on("server moves player", onMovePlayer);
+	  socket.on("draw game", onServerMovesBall);
 	  socket.on("start game", startGame);
 	};
 
@@ -128,7 +130,11 @@
 	      opponent.id = player.id;
 	    }
 	  }
-	  gameController = new GameController(ball, gameBox, localPlayer, opponent);
+	  localBall = new Ball(context, gameData.ballCoordinates);
+	  // localBall.setCoordinates(gameData.ballCoordinates);
+	  console.log(1);
+	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+	  console.log(2);
 
 	  animate(gameLoop);
 	}
@@ -144,16 +150,18 @@
 	};
 
 	var update = function(){
-	  gameController.update();
+	  socket.emit("update game controller");
 	  if (keydown.down) {
 	    localPlayer.paddle.moveDown();
-	    socket.emit("move player", {y: localPlayer.paddle.getY()});
-	    }
+	    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
+	  }
 	  if (keydown.up) {
 	    localPlayer.paddle.moveUp();
-	    socket.emit("move player", {y: localPlayer.paddle.getY()});
-	    }
-	  };
+	    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
+	  }
+	};
+
+	init();
 
 
 /***/ },
@@ -167,37 +175,37 @@
 	  this.player2 = player2;
 	};
 
-	  GameController.prototype.ballHitsPaddle = function(){
-	    if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
-	      this.ball.bouncePaddle();
-	    }
-	    if(this.ball.x > this.player2.paddle.x && this.ball.x < (this.player2.paddle.x + this.player2.paddle.width) && (this.ball.y >= this.player2.paddle.y && this.ball.y <= (this.player2.paddle.y + this.player2.paddle.height))) {
-	      this.ball.bouncePaddle();
-	    }
-	  };
-
-	  GameController.prototype.ballHitsWall = function(){
-	    if(this.ball.y <= this.gameBox.y || this.ball.y > this.gameBox.height) {
-	      this.ball.bounceWall();
-	    }
-	  };
-
-	  GameController.prototype.ballGoesOutOfPlay = function(){
-	    if (this.ball.x >= this.gameBox.width) {
-	      this.player1.increaseScore();
-	      this.ball.reset();
-	    } else if (this.ball.x <= this.gameBox.x) {
-	      this.player2.increaseScore();
-	      this.ball.reset();
-	    }
-	  };
-
-	  GameController.prototype.update = function(){
-	    this.ballHitsWall();
-	    this.ballHitsPaddle();
-	    this.ballGoesOutOfPlay()
-	    this.ball.update();
-	  };
+	  // GameController.prototype.ballHitsPaddle = function(){
+	  //   if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
+	  //     this.ball.bouncePaddle();
+	  //   }
+	  //   if(this.ball.x > this.player2.paddle.x && this.ball.x < (this.player2.paddle.x + this.player2.paddle.width) && (this.ball.y >= this.player2.paddle.y && this.ball.y <= (this.player2.paddle.y + this.player2.paddle.height))) {
+	  //     this.ball.bouncePaddle();
+	  //   }
+	  // };
+	  //
+	  // GameController.prototype.ballHitsWall = function(){
+	  //   if(this.ball.y <= this.gameBox.y || this.ball.y > this.gameBox.height) {
+	  //     this.ball.bounceWall();
+	  //   }
+	  // };
+	  //
+	  // GameController.prototype.ballGoesOutOfPlay = function(){
+	  //   if (this.ball.x >= this.gameBox.width) {
+	  //     this.player2.increaseScore();
+	  //     this.ball.reset();
+	  //   } else if (this.ball.x <= this.gameBox.x) {
+	  //     this.player1.increaseScore();
+	  //     this.ball.reset();
+	  //   }
+	  // };
+	  //
+	  // GameController.prototype.update = function(){
+	  //   this.ball.update();
+	  //   this.ballHitsWall();
+	  //   this.ballHitsPaddle();
+	  //   this.ballGoesOutOfPlay();
+	  // };
 
 	  GameController.prototype.drawGame = function(){
 	    this.gameBox.draw();
@@ -239,11 +247,9 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	var Ball = function(context, x, y){
-	  this.x = 300;
-	  this.y = 20;
-	  // this.xSpeed = 3;
-	  // this.ySpeed = 2;
+	var Ball = function(context, ballCoordinates){
+	  this.x = ballCoordinates.x;
+	  this.y = ballCoordinates.y;
 	  this.context = context;
 	};
 
@@ -255,6 +261,10 @@
 	  this.context.fill();
 	};
 
+	Ball.prototype.setCoordinates = function (ballCoordinates) {
+	  this.x = ballCoordinates.x;
+	  this.y = ballCoordinates.y;
+	};
 	// Ball.prototype.bouncePaddle = function(){
 	//   this.xSpeed = -this.xSpeed;
 	// };

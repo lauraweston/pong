@@ -8,7 +8,7 @@ var gameBox;
 var gameController;
 var GameController = require('./gameController.js');
 var GameBox = require('./gameBox.js');
-// var Ball = require('./ball.js');
+var Ball = require('./ball.js');
 var Player = require('./player.js');
 var Paddle = require('./paddle.js');
 var keydown = require('./../../lib/key_status.js');
@@ -27,8 +27,6 @@ function init(){
   socket = io.connect('http://localhost:3000');
   setEventHandlers();
 };
-init();
-
 
 var signDiv = document.getElementById('signDiv');
 var play = document.getElementById('signIn');
@@ -65,7 +63,7 @@ function setEventHandlers() {
 	socket.on("disconnect", onSocketDisconnect);
 	// Player move message received
 	socket.on("server moves player", onMovePlayer);
-  socket.on("server moves ball", onServerMovesBall);
+  socket.on("draw game", onServerMovesBall);
   socket.on("start game", startGame);
 };
 
@@ -86,9 +84,11 @@ function startGame(gameData){
       opponent.id = player.id;
     }
   }
-  localBall = new Ball(context);
-  localBall.setCoordinates(gameData.ballCoordinates);
+  localBall = new Ball(context, gameData.ballCoordinates);
+  // localBall.setCoordinates(gameData.ballCoordinates);
+  console.log(1);
   gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+  console.log(2);
 
   animate(gameLoop);
 }
@@ -104,7 +104,6 @@ var draw = function(){
 };
 
 var update = function(){
-  socket.emit("move ball");
   socket.emit("update game controller");
   if (keydown.down) {
     localPlayer.paddle.moveDown();

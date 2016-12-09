@@ -7,7 +7,7 @@ var io = require('socket.io')
 var Player = require("./src/remotePlayer").Player;
 var Paddle = require("./src/remotePaddle").Paddle;
 // var GameBox = require('./src/gameBox.js');
-var Ball = require('./src/serverBall.js');
+var ServerBall = require('./src/serverBall.js');
 var ServerGameController = require('./src/serverGameController.js'); //TODO add game controller function in here
 var socket;
 var players;
@@ -61,7 +61,7 @@ function startGame(){
   });
   var startingGameData = {
     players: playerData,
-    ballCoordinates: ball.getCoordinates();
+    ballCoordinates: ball.getCoordinates()
   };
   gameController = new ServerGameController(ball, players[0], players[1]);
 socket.sockets.emit("start game", startingGameData);
@@ -74,19 +74,15 @@ function onMovePlayer(data) {
 	this.broadcast.emit("server moves player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
 };
 
-function onMoveBall() {
-  this.emit("server moves ball", {coordinates: ball.getCoordinates()});
-};
 
 function updateGameController() {
-  gameController.update();//TODO - bundle up coordinates to send back to client - ball location and player scr0re - so also need to send across player
-  this.emit("draw game", )
+  gameController.update();
+  this.emit("draw game", {coordinates: ball.getCoordinates()});
 };
 
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
    client.on("client moves player", onMovePlayer);
-   client.on("move ball", onMoveBall);
    client.on("update game controller", updateGameController);
    client.on("user sign in", updatePlayerName)
    addNewPlayerToGame(client.id);

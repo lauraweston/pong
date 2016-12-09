@@ -27,10 +27,10 @@ var ServerGameController = function(ball, player1, player2){
 
   ServerGameController.prototype.ballGoesOutOfPlay = function(){
     if (this.ball.x >= this.gameBox.width) {
-      this.player2.increaseScore();
+      // this.player2.increaseScore();
       this.ball.reset();
     } else if (this.ball.x <= this.gameBox.x) {
-      this.player1.increaseScore();
+      // this.player1.increaseScore();
       this.ball.reset();
     }
   };

@@ -1,8 +1,6 @@
-var Ball = function(context){
-  // this.x = 300;
-  // this.y = 20;
-  // this.xSpeed = 3;
-  // this.ySpeed = 2;
+var Ball = function(context, ballCoordinates){
+  this.x = ballCoordinates.x;
+  this.y = ballCoordinates.y;
   this.context = context;
 };
 
