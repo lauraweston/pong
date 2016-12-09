@@ -6,9 +6,13 @@ var util = require('util');
 var io = require('socket.io')
 var Player = require("./src/remotePlayer").Player;
 var Paddle = require("./src/remotePaddle").Paddle;
+// var GameBox = require('./src/gameBox.js');
+var Ball = require('./src/serverBall.js');
+var GameController = require('./src/serverGameController.js'); //TODO: create this file
 
 var socket;
 var players;
+var ball;
 
 server.listen(3000);
 
@@ -36,6 +40,7 @@ function addNewPlayerToGame(newPlayerId) {
 
   if (players.length === 2) {
       console.log("starting game");
+      ball = new ServerBall();
       var playerData = players.map(function(p) {
         return {
           id: p.id,
@@ -44,8 +49,10 @@ function addNewPlayerToGame(newPlayerId) {
         }
       });
       var startingGameData = {
-        players: playerData
+        players: playerData,
+        ballCoordinates: ball.getCoordinates()
       };
+      var gameController = new ServerGameController();
     socket.sockets.emit("start game", startingGameData);
   }
 };
@@ -56,11 +63,14 @@ function onMovePlayer(data) {
 	this.broadcast.emit("move player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
 };
 
+function onMoveBall() {
+  this.emit("server moves ball", {coordinates: ball.getCoordinates()});
+};
 
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
    client.on("move player", onMovePlayer);
-
+   client.on("move ball", onMoveBall);
    addNewPlayerToGame(client.id);
 };
 

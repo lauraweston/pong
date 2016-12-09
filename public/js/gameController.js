@@ -31,10 +31,10 @@ var GameController = function(ball, gamebox, player1, player2){
   };
 
   GameController.prototype.update = function(){
+    this.ball.update();
     this.ballHitsWall();
     this.ballHitsPaddle();
-    this.ballGoesOutOfPlay()
-    this.ball.update();
+    this.ballGoesOutOfPlay();
   };
 
   GameController.prototype.drawGame = function(){

@@ -18,6 +18,13 @@ Ball.prototype.update = function(){
   this.y += this.ySpeed;
 };
 
+Ball.prototype.getCoordinates = function () {
+  return {
+    x: this.x,
+    y: this.y
+  };
+};
+
 Ball.prototype.reset = function(){
   this.x = 300;
   this.y = 20;
