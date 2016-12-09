@@ -6,9 +6,13 @@ var util = require('util');
 var io = require('socket.io')
 var Player = require("./src/remotePlayer").Player;
 var Paddle = require("./src/remotePaddle").Paddle;
+// var GameBox = require('./src/gameBox.js');
+var Ball = require('./src/serverBall.js');
+var GameController = require('./src/serverGameController.js'); //TODO: create this file
 
 var socket;
 var players;
+var ball;
 
 server.listen(3000);
 
@@ -33,19 +37,19 @@ function addNewPlayerToGame(newPlayerId) {
   var newPlayer = new Player(newPaddle, newPlayerId, playerIsOnLeft);
 
   players.push(newPlayer);
-
-};
+}
 
 function updatePlayerName(data){
   var updateNamePlayer = playerById(this.id)
   updateNamePlayer.setName(data.username)
-  if (players.length === 2 && (players[0].name.length > 0 ) && (players[1].name.length >0)) {
-      console.log("starting game");
-    startGame()
+  if (players.length === 2 && (players[0].name.length > 0 ) && (players[1].name.length > 0)) {
+    console.log("starting game");
+    startGame();
   }
-};
+}
 
 function startGame(){
+  ball = new ServerBall();
   var playerData = players.map(function(p) {
     return {
       id: p.id,
@@ -55,9 +59,11 @@ function startGame(){
     };
   });
   var startingGameData = {
-    players: playerData
+    players: playerData,
+    ballCoordinates: ball.getCoordinates()
   };
-socket.sockets.emit("start game", startingGameData);
+  var gameController = new ServerGameController();
+  socket.sockets.emit("start game", startingGameData);
 }
 
 
@@ -65,15 +71,18 @@ function onMovePlayer(data) {
   var movePlayer = playerById(this.id);
   movePlayer.paddle.setY(data.y);
 	this.broadcast.emit("move player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
-};
+}
 
+function onMoveBall() {
+  this.emit("server moves ball", {coordinates: ball.getCoordinates()});
+}
 
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
    client.on("move player", onMovePlayer);
    client.on("user sign in", updatePlayerName)
    addNewPlayerToGame(client.id);
-};
+}
 
 function setEventHandlers () {
   socket.sockets.on('connection', onSocketConnection);

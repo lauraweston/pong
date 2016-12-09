@@ -1,6 +1,6 @@
-var Ball = function(context, x, y){
-  this.x = 300;
-  this.y = 20;
+var Ball = function(context){
+  // this.x = 300;
+  // this.y = 20;
   // this.xSpeed = 3;
   // this.ySpeed = 2;
   this.context = context;
@@ -14,6 +14,10 @@ Ball.prototype.draw = function(){
   this.context.fill();
 };
 
+Ball.prototype.setCoordinates = function (ballCoordinates) {
+  this.x = ballCoordinates.x;
+  this.y = ballCoordinates.y;
+};
 // Ball.prototype.bouncePaddle = function(){
 //   this.xSpeed = -this.xSpeed;
 // };
