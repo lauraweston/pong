@@ -27,6 +27,18 @@ function init(){
   socket = io.connect('http://localhost:3000');
   setEventHandlers();
 };
+init();
+
+
+var signDiv = document.getElementById('signDiv');
+var play = document.getElementById('signIn');
+var newUsername = document.getElementById('username');
+
+play.onclick = function(){
+  signDiv.style.display = 'none';
+  socket.emit('user sign in',{username: newUsername.value});
+}
+
 
 function onSocketConnected() {
   console.log("Connected to socket server");
@@ -67,10 +79,10 @@ function startGame(gameData){
     var player = gameData.players[i];
     var paddle = new Paddle(player.x, player.y, context);
     if(player.id === myId()) {
-      localPlayer = new Player(paddle, context);
+      localPlayer = new Player(paddle, context, player.name);
       localPlayer.id = myId();
     } else {
-      opponent = new Player(paddle, context);
+      opponent = new Player(paddle, context, player.name);
       opponent.id = player.id;
     }
   }

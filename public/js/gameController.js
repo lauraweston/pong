@@ -5,6 +5,7 @@ var GameController = function(ball, gamebox, player1, player2){
   this.player2 = player2;
 };
 
+<<<<<<< HEAD
   // GameController.prototype.ballHitsPaddle = function(){
   //   if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
   //     this.ball.bouncePaddle();
@@ -36,6 +37,39 @@ var GameController = function(ball, gamebox, player1, player2){
   //   this.ballHitsPaddle();
   //   this.ballGoesOutOfPlay();
   // };
+=======
+  GameController.prototype.ballHitsPaddle = function(){
+    if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
+      this.ball.bouncePaddle();
+    }
+    if(this.ball.x > this.player2.paddle.x && this.ball.x < (this.player2.paddle.x + this.player2.paddle.width) && (this.ball.y >= this.player2.paddle.y && this.ball.y <= (this.player2.paddle.y + this.player2.paddle.height))) {
+      this.ball.bouncePaddle();
+    }
+  };
+
+  GameController.prototype.ballHitsWall = function(){
+    if(this.ball.y <= this.gameBox.y || this.ball.y > this.gameBox.height) {
+      this.ball.bounceWall();
+    }
+  };
+
+  GameController.prototype.ballGoesOutOfPlay = function(){
+    if (this.ball.x >= this.gameBox.width) {
+      this.player1.increaseScore();
+      this.ball.reset();
+    } else if (this.ball.x <= this.gameBox.x) {
+      this.player2.increaseScore();
+      this.ball.reset();
+    }
+  };
+
+  GameController.prototype.update = function(){
+    this.ballHitsWall();
+    this.ballHitsPaddle();
+    this.ballGoesOutOfPlay()
+    this.ball.update();
+  };
+>>>>>>> 1eb2d5309e41cabc1bce77982a3d08b1d4f1d48e
 
   GameController.prototype.drawGame = function(){
     this.gameBox.draw();

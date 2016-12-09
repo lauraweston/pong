@@ -9,7 +9,6 @@ var Paddle = require("./src/remotePaddle").Paddle;
 // var GameBox = require('./src/gameBox.js');
 var Ball = require('./src/serverBall.js');
 var ServerGameController = require('./src/serverGameController.js'); //TODO add game controller function in here
-
 var socket;
 var players;
 var ball;
@@ -39,24 +38,35 @@ function addNewPlayerToGame(newPlayerId) {
 
   players.push(newPlayer);
 
-  if (players.length === 2) {
-      console.log("starting game");
-      ball = new ServerBall();
-      var playerData = players.map(function(p) {
-        return {
-          id: p.id,
-          x: p.paddle.getX(),
-          y: p.paddle.getY(),
-        }
-      });
-      var startingGameData = {
-        players: playerData,
-        ballCoordinates: ball.getCoordinates()
-      };
-      gameController = new ServerGameController(ball, players[0], players[1]);
-    socket.sockets.emit("start game", startingGameData);
+};
+
+function updatePlayerName(data){
+  var updateNamePlayer = playerById(this.id)
+  updateNamePlayer.setName(data.username)
+  if (players.length === 2 && (players[0].name.length > 0 ) && (players[1].name.length >0)) {
+    startGame()
   }
 };
+
+function startGame(){
+  console.log("starting game");
+  ball = new ServerBall();
+  var playerData = players.map(function(p) {
+    return {
+      id: p.id,
+      name: p.name,
+      x: p.paddle.getX(),
+      y: p.paddle.getY(),
+    };
+  });
+  var startingGameData = {
+    players: playerData,
+    ballCoordinates: ball.getCoordinates();
+  };
+  gameController = new ServerGameController(ball, players[0], players[1]);
+socket.sockets.emit("start game", startingGameData);
+}
+
 
 function onMovePlayer(data) {
   var movePlayer = playerById(this.id);
@@ -78,6 +88,7 @@ function onSocketConnection(client) {
    client.on("client moves player", onMovePlayer);
    client.on("move ball", onMoveBall);
    client.on("update game controller", updateGameController);
+   client.on("user sign in", updatePlayerName)
    addNewPlayerToGame(client.id);
 };
 
