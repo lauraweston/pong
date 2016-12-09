@@ -3,7 +3,7 @@ function Player (paddle, context) {
   this.id
   this.paddle = paddle;
   this.context = context;
-};
+}
 
 Player.prototype.increaseScore = function() {
   this.score++;

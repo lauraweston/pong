@@ -3,7 +3,7 @@ var path = require("path");
 var app = express();
 var server = require('http').Server(app);
 var util = require('util');
-var io = require('socket.io')
+var io = require('socket.io');
 var Player = require("./remotePlayer").Player;
 var Paddle = require("./remotePaddle").Paddle;
 
@@ -30,7 +30,7 @@ function addNewPlayerToGame(newPlayerId) {
   var playerIsOnLeft = players.length === 0 || !players[0].isOnLeft;
   var startingX = playerIsOnLeft ? 15 : 570;
   var newPaddle = new Paddle(startingX, 150);
-  var newPlayer = new Player(newPaddle, newPlayerId, playerIsOnLeft);
+  var newPlayer = new Player(newPaddle, newPlayerId, playerIsOnLeft, name);
 
   players.push(newPlayer);
 
@@ -41,7 +41,7 @@ function addNewPlayerToGame(newPlayerId) {
           id: p.id,
           x: p.paddle.getX(),
           y: p.paddle.getY(),
-        }
+        };
       });
       var startingGameData = {
         players: playerData

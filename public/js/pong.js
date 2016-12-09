@@ -6,6 +6,7 @@ var context;
 var canvas;
 var gameBox;
 var gameController;
+var userName;
 var GameController = require('./gameController.js');
 var GameBox = require('./gameBox.js');
 var Ball = require('./ball.js');
@@ -21,12 +22,18 @@ function (callback) {window.setTimeout(callback, 10000 / 60)};
 
 function init(){
   canvas = document.getElementById("canvas");
+  userName = document.getElementById("playerName").value;
+  console.log(userName);
   context = canvas.getContext('2d');
   gameBox = new GameBox(context);
   ball = new Ball(context);
   socket = io.connect('http://localhost:3000');
   setEventHandlers();
 };
+
+// function setUserName(){
+//   socket.emit("add username", userName);
+// }
 
 function onSocketConnected() {
   console.log("Connected to socket server");
