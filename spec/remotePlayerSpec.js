@@ -1,4 +1,4 @@
-var remotePlayer = require('../remotePlayer.js');
+var remotePlayer = require('../src/remotePlayer.js');
 var Player = remotePlayer.Player;
 var Paddle = remotePlayer.Paddle;
 
