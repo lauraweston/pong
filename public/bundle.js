@@ -105,7 +105,7 @@
 
 	function startGame(gameData){
 	  console.log("Starting game:");
-	  for(var i= 0; i < gameData.players.length; i++) {
+	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
 	    var paddle = new Paddle(player.x, player.y, context);
 	    if(player.id === myId()) {

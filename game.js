@@ -5,7 +5,7 @@ var server = require('http').Server(app);
 var util = require('util');
 var io = require('socket.io')
 var Player = require("./remotePlayer").Player;
-var Paddle = require("./remotePlayer").Paddle;
+var Paddle = require("./remotePaddle").Paddle;
 
 var socket;
 var players;
