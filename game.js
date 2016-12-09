@@ -30,25 +30,36 @@ function addNewPlayerToGame(newPlayerId) {
   var playerIsOnLeft = players.length === 0 || !players[0].isOnLeft;
   var startingX = playerIsOnLeft ? 15 : 570;
   var newPaddle = new Paddle(startingX, 150);
-  var newPlayer = new Player(newPaddle, newPlayerId, playerIsOnLeft, name);
+  var newPlayer = new Player(newPaddle, newPlayerId, playerIsOnLeft);
 
   players.push(newPlayer);
 
-  if (players.length === 2) {
+};
+
+function updatePlayerName(data){
+  var updateNamePlayer = playerById(this.id)
+  updateNamePlayer.setName(data.username)
+  if (players.length === 2 && (players[0].name.length > 0 ) && (players[1].name.length >0)) {
       console.log("starting game");
-      var playerData = players.map(function(p) {
-        return {
-          id: p.id,
-          x: p.paddle.getX(),
-          y: p.paddle.getY(),
-        };
-      });
-      var startingGameData = {
-        players: playerData
-      };
-    socket.sockets.emit("start game", startingGameData);
+    startGame()
   }
 };
+
+function startGame(){
+  var playerData = players.map(function(p) {
+    return {
+      id: p.id,
+      name: p.name,
+      x: p.paddle.getX(),
+      y: p.paddle.getY(),
+    };
+  });
+  var startingGameData = {
+    players: playerData
+  };
+socket.sockets.emit("start game", startingGameData);
+}
+
 
 function onMovePlayer(data) {
   var movePlayer = playerById(this.id);
@@ -60,7 +71,7 @@ function onMovePlayer(data) {
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
    client.on("move player", onMovePlayer);
-
+   client.on("user sign in", updatePlayerName)
    addNewPlayerToGame(client.id);
 };
 

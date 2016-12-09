@@ -73,6 +73,18 @@
 	  socket = io.connect('http://localhost:3000');
 	  setEventHandlers();
 	};
+	init();
+
+
+	var signDiv = document.getElementById('signDiv');
+	var play = document.getElementById('signIn');
+	var newUsername = document.getElementById('username');
+
+	play.onclick = function(){
+	  signDiv.style.display = 'none';
+	  socket.emit('user sign in',{username: newUsername.value});
+	}
+
 
 	function onSocketConnected() {
 	  console.log("Connected to socket server");
@@ -109,10 +121,10 @@
 	    var player = gameData.players[i];
 	    var paddle = new Paddle(player.x, player.y, context);
 	    if(player.id === myId()) {
-	      localPlayer = new Player(paddle, context);
+	      localPlayer = new Player(paddle, context, player.name);
 	      localPlayer.id = myId();
 	    } else {
-	      opponent = new Player(paddle, context);
+	      opponent = new Player(paddle, context, player.name);
 	      opponent.id = player.id;
 	    }
 	  }
@@ -143,8 +155,6 @@
 	    }
 	  };
 
-	init();
-
 
 /***/ },
 /* 1 */
@@ -174,10 +184,10 @@
 
 	  GameController.prototype.ballGoesOutOfPlay = function(){
 	    if (this.ball.x >= this.gameBox.width) {
-	      this.player2.increaseScore();
+	      this.player1.increaseScore();
 	      this.ball.reset();
 	    } else if (this.ball.x <= this.gameBox.x) {
-	      this.player1.increaseScore();
+	      this.player2.increaseScore();
 	      this.ball.reset();
 	    }
 	  };
@@ -271,29 +281,31 @@
 /* 4 */
 /***/ function(module, exports) {
 
-	function Player (paddle, context) {
+	function Player (paddle, context, name) {
 	  this.score = 0;
 	  this.id
 	  this.paddle = paddle;
 	  this.context = context;
-	};
+	  this.name = name
+	}
 
 	Player.prototype.increaseScore = function() {
 	  this.score++;
 	};
 
 	Player.prototype.draw = function() {
-	  this.context.fillText(this.score, this.paddle.x, 15);
+	  this.context.fillText("vs", 300, 10);
+	  this.context.fillText(this.name, this.paddle.x - 10, 10);
+	  this.context.fillText(this.score, this.paddle.x, 20);
 	};
 
-	Player.prototype.setScore = function(newScore) {
-	  this.score = newScore;
-	};
+	Player.prototype.getName = function(){
+	  return this.name;
+	}
 
-	Player.prototype.getScore = function() {
-	  return this.score;
-	};
-
+	Player.prototype.setName = function(name){
+	  this.name = name;
+	}
 
 	module.exports = Player;
 
@@ -309,7 +321,7 @@
 	  this.x = x;
 	  this.y = y;
 	  this.ySpeed = 5;
-	  this.context = context
+	  this.context = context;
 	}
 
 	Paddle.prototype.draw = function() {
@@ -318,28 +330,32 @@
 	};
 
 	Paddle.prototype.moveDown = function() {
-	   if (this.y < 330) {this.y += this.ySpeed}
+	   if (this.y < 330) {
+	     this.y += this.ySpeed;
+	   }
 	};
 
 	Paddle.prototype.moveUp = function(value) {
-	  if (this.y > 0) {this.y -= this.ySpeed}
+	  if (this.y > 0) {
+	    this.y -= this.ySpeed;
+	  }
 	};
 
 	Paddle.prototype.setY = function(y) {
 	  this.y = y;
-	}
+	};
 
 	Paddle.prototype.setX = function(x) {
 	  this.x = x;
-	}
+	};
 
 	Paddle.prototype.getY = function() {
 	  return this.y;
-	}
+	};
 
 	Paddle.prototype.getX = function() {
 	  return this.x;
-	}
+	};
 
 	module.exports = Paddle;
 

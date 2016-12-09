@@ -6,7 +6,6 @@ var context;
 var canvas;
 var gameBox;
 var gameController;
-var userName;
 var GameController = require('./gameController.js');
 var GameBox = require('./gameBox.js');
 var Ball = require('./ball.js');
@@ -22,18 +21,24 @@ function (callback) {window.setTimeout(callback, 10000 / 60)};
 
 function init(){
   canvas = document.getElementById("canvas");
-  userName = document.getElementById("playerName").value;
-  console.log(userName);
   context = canvas.getContext('2d');
   gameBox = new GameBox(context);
   ball = new Ball(context);
   socket = io.connect('http://localhost:3000');
   setEventHandlers();
 };
+init();
 
-// function setUserName(){
-//   socket.emit("add username", userName);
-// }
+
+var signDiv = document.getElementById('signDiv');
+var play = document.getElementById('signIn');
+var newUsername = document.getElementById('username');
+
+play.onclick = function(){
+  signDiv.style.display = 'none';
+  socket.emit('user sign in',{username: newUsername.value});
+}
+
 
 function onSocketConnected() {
   console.log("Connected to socket server");
@@ -70,10 +75,10 @@ function startGame(gameData){
     var player = gameData.players[i];
     var paddle = new Paddle(player.x, player.y, context);
     if(player.id === myId()) {
-      localPlayer = new Player(paddle, context);
+      localPlayer = new Player(paddle, context, player.name);
       localPlayer.id = myId();
     } else {
-      opponent = new Player(paddle, context);
+      opponent = new Player(paddle, context, player.name);
       opponent.id = player.id;
     }
   }
@@ -103,5 +108,3 @@ var update = function(){
     socket.emit("move player", {y: localPlayer.paddle.getY()});
     }
   };
-
-init();
