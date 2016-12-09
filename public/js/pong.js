@@ -62,7 +62,7 @@ function setEventHandlers() {
 	// Socket disconnection
 	socket.on("disconnect", onSocketDisconnect);
 	// Player move message received
-	socket.on("move player", onMovePlayer);
+	socket.on("server moves player", onMovePlayer);
   socket.on("server moves ball", onServerMovesBall);
   socket.on("start game", startGame);
 };
@@ -103,14 +103,14 @@ var draw = function(){
 
 var update = function(){
   socket.emit("move ball");
-  gameController.update();
+  socket.emit("update game controller");
   if (keydown.down) {
     localPlayer.paddle.moveDown();
-    socket.emit("move player", {y: localPlayer.paddle.getY()});
+    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
   }
   if (keydown.up) {
     localPlayer.paddle.moveUp();
-    socket.emit("move player", {y: localPlayer.paddle.getY()});
+    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
   }
 };
 

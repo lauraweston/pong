@@ -8,11 +8,12 @@ var Player = require("./src/remotePlayer").Player;
 var Paddle = require("./src/remotePaddle").Paddle;
 // var GameBox = require('./src/gameBox.js');
 var Ball = require('./src/serverBall.js');
-var GameController = require('./src/serverGameController.js'); //TODO: create this file
+var ServerGameController = require('./src/serverGameController.js'); //TODO add game controller function in here
 
 var socket;
 var players;
 var ball;
+var gameController;
 
 server.listen(3000);
 
@@ -45,7 +46,6 @@ function updatePlayerName(data){
   if (players.length === 2 && (players[0].name.length > 0 ) && (players[1].name.length > 0)) {
     console.log("starting game");
     startGame();
-  }
 }
 
 function startGame(){
@@ -55,14 +55,14 @@ function startGame(){
       id: p.id,
       name: p.name,
       x: p.paddle.getX(),
-      y: p.paddle.getY(),
+      y: p.paddle.getY()
     };
   });
   var startingGameData = {
     players: playerData,
     ballCoordinates: ball.getCoordinates()
   };
-  var gameController = new ServerGameController();
+  gameController = new ServerGameController(ball, players[0], players[1]);
   socket.sockets.emit("start game", startingGameData);
 }
 
@@ -70,17 +70,22 @@ function startGame(){
 function onMovePlayer(data) {
   var movePlayer = playerById(this.id);
   movePlayer.paddle.setY(data.y);
-	this.broadcast.emit("move player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
-}
+	this.broadcast.emit("server moves player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
+};
 
 function onMoveBall() {
   this.emit("server moves ball", {coordinates: ball.getCoordinates()});
 }
 
+function updateGameController() {
+  gameController.update();//TODO - bundle up coordinates to send back to client - ball location and player scr0re - so also need to send across player
+  this.emit("draw game", )
+};
+
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
-   client.on("move player", onMovePlayer);
    client.on("user sign in", updatePlayerName)
+   client.on("client moves player", onMovePlayer);
    addNewPlayerToGame(client.id);
 }
 
