@@ -58,7 +58,7 @@
 	var Player = __webpack_require__(4);
 	var Paddle = __webpack_require__(5);
 	var keydown = __webpack_require__(6);
-	__webpack_require__(7);
+	__webpack_require__(8);
 
 	var animate = window.requestAnimationFrame ||
 	window.webkitRequestAnimationFrame ||
@@ -383,7 +383,8 @@
 
 
 /***/ },
-/* 7 */
+/* 7 */,
+/* 8 */
 /***/ function(module, exports) {
 
 	/*
