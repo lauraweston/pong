@@ -22,7 +22,7 @@ var newUsername = document.getElementById('username');
 
 play.onclick = function(){
   signDiv.style.display = 'none';
-  socket.emit('user sign in',{username: newUsername.value});
+  socket.emit('user sign in', {username: newUsername.value});
 }
 
 function onSocketConnected() {
@@ -43,6 +43,10 @@ function onServerMovesBall(data) {
   localBall.setCoordinates(data);
 }
 
+function onServerUpdatesScores(data) {
+  gameController.setScores(data);
+}
+
 function setEventHandlers() {
 	// Socket connection successful
 	socket.on("connect", onSocketConnected);
@@ -51,6 +55,7 @@ function setEventHandlers() {
 	// Player move message received
 	socket.on("server moves player", onServerMovePlayer);
   socket.on("server moves ball", onServerMovesBall);
+  socket.on("server updates scores", onServerUpdatesScores);
   socket.on("start game", startGame);
 };
 
@@ -72,6 +77,7 @@ function startGame(gameData){
     }
   }
   localBall = new Ball(context);
+  console.log(localBall);
   localBall.setCoordinates(gameData.ballCoordinates);
   gameController = new GameController(localBall, gameBox, localPlayer, opponent);
 

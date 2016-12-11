@@ -68,7 +68,7 @@
 
 	play.onclick = function(){
 	  signDiv.style.display = 'none';
-	  socket.emit('user sign in',{username: newUsername.value});
+	  socket.emit('user sign in', {username: newUsername.value});
 	}
 
 	function onSocketConnected() {
@@ -89,6 +89,10 @@
 	  localBall.setCoordinates(data);
 	}
 
+	function onServerUpdatesScores(data) {
+	  gameController.setScores(data);
+	}
+
 	function setEventHandlers() {
 		// Socket connection successful
 		socket.on("connect", onSocketConnected);
@@ -97,6 +101,7 @@
 		// Player move message received
 		socket.on("server moves player", onServerMovePlayer);
 	  socket.on("server moves ball", onServerMovesBall);
+	  socket.on("server updates scores", onServerUpdatesScores);
 	  socket.on("start game", startGame);
 	};
 
@@ -118,6 +123,7 @@
 	    }
 	  }
 	  localBall = new Ball(context);
+	  console.log(localBall);
 	  localBall.setCoordinates(gameData.ballCoordinates);
 	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
 
@@ -181,12 +187,16 @@
 	  GameController.prototype.drawGame = function(){
 	    this.gameBox.draw();
 	    this.ball.draw();
-	    this.player1.paddle.draw();
-	    this.player2.paddle.draw();
 	    this.player1.draw();
 	    this.player2.draw();
 	  };
 
+	  GameController.prototype.setScores = function(scores) {
+	    var player1Score = scores.player1Score;
+	    var player2Score = scores.player2Score;
+	    this.player1.setScore(player1Score);
+	    this.player2.setScore(player2Score);
+	  };
 
 	  module.exports = GameController;
 
@@ -251,17 +261,19 @@
 	}
 
 	Player.prototype.draw = function() {
+	  this.paddle.draw();
+	  this.paddle.draw();
 	  this.context.fillText("vs", 300, 10);
 	  this.context.fillText(this.name, this.paddle.x - 10, 10);
 	  this.context.fillText(this.score, this.paddle.x, 20);
 	};
 
-	Player.prototype.getName = function(){
-	  return this.name;
-	};
-
 	Player.prototype.setName = function(name){
 	  this.name = name;
+	};
+
+	Player.prototype.setScore = function(score){
+	  this.score = score;
 	};
 
 	module.exports = Player;

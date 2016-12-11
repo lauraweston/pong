@@ -10,11 +10,12 @@ var ServerBall = require('./src/serverBall.js');
 var ServerGameController = require('./src/serverGameController.js');
 
 var socket;
-var players;
+var player1;
+var player2;
 var ball;
 var gameController;
 
-server.listen(3000);
+server.listen(3000, '0.0.0.0');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -24,26 +25,25 @@ app.get('/', function(req, res) {
 
 function addNewPlayerToGame(newPlayerId) {
   console.log("Adding new player: " + newPlayerId);
-  console.log("Current players: " + players.length);
 
-  if (players.length === 2) {
+  if (player1 && player2) {
     console.log('Already 2 players in game so exiting');
     return;
   }
 
-  var playerIsOnLeft = players.length === 0 || !players[0].isOnLeft;
-  var startingX = playerIsOnLeft ? 15 : 570;
-  var newPaddle = new Paddle(startingX, 150);
-  var newPlayer = new Player(newPaddle, newPlayerId, playerIsOnLeft);
-
-  players.push(newPlayer);
+  if (!player1) {
+    var paddle = new Paddle(15, 150);
+    player1 = new Player(paddle, newPlayerId);
+  } else {
+    var paddle = new Paddle(570, 150);
+    player2 = new Player(paddle, newPlayerId);
+  }
 }
 
 function updatePlayerName(data){
   var updateNamePlayer = playerById(this.id);
-  console.log(updateNamePlayer);
   updateNamePlayer.setName(data.username);
-  if (players.length === 2 && (players[0].name.length > 0 ) && (players[1].name.length > 0)) {
+  if (player1 && player2 && (player1.name.length > 0 ) && (player2.name.length > 0)) {
     console.log("Starting game");
     startGame();
   }
@@ -51,25 +51,33 @@ function updatePlayerName(data){
 
 function startGame() {
   ball = new ServerBall();
-  var playerData = players.map(function(p) {
-    return {
-      id: p.id,
-      name: p.name,
-      x: p.paddle.getX(),
-      y: p.paddle.getY()
-    };
-  });
+  var playerData = [
+    {
+      id: player1.id,
+      name: player1.name,
+      x: player1.paddle.getX(),
+      y: player1.paddle.getY()
+    },
+    {
+      id: player2.id,
+      name: player2.name,
+      x: player2.paddle.getX(),
+      y: player2.paddle.getY()
+    }
+  ];
+
   var startingGameData = {
     players: playerData,
     ballCoordinates: ball.getCoordinates()
   };
-  gameController = new ServerGameController(ball, players[0], players[1], onGameLoopTick);
+  gameController = new ServerGameController(ball, player1, player2, onGameLoopTick);
   socket.sockets.emit("start game", startingGameData);
   gameController.startGameLoop();
 }
 
 function onGameLoopTick() {
   socket.sockets.emit("server moves ball", ball.getCoordinates());
+  socket.sockets.emit("server updates scores", gameController.getPlayerScores())
 }
 
 function onMovePlayer(data) {
@@ -90,16 +98,16 @@ function setEventHandlers() {
 }
 
 (function init() {
-  players = [];
   socket = io.listen(server);
   setEventHandlers();
 })();
 
 function playerById(id) {
-	for (var i = 0; i < players.length; i++) {
-		if (players[i].id === id) {
-			return players[i];
-    }
-	}
+	if (player1.id === id) {
+    return player1;
+  }
+  if (player2.id === id) {
+    return player2;
+  }
 	return false;
 }
