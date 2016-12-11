@@ -16,14 +16,6 @@ var canvas;
 var gameBox;
 var gameController;
 
-function init(){
-  canvas = document.getElementById("canvas");
-  context = canvas.getContext('2d');
-  gameBox = new GameBox(context);
-  socket = io.connect('http://localhost:3000');
-  setEventHandlers();
-};
-
 var signDiv = document.getElementById('signDiv');
 var play = document.getElementById('signIn');
 var newUsername = document.getElementById('username');
@@ -33,17 +25,16 @@ play.onclick = function(){
   socket.emit('user sign in',{username: newUsername.value});
 }
 
-
 function onSocketConnected() {
   console.log("Connected to socket server");
 }
 
 function onSocketDisconnect() {
 	console.log("Disconnected from socket server");
-};
+}
 
 function onServerMovePlayer(data) {
-  if(data.id === opponent.id) {
+  if (data.id === opponent.id) {
     opponent.paddle.setY(data.y);
   }
 }
@@ -72,7 +63,7 @@ function startGame(gameData){
   for(var i = 0; i < gameData.players.length; i++) {
     var player = gameData.players[i];
     var paddle = new Paddle(player.x, player.y, context);
-    if(player.id === myId()) {
+    if (player.id === myId()) {
       localPlayer = new Player(paddle, context, player.name);
       localPlayer.id = myId();
     } else {
@@ -102,7 +93,7 @@ var checkForPaddleMove = function(){
   var timeNow = new Date();
   var timeSinceLastMove = timeNow - lastPaddleMove;
 
-  if(timeSinceLastMove < 15) {
+  if (timeSinceLastMove < 15) {
     return;
   }
 
@@ -115,10 +106,16 @@ var checkForPaddleMove = function(){
     paddleMoved = true;
   }
 
-  if(paddleMoved) {
+  if (paddleMoved) {
     socket.emit("client moves player", {y: localPlayer.paddle.getY()});
     lastPaddleMove = timeNow;
   }
 };
 
-init();
+(function init(){
+  canvas = document.getElementById("canvas");
+  context = canvas.getContext('2d');
+  gameBox = new GameBox(context);
+  socket = io.connect('http://localhost:3000');
+  setEventHandlers();
+})();

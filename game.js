@@ -6,9 +6,8 @@ var util = require('util');
 var io = require('socket.io')
 var Player = require("./src/remotePlayer").Player;
 var Paddle = require("./src/remotePaddle").Paddle;
-// var GameBox = require('./src/gameBox.js');
 var ServerBall = require('./src/serverBall.js');
-var ServerGameController = require('./src/serverGameController.js'); //TODO add game controller function in here
+var ServerGameController = require('./src/serverGameController.js');
 
 var socket;
 var players;
@@ -27,7 +26,7 @@ function addNewPlayerToGame(newPlayerId) {
   console.log("Adding new player: " + newPlayerId);
   console.log("Current players: " + players.length);
 
-  if(players.length === 2) {
+  if (players.length === 2) {
     console.log('Already 2 players in game so exiting');
     return;
   }
@@ -40,16 +39,15 @@ function addNewPlayerToGame(newPlayerId) {
   players.push(newPlayer);
 }
 
-<<<<<<< 565517ed569e3bb668fa530e99475e2f2b04a55a
 function updatePlayerName(data){
-  var updateNamePlayer = playerById(this.id)
-  updateNamePlayer.setName(data.username)
+  var updateNamePlayer = playerById(this.id);
+  updateNamePlayer.setName(data.username);
   if (players.length === 2 && (players[0].name.length > 0 ) && (players[1].name.length > 0)) {
-    console.log("starting game");
+    console.log("Starting game");
     startGame();
 }
 
-function startGame(){
+function startGame() {
   ball = new ServerBall();
   var playerData = players.map(function(p) {
     return {
@@ -80,12 +78,12 @@ function onMovePlayer(data) {
 
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
-   client.on("user sign in", updatePlayerName)
+   client.on("user sign in", updatePlayerName);
    client.on("client moves player", onMovePlayer);
    addNewPlayerToGame(client.id);
 }
 
-function setEventHandlers () {
+function setEventHandlers() {
   socket.sockets.on('connection', onSocketConnection);
 }
 
@@ -96,9 +94,8 @@ function setEventHandlers () {
 })();
 
 function playerById(id) {
-	var i;
-	for (i = 0; i < players.length; i++) {
-		if (players[i].id === id)
+	for (var i = 0; i < players.length; i++) {
+		if (players[i].id === id) {
 			return players[i];
 	};
 	return false;
