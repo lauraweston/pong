@@ -3,9 +3,9 @@ var path = require("path");
 var app = express();
 var server = require('http').Server(app);
 var util = require('util');
-var io = require('socket.io')
-var Player = require("./src/remotePlayer").Player;
-var Paddle = require("./src/remotePaddle").Paddle;
+var io = require('socket.io');
+var Player = require("./src/remotePlayer.js");
+var Paddle = require("./src/remotePaddle.js");
 var ServerBall = require('./src/serverBall.js');
 var ServerGameController = require('./src/serverGameController.js');
 
@@ -41,10 +41,12 @@ function addNewPlayerToGame(newPlayerId) {
 
 function updatePlayerName(data){
   var updateNamePlayer = playerById(this.id);
+  console.log(updateNamePlayer);
   updateNamePlayer.setName(data.username);
   if (players.length === 2 && (players[0].name.length > 0 ) && (players[1].name.length > 0)) {
     console.log("Starting game");
     startGame();
+  }
 }
 
 function startGame() {
@@ -74,7 +76,7 @@ function onMovePlayer(data) {
   var movePlayer = playerById(this.id);
   movePlayer.paddle.setY(data.y);
 	this.broadcast.emit("server moves player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
-};
+}
 
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
@@ -97,6 +99,7 @@ function playerById(id) {
 	for (var i = 0; i < players.length; i++) {
 		if (players[i].id === id) {
 			return players[i];
-	};
+    }
+	}
 	return false;
-};
+}
