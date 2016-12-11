@@ -1,13 +1,10 @@
-var remotePlayer = require('../src/remotePlayer.js');
-var Player = remotePlayer.Player;
-var Paddle = remotePlayer.Paddle;
+var Player = require('../src/remotePlayer.js').Player;
 
 describe('remotePlayer', function() {
   var paddle;
   var player;
 
   beforeEach(function() {
-    paddle = new Paddle(570, 150);
     player = new Player(paddle);
   });
 
@@ -20,12 +17,14 @@ describe('remotePlayer', function() {
     expect(player.getScore()).toEqual(0);
   });
 
-  it("sets y coordinates of paddle", function() {
-    paddle.setY(155);
-    expect(paddle.y).toEqual(155);
+  it("sets the name", function() {
+    player.setName("Bob");
+    expect(player.name).toEqual("Bob");
   });
 
-  it("gets y coordinates of paddle", function() {
-    expect(paddle.getY()).toEqual(150);
+  it("gets the score", function() {
+    player.setName("Bob");
+    expect(player.getName()).toEqual("Bob");
   });
+
 });
