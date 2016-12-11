@@ -40,6 +40,7 @@ function addNewPlayerToGame(newPlayerId) {
   players.push(newPlayer);
 }
 
+<<<<<<< 565517ed569e3bb668fa530e99475e2f2b04a55a
 function updatePlayerName(data){
   var updateNamePlayer = playerById(this.id)
   updateNamePlayer.setName(data.username)
@@ -63,8 +64,8 @@ function startGame(){
     ballCoordinates: ball.getCoordinates()
   };
   gameController = new ServerGameController(ball, players[0], players[1], onGameLoopTick);
-  gameController.startGameLoop();
   socket.sockets.emit("start game", startingGameData);
+  gameController.startGameLoop();
 }
 
 function onGameLoopTick() {

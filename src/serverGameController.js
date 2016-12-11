@@ -8,7 +8,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
                   x:        0,
                   y:        0
   };
-  this.gameLoopInterval = 10000 / 60;
+  this.gameLoopInterval = 8;
   this.gameLoopTickCallback = gameLoopTickCallback;
 };
 
@@ -39,10 +39,10 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
 
   ServerGameController.prototype.ballGoesOutOfPlay = function(){
     if (this.ball.x >= this.gameBox.width) {
-      this.player2.increaseScore();
+      //this.player2.increaseScore();
       this.ball.reset();
     } else if (this.ball.x <= this.gameBox.x) {
-      this.player1.increaseScore();
+      //this.player1.increaseScore();
       this.ball.reset();
     }
   };

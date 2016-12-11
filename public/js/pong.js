@@ -88,7 +88,7 @@ function startGame(gameData){
 }
 
 function gameLoop(){
-  update();
+  checkForPaddleMove();
   draw();
   animate(gameLoop);
 }
@@ -97,14 +97,27 @@ var draw = function(){
   gameController.drawGame();
 };
 
-var update = function(){
+var lastPaddleMove = 0;
+var checkForPaddleMove = function(){
+  var timeNow = new Date();
+  var timeSinceLastMove = timeNow - lastPaddleMove;
+
+  if(timeSinceLastMove < 15) {
+    return;
+  }
+
+  var paddleMoved = false;
   if (keydown.down) {
     localPlayer.paddle.moveDown();
-    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
-  }
-  if (keydown.up) {
+    paddleMoved = true;
+  } else if (keydown.up) {
     localPlayer.paddle.moveUp();
+    paddleMoved = true;
+  }
+
+  if(paddleMoved) {
     socket.emit("client moves player", {y: localPlayer.paddle.getY()});
+    lastPaddleMove = timeNow;
   }
 };
 
