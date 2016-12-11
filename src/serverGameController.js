@@ -1,4 +1,4 @@
-var ServerGameController = function(ball, player1, player2){
+var ServerGameController = function(ball, player1, player2, gameLoopTickCallback){
   this.ball = ball;
   this.player1 = player1;
   this.player2 = player2;
@@ -8,7 +8,19 @@ var ServerGameController = function(ball, player1, player2){
                   x:        0,
                   y:        0
   };
+  this.gameLoopInterval = 10000 / 60;
+  this.gameLoopTickCallback = gameLoopTickCallback;
 };
+
+  ServerGameController.prototype.startGameLoop = function() {
+    var self = this;
+    var gameLoopTick = function() {
+      self.update();
+      self.gameLoopTickCallback();
+      self.gameLoop = setTimeout(gameLoopTick, self.gameLoopInterval);
+    };
+    gameLoopTick();
+  }
 
   ServerGameController.prototype.ballHitsPaddle = function(){
     if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {

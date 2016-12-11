@@ -1,3 +1,12 @@
+var GameController = require('./gameController.js');
+var GameBox = require('./gameBox.js');
+var Ball = require('./ball.js');
+var Player = require('./player.js');
+var Paddle = require('./paddle.js');
+var keydown = require('./../../lib/key_status.js');
+var animate = require('./animationFrame.js');
+require('./../../lib/jquery.hotkeys.js');
+
 var socket;
 var localPlayer;
 var opponent;
@@ -6,24 +15,11 @@ var context;
 var canvas;
 var gameBox;
 var gameController;
-var GameController = require('./gameController.js');
-var GameBox = require('./gameBox.js');
-// var Ball = require('./ball.js');
-var Player = require('./player.js');
-var Paddle = require('./paddle.js');
-var keydown = require('./../../lib/key_status.js');
-require('./../../lib/jquery.hotkeys.js');
-
-var animate = window.requestAnimationFrame ||
-window.webkitRequestAnimationFrame ||
-window.mozRequestAnimationFrame ||
-function (callback) {window.setTimeout(callback, 10000 / 60)};
 
 function init(){
   canvas = document.getElementById("canvas");
   context = canvas.getContext('2d');
   gameBox = new GameBox(context);
-  // localBall = new Ball(context);
   socket = io.connect('http://localhost:3000');
   setEventHandlers();
 };
@@ -46,7 +42,7 @@ function onSocketDisconnect() {
 	console.log("Disconnected from socket server");
 };
 
-function onMovePlayer(data) {
+function onServerMovePlayer(data) {
   if(data.id === opponent.id) {
     opponent.paddle.setY(data.y);
   }
@@ -62,7 +58,7 @@ function setEventHandlers() {
 	// Socket disconnection
 	socket.on("disconnect", onSocketDisconnect);
 	// Player move message received
-	socket.on("server moves player", onMovePlayer);
+	socket.on("server moves player", onServerMovePlayer);
   socket.on("server moves ball", onServerMovesBall);
   socket.on("start game", startGame);
 };
@@ -102,8 +98,6 @@ var draw = function(){
 };
 
 var update = function(){
-  socket.emit("move ball");
-  socket.emit("update game controller");
   if (keydown.down) {
     localPlayer.paddle.moveDown();
     socket.emit("client moves player", {y: localPlayer.paddle.getY()});

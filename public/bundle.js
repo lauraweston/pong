@@ -44,37 +44,31 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var socket;
-	var localPlayer;
-	var opponent;
-	var ball;
-	var context;
-	var canvas;
-	var gameBox;
-	var gameController;
 	var GameController = __webpack_require__(1);
 	var GameBox = __webpack_require__(2);
 	var Ball = __webpack_require__(3);
 	var Player = __webpack_require__(4);
 	var Paddle = __webpack_require__(5);
 	var keydown = __webpack_require__(6);
+	var animate = __webpack_require__(7);
 	__webpack_require__(8);
 
-	var animate = window.requestAnimationFrame ||
-	window.webkitRequestAnimationFrame ||
-	window.mozRequestAnimationFrame ||
-	function (callback) {window.setTimeout(callback, 10000 / 60)};
+	var socket;
+	var localPlayer;
+	var opponent;
+	var localBall;
+	var context;
+	var canvas;
+	var gameBox;
+	var gameController;
 
 	function init(){
 	  canvas = document.getElementById("canvas");
 	  context = canvas.getContext('2d');
 	  gameBox = new GameBox(context);
-	  ball = new Ball(context);
 	  socket = io.connect('http://localhost:3000');
 	  setEventHandlers();
 	};
-	init();
-
 
 	var signDiv = document.getElementById('signDiv');
 	var play = document.getElementById('signIn');
@@ -94,10 +88,14 @@
 		console.log("Disconnected from socket server");
 	};
 
-	function onMovePlayer(data) {
+	function onServerMovePlayer(data) {
 	  if(data.id === opponent.id) {
 	    opponent.paddle.setY(data.y);
 	  }
+	}
+
+	function onServerMovesBall(data) {
+	  localBall.setCoordinates(data);
 	}
 
 	function setEventHandlers() {
@@ -106,8 +104,8 @@
 		// Socket disconnection
 		socket.on("disconnect", onSocketDisconnect);
 		// Player move message received
-		socket.on("move player", onMovePlayer);
-
+		socket.on("server moves player", onServerMovePlayer);
+	  socket.on("server moves ball", onServerMovesBall);
 	  socket.on("start game", startGame);
 	};
 
@@ -128,7 +126,9 @@
 	      opponent.id = player.id;
 	    }
 	  }
-	  gameController = new GameController(ball, gameBox, localPlayer, opponent);
+	  localBall = new Ball(context);
+	  localBall.setCoordinates(gameData.ballCoordinates);
+	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
 
 	  animate(gameLoop);
 	}
@@ -144,16 +144,17 @@
 	};
 
 	var update = function(){
-	  gameController.update();
 	  if (keydown.down) {
 	    localPlayer.paddle.moveDown();
-	    socket.emit("move player", {y: localPlayer.paddle.getY()});
-	    }
+	    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
+	  }
 	  if (keydown.up) {
 	    localPlayer.paddle.moveUp();
-	    socket.emit("move player", {y: localPlayer.paddle.getY()});
-	    }
-	  };
+	    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
+	  }
+	};
+
+	init();
 
 
 /***/ },
@@ -166,38 +167,6 @@
 	  this.player1 = player1;
 	  this.player2 = player2;
 	};
-
-	  GameController.prototype.ballHitsPaddle = function(){
-	    if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
-	      this.ball.bouncePaddle();
-	    }
-	    if(this.ball.x > this.player2.paddle.x && this.ball.x < (this.player2.paddle.x + this.player2.paddle.width) && (this.ball.y >= this.player2.paddle.y && this.ball.y <= (this.player2.paddle.y + this.player2.paddle.height))) {
-	      this.ball.bouncePaddle();
-	    }
-	  };
-
-	  GameController.prototype.ballHitsWall = function(){
-	    if(this.ball.y <= this.gameBox.y || this.ball.y > this.gameBox.height) {
-	      this.ball.bounceWall();
-	    }
-	  };
-
-	  GameController.prototype.ballGoesOutOfPlay = function(){
-	    if (this.ball.x >= this.gameBox.width) {
-	      this.player1.increaseScore();
-	      this.ball.reset();
-	    } else if (this.ball.x <= this.gameBox.x) {
-	      this.player2.increaseScore();
-	      this.ball.reset();
-	    }
-	  };
-
-	  GameController.prototype.update = function(){
-	    this.ballHitsWall();
-	    this.ballHitsPaddle();
-	    this.ballGoesOutOfPlay()
-	    this.ball.update();
-	  };
 
 	  GameController.prototype.drawGame = function(){
 	    this.gameBox.draw();
@@ -239,11 +208,7 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	var Ball = function(context, x, y){
-	  this.x = 300;
-	  this.y = 20;
-	  // this.xSpeed = 3;
-	  // this.ySpeed = 2;
+	var Ball = function(context){
 	  this.context = context;
 	};
 
@@ -255,25 +220,11 @@
 	  this.context.fill();
 	};
 
-	// Ball.prototype.bouncePaddle = function(){
-	//   this.xSpeed = -this.xSpeed;
-	// };
-	//
-	// Ball.prototype.bounceWall = function(){
-	//   this.ySpeed = -this.ySpeed;
-	// };
-	//
-	// Ball.prototype.update = function(){
-	//   this.x += this.xSpeed;
-	//   this.y += this.ySpeed;
-	// };
-	//
-	// Ball.prototype.reset = function(){
-	//   this.x = 300;
-	//   this.y = 20;
-	//   this.xSpeed = 3;
-	//   this.ySpeed = 2;
-	// };
+	Ball.prototype.setCoordinates = function (ballCoordinates) {
+	  this.x = ballCoordinates.x;
+	  this.y = ballCoordinates.y;
+	};
+
 	module.exports = Ball;
 
 
@@ -383,7 +334,18 @@
 
 
 /***/ },
-/* 7 */,
+/* 7 */
+/***/ function(module, exports) {
+
+	var animate = window.requestAnimationFrame ||
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	function (callback) {window.setTimeout(callback, 10000 / 60)};
+
+	module.exports = animate;
+
+
+/***/ },
 /* 8 */
 /***/ function(module, exports) {
 
