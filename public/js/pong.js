@@ -15,11 +15,13 @@ var context;
 var canvas;
 var gameBox;
 var gameController;
+var gameEnded = false
 
 var signDiv = document.getElementById('signDiv');
 var play = document.getElementById('signIn');
 var newUsername = document.getElementById('username');
 var waiting = document.getElementById('waiting');
+var disconnect = document.getElementById('disconnect');
 
 play.onclick = function(){
   waiting.style.display = 'inline';
@@ -33,6 +35,7 @@ function onSocketConnected() {
 
 function onSocketDisconnect() {
 	console.log("Disconnected from socket server");
+  socket.emit("disconnect")
 }
 
 function onServerMovePlayer(data) {
@@ -59,7 +62,13 @@ function setEventHandlers() {
   socket.on("server moves ball", onServerMovesBall);
   socket.on("server updates scores", onServerUpdatesScores);
   socket.on("start game", startGame);
+  socket.on("remove player", removePlayer)
 };
+
+function removePlayer(){
+  gameEnded = true
+  disconnect.style.display = "inline";
+}
 
 function myId() {
   return socket.io.engine.id;
@@ -82,14 +91,17 @@ function startGame(gameData){
   localBall = new Ball(context);
   localBall.setCoordinates(gameData.ballCoordinates);
   gameController = new GameController(localBall, gameBox, localPlayer, opponent);
-
   animate(gameLoop);
 }
 
 function gameLoop(){
   checkForPaddleMove();
   draw();
+  console.log(gameEnded)
+  while(!gameEnded){
+  console.log(gameEnded)
   animate(gameLoop);
+}
 }
 
 var draw = function(){
