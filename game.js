@@ -86,16 +86,21 @@ function onMovePlayer(data) {
 	this.broadcast.emit("server moves player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
 }
 
-function removePlayer() {
-  socket.sockets.emit("remove player");
-}
+// function removePlayer() {
+//   this.broadcast.emit("remove player");
+// }
 
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
    client.on("user sign in", updatePlayerName);
    client.on("client moves player", onMovePlayer);
-   client.on('disconnect', removePlayer)
+   client.on('disconnect', onClientDisconnect)
    addNewPlayerToGame(client.id);
+}
+
+function onClientDisconnect(){
+  util.log("Player has disconnected: "+this.id);
+  this.broadcast.emit("remove player");
 }
 
 function setEventHandlers() {

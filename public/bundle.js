@@ -81,7 +81,6 @@
 
 	function onSocketDisconnect() {
 		console.log("Disconnected from socket server");
-	  socket.emit("disconnect")
 	}
 
 	function onServerMovePlayer(data) {
@@ -143,9 +142,7 @@
 	function gameLoop(){
 	  checkForPaddleMove();
 	  draw();
-	  console.log(gameEnded)
-	  while(!gameEnded){
-	  console.log(gameEnded)
+	  if(gameEnded === false){
 	  animate(gameLoop);
 	}
 	}
