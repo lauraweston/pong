@@ -68,6 +68,8 @@
 	var newUsername = document.getElementById('username');
 	var waiting = document.getElementById('waiting');
 	var disconnect = document.getElementById('disconnect');
+	var winner = document.getElementById('winner');
+
 
 	play.onclick = function(){
 	  waiting.style.display = 'inline';
@@ -108,13 +110,21 @@
 	  socket.on("server updates scores", onServerUpdatesScores);
 	  socket.on("start game", startGame);
 	  socket.on("remove player", removePlayer)
+	  socket.on("game won", declareWinner)
 	};
 
 	function removePlayer(){
 	  gameController.endGame();
 	  disconnect.style.display = "inline";
 	  waiting.style.display = 'inline';
+	}
 
+	function declareWinner(data){
+	  gameController.endGame();
+	  var textHolder = document.createElement("h2")
+	  textHolder.innerHTML = data.winner.name + " wins!";
+	  winner.appendChild(textHolder)
+	  winner.style.display = 'inline';
 	}
 
 	function myId() {

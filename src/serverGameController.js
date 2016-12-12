@@ -16,7 +16,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
   ServerGameController.prototype.startGameLoop = function() {
     var self = this;
     var gameLoopTick = function() {
-      if (!self.isGameEnded) {
+      if (!self.isGameEnded){
         self.update();
         self.gameLoopTickCallback();
         self.gameLoop = setTimeout(gameLoopTick, self.gameLoopInterval);
@@ -57,11 +57,11 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
   };
 
   ServerGameController.prototype.update = function(){
-    console.log("I'm in gameController update")
     this.ball.update();
     this.ballHitsWall();
     this.ballHitsPaddle();
     this.ballGoesOutOfPlay();
+    this.assignWinner();
   };
 
   ServerGameController.prototype.getPlayerScores = function() {
@@ -70,5 +70,17 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
       player2:{id: this.player2.id, score: this.player2.getScore()}
     };
   };
+
+  ServerGameController.prototype.assignWinner = function(){
+    if (this.player1.score > 9) {
+     this.winner = this.player1;
+     this.isGameEnded = true;
+    } else if (this.player2.score > 9) {
+     this.winner = this.player2;
+     this.isGameEnded = true;
+    }
+  };
+
+
 
   module.exports = ServerGameController;
