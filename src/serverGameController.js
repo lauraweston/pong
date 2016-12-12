@@ -39,10 +39,10 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
 
   ServerGameController.prototype.ballGoesOutOfPlay = function(){
     if (this.ball.x >= this.gameBox.width) {
-      this.player2.increaseScore();
+      this.player1.increaseScore();
       this.ball.reset();
     } else if (this.ball.x <= this.gameBox.x) {
-      this.player1.increaseScore();
+      this.player2.increaseScore();
       this.ball.reset();
     }
   };
@@ -56,8 +56,8 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
 
   ServerGameController.prototype.getPlayerScores = function() {
     return {
-      player1Score: this.player1.getScore(),
-      player2Score: this.player2.getScore()
+      player1:{id: this.player1.id, score: this.player1.getScore()},
+      player2:{id: this.player2.id, score: this.player2.getScore()}
     };
   };
 
