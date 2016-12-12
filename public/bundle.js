@@ -65,8 +65,10 @@
 	var signDiv = document.getElementById('signDiv');
 	var play = document.getElementById('signIn');
 	var newUsername = document.getElementById('username');
+	var waiting = document.getElementById('waiting')
 
 	play.onclick = function(){
+	  waiting.style.display = 'inline'
 	  signDiv.style.display = 'none';
 	  socket.emit('user sign in', {username: newUsername.value});
 	}
@@ -111,6 +113,7 @@
 
 	function startGame(gameData){
 	  console.log("Starting game:");
+	  waiting.style.display = 'none';
 	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
 	    var paddle = new Paddle(player.x, player.y, context);
