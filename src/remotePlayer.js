@@ -6,6 +6,14 @@ function Player(paddle, id, isOnLeft, name) {
   this.name = ""
 };
 
+Player.prototype.setScore = function(newScore) {
+  this.score = newScore;
+};
+
+Player.prototype.getScore = function() {
+  return this.score;
+};
+
 Player.prototype.getName = function(){
   return this.name;
 }

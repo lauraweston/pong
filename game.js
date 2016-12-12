@@ -65,6 +65,7 @@ function startGame(){
   };
   gameController = new ServerGameController(ball, players[0], players[1]);
 socket.sockets.emit("start game", startingGameData);
+console.log(startingGameData);
 }
 
 

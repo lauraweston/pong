@@ -69,6 +69,7 @@
 	  canvas = document.getElementById("canvas");
 	  context = canvas.getContext('2d');
 	  gameBox = new GameBox(context);
+	  console.log(gameBox);
 	  // localBall = new Ball(context);
 	  socket = io.connect('http://localhost:3000');
 	  setEventHandlers();
@@ -100,6 +101,7 @@
 
 	function onServerMovesBall(data) {
 	  localBall.setCoordinates(data);
+	  console.log(data);
 	}
 
 	function setEventHandlers() {
@@ -130,12 +132,26 @@
 	      opponent.id = player.id;
 	    }
 	  }
-	  localBall = new Ball(context, gameData.ballCoordinates);
-	  // localBall.setCoordinates(gameData.ballCoordinates);
-	  console.log(1);
-	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
-	  console.log(2);
+	  createBall(context, gameData.ballCoordinates, createGameController);
+	    console.log(gameBox);
+	    console.log(localBall);
+	    console.log(localPlayer);
+	  // // localBall.setCoordinates(gameData.ballCoordinates);
+	  // console.log(1);
+	  // console.log(gameData.ballCoordinates);
+	  // console.log(localBall);
+	  // gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+	  // console.log(2);
 
+	}
+
+	function createBall(context, ballCoordinates, callback) {
+	  localBall = new Ball(context, ballCoordinates);
+	  callback(localBall, gameBox, localPlayer, opponent);
+	}
+
+	function createGameController(a, b, c, d) {
+	  gameController = new GameController(a, b, c, d);
 	  animate(gameLoop);
 	}
 
@@ -168,9 +184,9 @@
 /* 1 */
 /***/ function(module, exports) {
 
-	var GameController = function(ball, gamebox, player1, player2){
+	var GameController = function(ball, gameBox, player1, player2){
 	  this.ball = ball;
-	  this.gameBox = gamebox;
+	  this.gameBox = gameBox;
 	  this.player1 = player1;
 	  this.player2 = player2;
 	};
@@ -209,6 +225,8 @@
 
 	  GameController.prototype.drawGame = function(){
 	    this.gameBox.draw();
+	    console.log('ball in gameController')
+	    console.log(this.ball);
 	    this.ball.draw();
 	    this.player1.paddle.draw();
 	    this.player2.paddle.draw();
@@ -248,22 +266,30 @@
 /***/ function(module, exports) {
 
 	var Ball = function(context, ballCoordinates){
+	  console.log('hello from ball.js');
+	  //console.log(ballCoordinates); - this logs
+	  //console.log(ballCoordinates.x); - this also logs
 	  this.x = ballCoordinates.x;
+	  console.log(this.x);
 	  this.y = ballCoordinates.y;
 	  this.context = context;
 	};
 
 	Ball.prototype.draw = function(){
+	  console.log('ball is being drawn');
 	  this.context.beginPath();
 	  this.context.arc(this.x, this.y, 7, 0, Math.PI*2, true)
 	  this.context.fillStyle = "white";
 	  this.context.closePath();
 	  this.context.fill();
+	  console.log('ball is still being drawn');
 	};
 
 	Ball.prototype.setCoordinates = function (ballCoordinates) {
 	  this.x = ballCoordinates.x;
 	  this.y = ballCoordinates.y;
+	  console.log('hello from ball.js');
+	  console.log(ballCoordinates);
 	};
 	// Ball.prototype.bouncePaddle = function(){
 	//   this.xSpeed = -this.xSpeed;

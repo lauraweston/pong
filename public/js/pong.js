@@ -23,6 +23,7 @@ function init(){
   canvas = document.getElementById("canvas");
   context = canvas.getContext('2d');
   gameBox = new GameBox(context);
+  console.log(gameBox);
   // localBall = new Ball(context);
   socket = io.connect('http://localhost:3000');
   setEventHandlers();
@@ -54,6 +55,7 @@ function onMovePlayer(data) {
 
 function onServerMovesBall(data) {
   localBall.setCoordinates(data);
+  console.log(data);
 }
 
 function setEventHandlers() {
@@ -84,12 +86,26 @@ function startGame(gameData){
       opponent.id = player.id;
     }
   }
-  localBall = new Ball(context, gameData.ballCoordinates);
-  // localBall.setCoordinates(gameData.ballCoordinates);
-  console.log(1);
-  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
-  console.log(2);
+  createBall(context, gameData.ballCoordinates, createGameController);
+    console.log(gameBox);
+    console.log(localBall);
+    console.log(localPlayer);
+  // // localBall.setCoordinates(gameData.ballCoordinates);
+  // console.log(1);
+  // console.log(gameData.ballCoordinates);
+  // console.log(localBall);
+  // gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+  // console.log(2);
 
+}
+
+function createBall(context, ballCoordinates, callback) {
+  localBall = new Ball(context, ballCoordinates);
+  callback(localBall, gameBox, localPlayer, opponent);
+}
+
+function createGameController(a, b, c, d) {
+  gameController = new GameController(a, b, c, d);
   animate(gameLoop);
 }
 
