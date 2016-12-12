@@ -24,8 +24,6 @@ app.get('/', function(req, res) {
 });
 
 function addNewPlayerToGame(newPlayerId) {
-  console.log("Adding new player: " + newPlayerId);
-
   if (player1 && player2) {
     console.log('Already 2 players in game so exiting');
     return;
@@ -76,8 +74,9 @@ function startGame() {
 }
 
 function onGameLoopTick() {
+  console.log("gameloop tick emitting")
   socket.sockets.emit("server moves ball", ball.getCoordinates());
-  socket.sockets.emit("server updates scores", gameController.getPlayerScores())
+  socket.sockets.emit("server updates scores", gameController.getPlayerScores());
 }
 
 function onMovePlayer(data) {
@@ -86,10 +85,27 @@ function onMovePlayer(data) {
 	this.broadcast.emit("server moves player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
 }
 
+function onClientDisconnect(){
+  util.log("Player has disconnected: " + this.id);
+  var disconnectedPlayer = playerById(this.id);
+  if (disconnectedPlayer === player1) {
+    player1 = undefined;
+  } else {
+    player2 = undefined;
+  }
+  this.broadcast.emit("remove player");
+  endGame();
+}
+
+function endGame() {
+  gameController.endGameLoop();
+}
+
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
    client.on("user sign in", updatePlayerName);
    client.on("client moves player", onMovePlayer);
+   client.on('disconnect', onClientDisconnect)
    addNewPlayerToGame(client.id);
 }
 

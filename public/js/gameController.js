@@ -3,6 +3,7 @@ var GameController = function(ball, gamebox, localPlayer, opponent){
   this.gameBox = gamebox;
   this.localPlayer = localPlayer;
   this.opponent = opponent;
+  this.isGameEnded = false
 };
 
   GameController.prototype.drawGame = function(){
@@ -13,8 +14,6 @@ var GameController = function(ball, gamebox, localPlayer, opponent){
   };
 
   GameController.prototype.setScores = function(scores) {
-    console.log(scores)
-
     if (this.localPlayer.id === scores.player1.id) {
       var localPlayerScore = scores.player1.score;
       this.localPlayer.setScore(localPlayerScore);
@@ -27,5 +26,13 @@ var GameController = function(ball, gamebox, localPlayer, opponent){
       this.opponent.setScore(opponentScore);
     }
   };
+
+  GameController.prototype.endGame = function(){
+    this.isGameEnded = true
+  }
+
+  GameController.prototype.resetGame = function(){
+    this.isGameEnded = false
+  }
 
   module.exports = GameController;

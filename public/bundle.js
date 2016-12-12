@@ -61,20 +61,22 @@
 	var canvas;
 	var gameBox;
 	var gameController;
+	var gameEnded = false;
 
 	var signDiv = document.getElementById('signDiv');
 	var play = document.getElementById('signIn');
 	var newUsername = document.getElementById('username');
-	var waiting = document.getElementById('waiting')
+	var waiting = document.getElementById('waiting');
+	var disconnect = document.getElementById('disconnect');
 
 	play.onclick = function(){
-	  waiting.style.display = 'inline'
+	  waiting.style.display = 'inline';
 	  signDiv.style.display = 'none';
 	  socket.emit('user sign in', {username: newUsername.value});
 	}
 
 	function onSocketConnected() {
-	  console.log("Connected to socket server");
+	  ("Connected to socket server");
 	}
 
 	function onSocketDisconnect() {
@@ -105,7 +107,15 @@
 	  socket.on("server moves ball", onServerMovesBall);
 	  socket.on("server updates scores", onServerUpdatesScores);
 	  socket.on("start game", startGame);
+	  socket.on("remove player", removePlayer)
 	};
+
+	function removePlayer(){
+	  gameController.endGame();
+	  disconnect.style.display = "inline";
+	  waiting.style.display = 'inline';
+
+	}
 
 	function myId() {
 	  return socket.io.engine.id;
@@ -114,6 +124,7 @@
 	function startGame(gameData){
 	  console.log("Starting game:");
 	  waiting.style.display = 'none';
+	  disconnect.style.display = 'none';
 	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
 	    var paddle = new Paddle(player.x, player.y, context);
@@ -128,14 +139,16 @@
 	  localBall = new Ball(context);
 	  localBall.setCoordinates(gameData.ballCoordinates);
 	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
-
+	  gameController.resetGame();
 	  animate(gameLoop);
 	}
 
 	function gameLoop(){
 	  checkForPaddleMove();
 	  draw();
-	  animate(gameLoop);
+	  if (gameController.isGameEnded === false) {
+	    animate(gameLoop);
+	  }
 	}
 
 	var draw = function(){
@@ -184,6 +197,7 @@
 	  this.gameBox = gamebox;
 	  this.localPlayer = localPlayer;
 	  this.opponent = opponent;
+	  this.isGameEnded = false
 	};
 
 	  GameController.prototype.drawGame = function(){
@@ -194,8 +208,6 @@
 	  };
 
 	  GameController.prototype.setScores = function(scores) {
-	    console.log(scores)
-
 	    if (this.localPlayer.id === scores.player1.id) {
 	      var localPlayerScore = scores.player1.score;
 	      this.localPlayer.setScore(localPlayerScore);
@@ -208,6 +220,14 @@
 	      this.opponent.setScore(opponentScore);
 	    }
 	  };
+
+	  GameController.prototype.endGame = function(){
+	    this.isGameEnded = true
+	  }
+
+	  GameController.prototype.resetGame = function(){
+	    this.isGameEnded = false
+	  }
 
 	  module.exports = GameController;
 
