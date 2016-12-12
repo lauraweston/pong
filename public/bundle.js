@@ -194,7 +194,7 @@
 	  canvas = document.getElementById("canvas");
 	  context = canvas.getContext('2d');
 	  gameBox = new GameBox(context);
-	  socket = io.connect('http://localhost:3000');
+	  socket = io.connect();
 	  setEventHandlers();
 	})();
 
