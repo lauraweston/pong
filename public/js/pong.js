@@ -67,6 +67,8 @@ function setEventHandlers() {
 function removePlayer(){
   gameEnded = true;
   disconnect.style.display = "inline";
+  waiting.style.display = 'inline';
+
 }
 
 function myId() {
@@ -76,6 +78,7 @@ function myId() {
 function startGame(gameData){
   console.log("Starting game:");
   waiting.style.display = 'none';
+  disconnect.style.display = 'none';
   for(var i = 0; i < gameData.players.length; i++) {
     var player = gameData.players[i];
     var paddle = new Paddle(player.x, player.y, context);
@@ -90,6 +93,7 @@ function startGame(gameData){
   localBall = new Ball(context);
   localBall.setCoordinates(gameData.ballCoordinates);
   gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+  gameEnded = false
   animate(gameLoop);
 }
 

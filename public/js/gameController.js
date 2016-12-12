@@ -13,8 +13,6 @@ var GameController = function(ball, gamebox, localPlayer, opponent){
   };
 
   GameController.prototype.setScores = function(scores) {
-    console.log(scores)
-
     if (this.localPlayer.id === scores.player1.id) {
       var localPlayerScore = scores.player1.score;
       this.localPlayer.setScore(localPlayerScore);

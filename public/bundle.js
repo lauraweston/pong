@@ -122,6 +122,7 @@
 	function startGame(gameData){
 	  console.log("Starting game:");
 	  waiting.style.display = 'none';
+	  disconnect.style.display = 'none';
 	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
 	    var paddle = new Paddle(player.x, player.y, context);
@@ -136,6 +137,7 @@
 	  localBall = new Ball(context);
 	  localBall.setCoordinates(gameData.ballCoordinates);
 	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+	  gameEnded = false
 	  animate(gameLoop);
 	}
 
@@ -203,8 +205,6 @@
 	  };
 
 	  GameController.prototype.setScores = function(scores) {
-	    console.log(scores)
-
 	    if (this.localPlayer.id === scores.player1.id) {
 	      var localPlayerScore = scores.player1.score;
 	      this.localPlayer.setScore(localPlayerScore);
