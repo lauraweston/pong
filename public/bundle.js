@@ -61,7 +61,7 @@
 	var canvas;
 	var gameBox;
 	var gameController;
-	var gameEnded = false
+	var gameEnded = false;
 
 	var signDiv = document.getElementById('signDiv');
 	var play = document.getElementById('signIn');
@@ -111,7 +111,7 @@
 	};
 
 	function removePlayer(){
-	  gameEnded = true
+	  gameEnded = true;
 	  disconnect.style.display = "inline";
 	}
 
@@ -142,9 +142,9 @@
 	function gameLoop(){
 	  checkForPaddleMove();
 	  draw();
-	  if(gameEnded === false){
-	  animate(gameLoop);
-	}
+	  if (gameEnded === false) {
+	    animate(gameLoop);
+	  }
 	}
 
 	var draw = function(){

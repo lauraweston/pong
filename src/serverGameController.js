@@ -10,17 +10,26 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
   };
   this.gameLoopInterval = 8;
   this.gameLoopTickCallback = gameLoopTickCallback;
+  this.isGameEnded = false;
 };
 
   ServerGameController.prototype.startGameLoop = function() {
     var self = this;
     var gameLoopTick = function() {
-      self.update();
-      self.gameLoopTickCallback();
-      self.gameLoop = setTimeout(gameLoopTick, self.gameLoopInterval);
+      if (!self.isGameEnded) {
+        self.update();
+        self.gameLoopTickCallback();
+        self.gameLoop = setTimeout(gameLoopTick, self.gameLoopInterval);
+      } else {
+        clearTimeout(self.gameLoop);
+      }
     };
     gameLoopTick();
   }
+
+  ServerGameController.prototype.endGameLoop = function() {
+    this.isGameEnded = true;
+  };
 
   ServerGameController.prototype.ballHitsPaddle = function(){
     if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
@@ -48,6 +57,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
   };
 
   ServerGameController.prototype.update = function(){
+    console.log("I'm in gameController update")
     this.ball.update();
     this.ballHitsWall();
     this.ballHitsPaddle();
