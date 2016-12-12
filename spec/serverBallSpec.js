@@ -8,10 +8,10 @@ describe('serverBall', function() {
     serverBall = new ServerBall();
   });
 
-  // it("sets the score", function() {
-  //   player.setScore(1);
-  //   expect(player.score).toEqual(1);
-  // });
+  it("changes direction when bounches off padde", function() {
+    serverBall.bouncePaddle();
+    expect(serverBall.xSpeed).toEqual(-3);
+  });
   //
   // it("gets the score", function() {
   //   expect(player.getScore()).toEqual(0);
