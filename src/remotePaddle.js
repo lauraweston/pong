@@ -24,6 +24,4 @@ Paddle.prototype.getX = function() {
 }
 
 
-module.exports = {
-                  Paddle: Paddle,
-                };
+module.exports = Paddle;
