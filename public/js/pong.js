@@ -77,7 +77,6 @@ function startGame(gameData){
     }
   }
   localBall = new Ball(context);
-  console.log(localBall);
   localBall.setCoordinates(gameData.ballCoordinates);
   gameController = new GameController(localBall, gameBox, localPlayer, opponent);
 
