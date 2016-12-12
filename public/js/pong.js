@@ -30,7 +30,7 @@ play.onclick = function(){
 }
 
 function onSocketConnected() {
-  console.log("Connected to socket server");
+  ("Connected to socket server");
 }
 
 function onSocketDisconnect() {
@@ -65,7 +65,7 @@ function setEventHandlers() {
 };
 
 function removePlayer(){
-  gameEnded = true;
+  gameController.endGame();
   disconnect.style.display = "inline";
   waiting.style.display = 'inline';
 
@@ -93,14 +93,14 @@ function startGame(gameData){
   localBall = new Ball(context);
   localBall.setCoordinates(gameData.ballCoordinates);
   gameController = new GameController(localBall, gameBox, localPlayer, opponent);
-  gameEnded = false
+  gameController.resetGame();
   animate(gameLoop);
 }
 
 function gameLoop(){
   checkForPaddleMove();
   draw();
-  if (gameEnded === false) {
+  if (gameController.isGameEnded === false) {
     animate(gameLoop);
   }
 }

@@ -76,7 +76,7 @@
 	}
 
 	function onSocketConnected() {
-	  console.log("Connected to socket server");
+	  ("Connected to socket server");
 	}
 
 	function onSocketDisconnect() {
@@ -111,8 +111,10 @@
 	};
 
 	function removePlayer(){
-	  gameEnded = true;
+	  gameController.endGame();
 	  disconnect.style.display = "inline";
+	  waiting.style.display = 'inline';
+
 	}
 
 	function myId() {
@@ -137,14 +139,14 @@
 	  localBall = new Ball(context);
 	  localBall.setCoordinates(gameData.ballCoordinates);
 	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
-	  gameEnded = false
+	  gameController.resetGame();
 	  animate(gameLoop);
 	}
 
 	function gameLoop(){
 	  checkForPaddleMove();
 	  draw();
-	  if (gameEnded === false) {
+	  if (gameController.isGameEnded === false) {
 	    animate(gameLoop);
 	  }
 	}
@@ -195,6 +197,7 @@
 	  this.gameBox = gamebox;
 	  this.localPlayer = localPlayer;
 	  this.opponent = opponent;
+	  this.isGameEnded = false
 	};
 
 	  GameController.prototype.drawGame = function(){
@@ -217,6 +220,14 @@
 	      this.opponent.setScore(opponentScore);
 	    }
 	  };
+
+	  GameController.prototype.endGame = function(){
+	    this.isGameEnded = true
+	  }
+
+	  GameController.prototype.resetGame = function(){
+	    this.isGameEnded = false
+	  }
 
 	  module.exports = GameController;
 
