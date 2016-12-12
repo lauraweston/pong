@@ -75,9 +75,11 @@ function startGame() {
 }
 
 function onGameLoopTick() {
-  console.log("gameloop tick emitting")
   socket.sockets.emit("server moves ball", ball.getCoordinates());
   socket.sockets.emit("server updates scores", gameController.getPlayerScores());
+  if (gameController.winner){
+  socket.sockets.emit("game won", {winner: gameController.winner});
+  }
 }
 
 function onMovePlayer(data) {
