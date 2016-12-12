@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-var ServerGameController = function(ball, player1, player2){
-=======
 var ServerGameController = function(ball, player1, player2, gameLoopTickCallback){
->>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
   this.ball = ball;
   this.player1 = player1;
   this.player2 = player2;
@@ -12,10 +8,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
                   x:        0,
                   y:        0
   };
-<<<<<<< HEAD
-};
 
-=======
   this.gameLoopInterval = 8;
   this.gameLoopTickCallback = gameLoopTickCallback;
 };
@@ -48,17 +41,10 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
 
   ServerGameController.prototype.ballGoesOutOfPlay = function(){
     if (this.ball.x >= this.gameBox.width) {
-<<<<<<< HEAD
-      // this.player2.increaseScore();
-      this.ball.reset();
-    } else if (this.ball.x <= this.gameBox.x) {
-      // this.player1.increaseScore();
-=======
       this.player2.increaseScore();
       this.ball.reset();
     } else if (this.ball.x <= this.gameBox.x) {
       this.player1.increaseScore();
->>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
       this.ball.reset();
     }
   };
@@ -69,9 +55,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
     this.ballHitsPaddle();
     this.ballGoesOutOfPlay();
   };
-
-<<<<<<< HEAD
-=======
+  
   ServerGameController.prototype.getPlayerScores = function() {
     return {
       player1Score: this.player1.getScore(),
@@ -79,5 +63,4 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
     };
   };
 
->>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
   module.exports = ServerGameController;
