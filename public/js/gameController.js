@@ -1,8 +1,8 @@
-var GameController = function(ball, gameBox, player1, player2){
+var GameController = function(ball, gamebox, localPlayer, opponent){
   this.ball = ball;
-  this.gameBox = gameBox;
-  this.player1 = player1;
-  this.player2 = player2;
+  this.gameBox = gamebox;
+  this.localPlayer = localPlayer;
+  this.opponent = opponent;
 };
 
   GameController.prototype.drawGame = function(){
@@ -10,15 +10,24 @@ var GameController = function(ball, gameBox, player1, player2){
     console.log('ball in gameController')
     console.log(this.ball);
     this.ball.draw();
-    this.player1.draw();
-    this.player2.draw();
+    this.localPlayer.draw();
+    this.opponent.draw();
   };
 
   GameController.prototype.setScores = function(scores) {
-    var player1Score = scores.player1Score;
-    var player2Score = scores.player2Score;
-    this.player1.setScore(player1Score);
-    this.player2.setScore(player2Score);
+    console.log(scores)
+
+    if (this.localPlayer.id === scores.player1.id) {
+      var localPlayerScore = scores.player1.score;
+      this.localPlayer.setScore(localPlayerScore);
+      var opponentScore = scores.player2.score;
+      this.opponent.setScore(opponentScore);
+    } else {
+      var localPlayerScore = scores.player2.score;
+      this.localPlayer.setScore(localPlayerScore);
+      var opponentScore = scores.player1.score;
+      this.opponent.setScore(opponentScore);
+    }
   };
 
   module.exports = GameController;

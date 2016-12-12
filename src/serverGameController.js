@@ -23,7 +23,6 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
     gameLoopTick();
   }
 
->>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
   ServerGameController.prototype.ballHitsPaddle = function(){
     if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
       this.ball.bouncePaddle();
@@ -41,10 +40,10 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
 
   ServerGameController.prototype.ballGoesOutOfPlay = function(){
     if (this.ball.x >= this.gameBox.width) {
-      this.player2.increaseScore();
+      this.player1.increaseScore();
       this.ball.reset();
     } else if (this.ball.x <= this.gameBox.x) {
-      this.player1.increaseScore();
+      this.player2.increaseScore();
       this.ball.reset();
     }
   };
@@ -55,11 +54,11 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
     this.ballHitsPaddle();
     this.ballGoesOutOfPlay();
   };
-  
+
   ServerGameController.prototype.getPlayerScores = function() {
     return {
-      player1Score: this.player1.getScore(),
-      player2Score: this.player2.getScore()
+      player1:{id: this.player1.id, score: this.player1.getScore()},
+      player2:{id: this.player2.id, score: this.player2.getScore()}
     };
   };
 
