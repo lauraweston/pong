@@ -71,6 +71,7 @@ function removePlayer(){
   gameController.endGame();
   disconnect.style.display = "inline";
   waiting.style.display = 'inline';
+  winner.style.display = 'none';
 }
 
 function declareWinner(data){
@@ -89,6 +90,7 @@ function startGame(gameData){
   console.log("Starting game:");
   waiting.style.display = 'none';
   disconnect.style.display = 'none';
+  winner.style.display = 'none';
   for(var i = 0; i < gameData.players.length; i++) {
     var player = gameData.players[i];
     var paddle = new Paddle(player.x, player.y, context);
