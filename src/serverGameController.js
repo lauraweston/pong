@@ -21,7 +21,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
       self.gameLoop = setTimeout(gameLoopTick, self.gameLoopInterval);
     };
     gameLoopTick();
-  }
+  }//this is untested
 
   ServerGameController.prototype.ballHitsPaddle = function(){
     if(this.ball.x >= this.player1.paddle.x && this.ball.x <= (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {

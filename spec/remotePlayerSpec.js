@@ -14,7 +14,7 @@ describe('remotePlayer', function() {
     expect(player.name).toEqual("Bob");
   });
 
-  it("gets the score", function() {
+  it("gets the name", function() {
     player.setName("Bob");
     expect(player.getName()).toEqual("Bob");
   });

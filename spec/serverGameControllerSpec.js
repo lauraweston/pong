@@ -18,13 +18,13 @@ describe("GameController", function(){
     player2 = new Player(paddle2, 2);
     gameController = new GameController(ball, player1, player2, gameLoopTickCallback);
   });
-
+  
   describe("ball moves", function() {
     it("when game updates", function(){
-        gameController.update();
-        expect(gameController.ball.x).toEqual(303);
-        expect(gameController.ball.y).toEqual(22);
-      });
+      gameController.update();
+      expect(gameController.ball.x).toEqual(303);
+      expect(gameController.ball.y).toEqual(22);
+    });
   });
 
   describe("ball changes course", function() {
