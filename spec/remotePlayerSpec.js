@@ -1,4 +1,4 @@
-var Player = require('../src/remotePlayer.js').Player;
+var Player = require('../src/remotePlayer.js');
 
 describe('remotePlayer', function() {
   var paddle;
@@ -8,14 +8,6 @@ describe('remotePlayer', function() {
     player = new Player(paddle);
   });
 
-  it("sets the score", function() {
-    player.setScore(1);
-    expect(player.score).toEqual(1);
-  });
-
-  it("gets the score", function() {
-    expect(player.getScore()).toEqual(0);
-  });
 
   it("sets the name", function() {
     player.setName("Bob");
@@ -27,4 +19,12 @@ describe('remotePlayer', function() {
     expect(player.getName()).toEqual("Bob");
   });
 
+  it("increases the score", function() {
+    player.increaseScore();
+    expect(player.score).toEqual(1);
+  });
+
+  it("gets the score", function() {
+    expect(player.getScore()).toEqual(0);
+  });
 });

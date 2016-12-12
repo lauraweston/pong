@@ -33,7 +33,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
   };
 
   ServerGameController.prototype.ballHitsWall = function(){
-    if(this.ball.y <= this.gameBox.y || this.ball.y > this.gameBox.height) {
+    if(this.ball.y <= this.gameBox.y || this.ball.y >= this.gameBox.height) {
       this.ball.bounceWall();
     }
   };
