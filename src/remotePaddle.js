@@ -10,10 +10,6 @@ function Paddle(x, y) {
 Paddle.prototype.setY = function(y) {
   this.y = y;
 }
-// 
-// Paddle.prototype.setX = function(x) {
-//   this.x = x;
-// }
 
 Paddle.prototype.getY = function() {
   return this.y;
@@ -24,6 +20,4 @@ Paddle.prototype.getX = function() {
 }
 
 
-module.exports = {
-                  Paddle: Paddle,
-                };
+module.exports = Paddle;

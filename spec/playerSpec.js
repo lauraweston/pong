@@ -12,11 +12,18 @@ describe("Player", function() {
   it("has an initial score of zero", function() {
     expect(player.score).toEqual(0);
   });
+
   it("has a paddle", function () {
     expect(player.paddle).toEqual(paddle);
   });
-  it("increases the score", function() {
-    player.increaseScore();
+
+  it("sets a name", function() {
+    player.setName("Bob")
+    expect(player.name).toEqual("Bob");
+  });
+
+  it("sets the score", function() {
+    player.setScore(1);
     expect(player.score).toEqual(1);
   });
 });

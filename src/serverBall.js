@@ -31,4 +31,5 @@ ServerBall.prototype.reset = function(){
   this.xSpeed = 3;
   this.ySpeed = 2;
 };
+
 module.exports = ServerBall;

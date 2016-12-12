@@ -44,6 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+<<<<<<< HEAD
 	var socket;
 	var localPlayer;
 	var opponent;
@@ -52,12 +53,15 @@
 	var canvas;
 	var gameBox;
 	var gameController;
+=======
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 	var GameController = __webpack_require__(1);
 	var GameBox = __webpack_require__(2);
 	var Ball = __webpack_require__(3);
 	var Player = __webpack_require__(4);
 	var Paddle = __webpack_require__(5);
 	var keydown = __webpack_require__(6);
+<<<<<<< HEAD
 	__webpack_require__(7);
 
 	var animate = window.requestAnimationFrame ||
@@ -74,6 +78,19 @@
 	  socket = io.connect('http://localhost:3000');
 	  setEventHandlers();
 	};
+=======
+	var animate = __webpack_require__(7);
+	__webpack_require__(8);
+
+	var socket;
+	var localPlayer;
+	var opponent;
+	var localBall;
+	var context;
+	var canvas;
+	var gameBox;
+	var gameController;
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 
 	var signDiv = document.getElementById('signDiv');
 	var play = document.getElementById('signIn');
@@ -81,9 +98,8 @@
 
 	play.onclick = function(){
 	  signDiv.style.display = 'none';
-	  socket.emit('user sign in',{username: newUsername.value});
+	  socket.emit('user sign in', {username: newUsername.value});
 	}
-
 
 	function onSocketConnected() {
 	  console.log("Connected to socket server");
@@ -91,17 +107,24 @@
 
 	function onSocketDisconnect() {
 		console.log("Disconnected from socket server");
-	};
+	}
 
-	function onMovePlayer(data) {
-	  if(data.id === opponent.id) {
+	function onServerMovePlayer(data) {
+	  if (data.id === opponent.id) {
 	    opponent.paddle.setY(data.y);
 	  }
 	}
 
 	function onServerMovesBall(data) {
 	  localBall.setCoordinates(data);
+<<<<<<< HEAD
 	  console.log(data);
+=======
+	}
+
+	function onServerUpdatesScores(data) {
+	  gameController.setScores(data);
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 	}
 
 	function setEventHandlers() {
@@ -110,8 +133,14 @@
 		// Socket disconnection
 		socket.on("disconnect", onSocketDisconnect);
 		// Player move message received
+<<<<<<< HEAD
 		socket.on("server moves player", onMovePlayer);
 	  socket.on("draw game", onServerMovesBall);
+=======
+		socket.on("server moves player", onServerMovePlayer);
+	  socket.on("server moves ball", onServerMovesBall);
+	  socket.on("server updates scores", onServerUpdatesScores);
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 	  socket.on("start game", startGame);
 	};
 
@@ -124,7 +153,7 @@
 	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
 	    var paddle = new Paddle(player.x, player.y, context);
-	    if(player.id === myId()) {
+	    if (player.id === myId()) {
 	      localPlayer = new Player(paddle, context, player.name);
 	      localPlayer.id = myId();
 	    } else {
@@ -132,6 +161,7 @@
 	      opponent.id = player.id;
 	    }
 	  }
+<<<<<<< HEAD
 	  createBall(context, gameData.ballCoordinates, createGameController);
 	    console.log(gameBox);
 	    console.log(localBall);
@@ -149,6 +179,12 @@
 	  localBall = new Ball(context, ballCoordinates);
 	  callback(localBall, gameBox, localPlayer, opponent);
 	}
+=======
+	  localBall = new Ball(context);
+	  console.log(localBall);
+	  localBall.setCoordinates(gameData.ballCoordinates);
+	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 
 	function createGameController(a, b, c, d) {
 	  gameController = new GameController(a, b, c, d);
@@ -156,7 +192,7 @@
 	}
 
 	function gameLoop(){
-	  update();
+	  checkForPaddleMove();
 	  draw();
 	  animate(gameLoop);
 	}
@@ -165,6 +201,7 @@
 	  gameController.drawGame();
 	};
 
+<<<<<<< HEAD
 	var update = function(){
 	  socket.emit("update game controller");
 	  if (keydown.down) {
@@ -178,6 +215,39 @@
 	};
 
 	init();
+=======
+	var lastPaddleMove = 0;
+	var checkForPaddleMove = function(){
+	  var timeNow = new Date();
+	  var timeSinceLastMove = timeNow - lastPaddleMove;
+
+	  if (timeSinceLastMove < 15) {
+	    return;
+	  }
+
+	  var paddleMoved = false;
+	  if (keydown.down) {
+	    localPlayer.paddle.moveDown();
+	    paddleMoved = true;
+	  } else if (keydown.up) {
+	    localPlayer.paddle.moveUp();
+	    paddleMoved = true;
+	  }
+
+	  if (paddleMoved) {
+	    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
+	    lastPaddleMove = timeNow;
+	  }
+	};
+
+	(function init(){
+	  canvas = document.getElementById("canvas");
+	  context = canvas.getContext('2d');
+	  gameBox = new GameBox(context);
+	  socket = io.connect('http://localhost:3000');
+	  setEventHandlers();
+	})();
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 
 
 /***/ },
@@ -191,6 +261,7 @@
 	  this.player2 = player2;
 	};
 
+<<<<<<< HEAD
 	  // GameController.prototype.ballHitsPaddle = function(){
 	  //   if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
 	  //     this.ball.bouncePaddle();
@@ -223,17 +294,23 @@
 	  //   this.ballGoesOutOfPlay();
 	  // };
 
+=======
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 	  GameController.prototype.drawGame = function(){
 	    this.gameBox.draw();
 	    console.log('ball in gameController')
 	    console.log(this.ball);
 	    this.ball.draw();
-	    this.player1.paddle.draw();
-	    this.player2.paddle.draw();
 	    this.player1.draw();
 	    this.player2.draw();
 	  };
 
+	  GameController.prototype.setScores = function(scores) {
+	    var player1Score = scores.player1Score;
+	    var player2Score = scores.player2Score;
+	    this.player1.setScore(player1Score);
+	    this.player2.setScore(player2Score);
+	  };
 
 	  module.exports = GameController;
 
@@ -265,6 +342,7 @@
 /* 3 */
 /***/ function(module, exports) {
 
+<<<<<<< HEAD
 	var Ball = function(context, ballCoordinates){
 	  console.log('hello from ball.js');
 	  //console.log(ballCoordinates); - this logs
@@ -272,6 +350,9 @@
 	  this.x = ballCoordinates.x;
 	  console.log(this.x);
 	  this.y = ballCoordinates.y;
+=======
+	var Ball = function(context){
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 	  this.context = context;
 	};
 
@@ -288,6 +369,7 @@
 	Ball.prototype.setCoordinates = function (ballCoordinates) {
 	  this.x = ballCoordinates.x;
 	  this.y = ballCoordinates.y;
+<<<<<<< HEAD
 	  console.log('hello from ball.js');
 	  console.log(ballCoordinates);
 	};
@@ -310,6 +392,10 @@
 	//   this.xSpeed = 3;
 	//   this.ySpeed = 2;
 	// };
+=======
+	};
+
+>>>>>>> 695eba5ab3867bc3906fe25dee70a35e1f9c940d
 	module.exports = Ball;
 
 
@@ -325,23 +411,21 @@
 	  this.name = name
 	}
 
-	Player.prototype.increaseScore = function() {
-	  this.score++;
-	};
-
 	Player.prototype.draw = function() {
+	  this.paddle.draw();
+	  this.paddle.draw();
 	  this.context.fillText("vs", 300, 10);
 	  this.context.fillText(this.name, this.paddle.x - 10, 10);
 	  this.context.fillText(this.score, this.paddle.x, 20);
 	};
 
-	Player.prototype.getName = function(){
-	  return this.name;
-	}
-
 	Player.prototype.setName = function(name){
 	  this.name = name;
-	}
+	};
+
+	Player.prototype.setScore = function(score){
+	  this.score = score;
+	};
 
 	module.exports = Player;
 
@@ -420,6 +504,18 @@
 
 /***/ },
 /* 7 */
+/***/ function(module, exports) {
+
+	var animate = window.requestAnimationFrame ||
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	function (callback) {window.setTimeout(callback, 10000 / 60)};
+
+	module.exports = animate;
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports) {
 
 	/*

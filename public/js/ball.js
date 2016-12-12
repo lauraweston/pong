@@ -1,10 +1,4 @@
-var Ball = function(context, ballCoordinates){
-  console.log('hello from ball.js');
-  //console.log(ballCoordinates); - this logs
-  //console.log(ballCoordinates.x); - this also logs
-  this.x = ballCoordinates.x;
-  console.log(this.x);
-  this.y = ballCoordinates.y;
+var Ball = function(context){
   this.context = context;
 };
 
@@ -21,26 +15,6 @@ Ball.prototype.draw = function(){
 Ball.prototype.setCoordinates = function (ballCoordinates) {
   this.x = ballCoordinates.x;
   this.y = ballCoordinates.y;
-  console.log('hello from ball.js');
-  console.log(ballCoordinates);
 };
-// Ball.prototype.bouncePaddle = function(){
-//   this.xSpeed = -this.xSpeed;
-// };
-//
-// Ball.prototype.bounceWall = function(){
-//   this.ySpeed = -this.ySpeed;
-// };
-//
-// Ball.prototype.update = function(){
-//   this.x += this.xSpeed;
-//   this.y += this.ySpeed;
-// };
-//
-// Ball.prototype.reset = function(){
-//   this.x = 300;
-//   this.y = 20;
-//   this.xSpeed = 3;
-//   this.ySpeed = 2;
-// };
+
 module.exports = Ball;

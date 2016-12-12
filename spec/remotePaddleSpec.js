@@ -1,4 +1,4 @@
-var Paddle = require('../src/remotePaddle.js').Paddle;
+var Paddle = require('../src/remotePaddle.js');
 
 
 describe('remotePaddle', function() {
