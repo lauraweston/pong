@@ -40,7 +40,7 @@ function addNewPlayerToGame(newPlayerId) {
 
 function updatePlayerName(data){
   var updateNamePlayer = playerById(this.id);
-  updateNamePlayer.setName(data.username);
+  updateNamePlayer.setName(data.playerName);
   if (player1 && player2 && (player1.name.length > 0 ) && (player2.name.length > 0)) {
     console.log("Starting game");
     startGame();
@@ -108,7 +108,7 @@ function endGame() {
 
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
-   client.on("user sign in", updatePlayerName);
+   client.on("player sign in", updatePlayerName);
    client.on("client moves player", onMovePlayer);
    client.on('disconnect', onClientDisconnect)
    addNewPlayerToGame(client.id);
