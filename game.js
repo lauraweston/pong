@@ -101,7 +101,9 @@ function onClientDisconnect(){
 }
 
 function endGame() {
-  gameController.endGameLoop();
+  if (gameController) {
+    gameController.endGameLoop();
+  }
 }
 
 function onSocketConnection(client) {
@@ -122,10 +124,10 @@ function setEventHandlers() {
 })();
 
 function playerById(id) {
-	if (player1.id === id) {
+	if (player1 && player1.id === id) {
     return player1;
   }
-  if (player2.id === id) {
+  if (player2 && player2.id === id) {
     return player2;
   }
 	return false;

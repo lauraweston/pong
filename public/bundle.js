@@ -117,6 +117,7 @@
 	  gameController.endGame();
 	  disconnect.style.display = "inline";
 	  waiting.style.display = 'inline';
+	  winner.style.display = 'none';
 	}
 
 	function declareWinner(data){
@@ -135,6 +136,7 @@
 	  console.log("Starting game:");
 	  waiting.style.display = 'none';
 	  disconnect.style.display = 'none';
+	  winner.style.display = 'none';
 	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
 	    var paddle = new Paddle(player.x, player.y, context);
@@ -190,11 +192,15 @@
 	  }
 	};
 
+	function getUrl() {
+	  return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+	}
+
 	(function init(){
 	  canvas = document.getElementById("canvas");
 	  context = canvas.getContext('2d');
 	  gameBox = new GameBox(context);
-	  socket = io.connect();
+	  socket = io.connect(getUrl());
 	  setEventHandlers();
 	})();
 

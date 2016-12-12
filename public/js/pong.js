@@ -146,10 +146,14 @@ var checkForPaddleMove = function(){
   }
 };
 
+function getUrl() {
+  return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+}
+
 (function init(){
   canvas = document.getElementById("canvas");
   context = canvas.getContext('2d');
   gameBox = new GameBox(context);
-  socket = io.connect();
+  socket = io.connect(getUrl());
   setEventHandlers();
 })();
