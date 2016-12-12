@@ -20,13 +20,29 @@ describe("GameController", function(){
   });
 
   describe("ball changes course", function() {
-    it("when hits paddle 1", function() {
+    it("when hits top of paddle 1", function() {
       gameController.ball.x = (player1.paddle.x - ball.xSpeed);
       gameController.ball.y = (player1.paddle.y);
-      console.log(gameController.ball.x, gameController.ball.y);
       gameController.update();
-      console.log(gameController.ball.x, gameController.ball.y);
       expect(gameController.ball.xSpeed).toBeLessThan(0);
+    });
+    it("when hits bottom of paddle 1", function() {
+      gameController.ball.x = (player1.paddle.x - ball.xSpeed);
+      gameController.ball.y = ((player1.paddle.y + player1.paddle.height) - ball.ySpeed);
+      gameController.update();
+      expect(gameController.ball.xSpeed).toBeLessThan(0);
+    });
+    it("when hits top of paddle 2", function() {
+      gameController.ball.x = (player2.paddle.x + player2.paddle.width + ball.xSpeed);
+      gameController.ball.y = (player2.paddle.y);
+      gameController.update();
+      expect(gameController.ball.xSpeed).toBeGreaterThan(0);
+    });
+    it("when hits bottom of paddle 2", function() {
+      gameController.ball.x = (player2.paddle.x + player2.paddle.width + ball.xSpeed);
+      gameController.ball.y = ((player2.paddle.y + player2.paddle.height) - ball.ySpeed);
+      gameController.update();
+      expect(gameController.ball.xSpeed).toBeGreaterThan(0);
     });
   });
 });
