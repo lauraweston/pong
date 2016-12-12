@@ -1,8 +1,9 @@
-function Player(paddle, id, name) {
+function Player(paddle, id, isOnLeft, name) {
   this.score = 0;
   this.paddle = paddle;
   this.id = id;
-  this.name = "";
+  this.isOnLeft = isOnLeft;
+  this.name = ""
 };
 
 Player.prototype.getName = function(){

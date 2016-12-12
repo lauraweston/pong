@@ -8,6 +8,8 @@ var GameController = function(ball, gamebox, localPlayer, opponent){
 
   GameController.prototype.drawGame = function(){
     this.gameBox.draw();
+    console.log('ball in gameController')
+    console.log(this.ball);
     this.ball.draw();
     this.localPlayer.draw();
     this.opponent.draw();

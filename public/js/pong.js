@@ -97,6 +97,7 @@ function startGame(gameData){
   animate(gameLoop);
 }
 
+
 function gameLoop(){
   checkForPaddleMove();
   draw();

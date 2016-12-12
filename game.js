@@ -68,6 +68,7 @@ function startGame() {
     players: playerData,
     ballCoordinates: ball.getCoordinates()
   };
+
   gameController = new ServerGameController(ball, player1, player2, onGameLoopTick);
   socket.sockets.emit("start game", startingGameData);
   gameController.startGameLoop();

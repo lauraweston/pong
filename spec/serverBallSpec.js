@@ -8,21 +8,32 @@ describe('serverBall', function() {
     serverBall = new ServerBall();
   });
 
-  // it("sets the score", function() {
-  //   player.setScore(1);
-  //   expect(player.score).toEqual(1);
-  // });
-  //
-  // it("gets the score", function() {
-  //   expect(player.getScore()).toEqual(0);
-  // });
-  //
-  // it("sets y coordinates of paddle", function() {
-  //   paddle.setY(155);
-  //   expect(paddle.y).toEqual(155);
-  // });
-  //
-  // it("gets y coordinates of paddle", function() {
-  //   expect(paddle.getY()).toEqual(150);
-  // });
+  it("changes direction when bounches off padde", function() {
+    serverBall.bouncePaddle();
+    expect(serverBall.xSpeed).toEqual(-3);
+  });
+
+  it("changes direction when bounches off wall", function() {
+    serverBall.bounceWall();
+    expect(serverBall.ySpeed).toEqual(-2);
+  });
+
+  it("updates ball coordinates", function() {
+    serverBall.update();
+    expect(serverBall.x).toEqual(303);
+    expect(serverBall.y).toEqual(22);
+  });
+
+  it("resets the ball", function() {
+    serverBall.update();
+    serverBall.reset();
+    expect(serverBall.x).toEqual(300);
+    expect(serverBall.y).toEqual(20);
+  });
+
+  it("returns the balls coordinates", function() {
+    expect(serverBall.getCoordinates()).toEqual({x: 300, y: 20});
+  });
+
+
 });
