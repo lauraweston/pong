@@ -229,8 +229,6 @@
 
 	  GameController.prototype.drawGame = function(){
 	    this.gameBox.draw();
-	    console.log('ball in gameController')
-	    console.log(this.ball);
 	    this.ball.draw();
 	    this.localPlayer.draw();
 	    this.opponent.draw();
@@ -293,13 +291,11 @@
 	};
 
 	Ball.prototype.draw = function(){
-	  console.log('ball is being drawn');
 	  this.context.beginPath();
 	  this.context.arc(this.x, this.y, 7, 0, Math.PI*2, true)
 	  this.context.fillStyle = "white";
 	  this.context.closePath();
 	  this.context.fill();
-	  console.log('ball is still being drawn');
 	};
 
 	Ball.prototype.setCoordinates = function (ballCoordinates) {

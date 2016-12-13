@@ -78,7 +78,7 @@ function onGameLoopTick() {
   socket.sockets.emit("server moves ball", ball.getCoordinates());
   socket.sockets.emit("server updates scores", gameController.getPlayerScores());
   if (gameController.winner){
-  socket.sockets.emit("game won", {winner: gameController.winner});
+    socket.sockets.emit("game won", {winner: gameController.winner});
   }
 }
 
@@ -108,9 +108,8 @@ function endGame() {
 
 function playAgain() {
   var playerToReset = playerById(this.id);
-  playerToReset.resetScore();
-  var scores = gameController.getPlayerScores();
-  if (scores.player1.score === 0 && scores.player2.score === 0) {
+  playerToReset.reset();
+  if (gameController.player1.isReady && gameController.player2.isReady) {
     startGame();
   }
 };

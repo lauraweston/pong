@@ -19,6 +19,24 @@ describe("GameController", function(){
     gameController = new GameController(ball, player1, player2, gameLoopTickCallback);
   });
 
+  describe("game start", function() {
+
+    beforeEach(function() {
+      spyOn(gameController.player1, 'setPlayStatus');
+      spyOn(gameController.player2, 'setPlayStatus');
+    });
+
+    it("resets player1 ready state to false", function() {
+      gameController.resetPlayerReadyState();
+      expect(gameController.player1.setPlayStatus).toHaveBeenCalledWith(false);
+    });
+
+    it("resets player2 ready state to false", function() {
+      gameController.resetPlayerReadyState();
+      expect(gameController.player2.setPlayStatus).toHaveBeenCalledWith(false);
+    });
+  });
+
   describe("ball moves", function() {
     it("when game updates", function(){
       gameController.update();

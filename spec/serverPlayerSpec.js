@@ -28,9 +28,21 @@ describe('serverPlayer', function() {
     expect(player.getScore()).toEqual(0);
   });
 
+  it("resets the player", function() {
+    player.increaseScore();
+    player.reset();
+    expect(player.score).toEqual(0);
+    expect(player.isReady).toEqual(true);
+  });
+
   it("resets the score", function() {
     player.increaseScore();
     player.resetScore();
     expect(player.score).toEqual(0);
+  });
+
+  it("sets isReady to true when player has clicked Play again", function() {
+    player.setPlayStatus(true);
+    expect(player.isReady).toEqual(true);
   });
 });
