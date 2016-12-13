@@ -5,8 +5,10 @@ var ServerBall = function(){
   this.ySpeed = 2;
 };
 
-ServerBall.prototype.bouncePaddle = function(){
-  this.xSpeed = -this.xSpeed;
+ServerBall.prototype.bouncePaddle = function(speed){
+  this.xSpeed += 0.2
+  this.ySpeed = (Math.random() * 3) + (-3)
+  this.xSpeed = (-this.xSpeed);
 };
 
 ServerBall.prototype.bounceWall = function(){

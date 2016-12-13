@@ -62,13 +62,14 @@
 	var gameBox;
 	var gameController;
 	var gameEnded = false;
-
+	var gameStart;
 	var signDiv = document.getElementById('signDiv');
 	var play = document.getElementById('signIn');
 	var newUsername = document.getElementById('username');
 	var waiting = document.getElementById('waiting');
 	var disconnect = document.getElementById('disconnect');
 	var winner = document.getElementById('winner');
+	var seconds = document.getElementById('countdown').innerHTML;
 
 
 	play.onclick = function(){
@@ -117,6 +118,7 @@
 	  gameController.endGame();
 	  disconnect.style.display = "inline";
 	  waiting.style.display = 'inline';
+	  winner.style.display = 'none';
 	}
 
 	function declareWinner(data){
@@ -131,10 +133,26 @@
 	  return socket.io.engine.id;
 	}
 
+	function countdown(){
+	  seconds = parseInt(seconds, 10);
+	  if (seconds == 1) {
+	    gameStart = document.getElementById('countdown');
+	    gameStart.innerHTML = "Play!";
+	    animate(gameLoop);
+	    return;
+	    }
+	  seconds--;
+	  gameStart = document.getElementById('countdown');
+	  gameStart.innerHTML = seconds;
+	  timeout = setTimeout(countdown, 1000);
+	}
+
 	function startGame(gameData){
+	  countdown();
 	  console.log("Starting game:");
 	  waiting.style.display = 'none';
 	  disconnect.style.display = 'none';
+	  winner.style.display = 'none';
 	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
 	    var paddle = new Paddle(player.x, player.y, context);
@@ -150,7 +168,7 @@
 	  localBall.setCoordinates(gameData.ballCoordinates);
 	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
 	  gameController.resetGame();
-	  animate(gameLoop);
+	  draw();
 	}
 
 	function gameLoop(){
