@@ -52,7 +52,6 @@
 	var keydown = __webpack_require__(6);
 	var animate = __webpack_require__(7);
 	__webpack_require__(8);
-
 	var socket;
 	var localPlayer;
 	var opponent;
@@ -62,13 +61,17 @@
 	var gameBox;
 	var gameController;
 	var gameEnded = false;
+	var gameStart;
+	var audio = new Audio("pongSound.mp3");
 
+	var pong = document.getElementById('pong');
 	var signInForm = document.getElementById('signIn');
 	var newPlayerName = document.getElementById('playerName');
 	var waiting = document.getElementById('waiting');
 	var disconnect = document.getElementById('disconnect');
 	var winner = document.getElementById('winner');
 	var playAgain = document.getElementById('playAgain');
+	var seconds = document.getElementById('countdown').innerHTML;
 
 	signInForm.onsubmit = function(event){
 	  event.preventDefault();
@@ -84,6 +87,7 @@
 	  playAgain.style.display = 'none';
 	  canvas.style.display = 'none';
 	}
+
 
 	function onSocketConnected() {
 	  ("Connected to socket server");
@@ -119,6 +123,7 @@
 	  socket.on("start game", startGame);
 	  socket.on("remove player", removePlayer)
 	  socket.on("game won", declareWinner)
+	  socket.on("pong sound", pongSound)
 	};
 
 	function removePlayer(){
@@ -141,7 +146,24 @@
 	  return socket.io.engine.id;
 	}
 
+	function countdown(){
+	  seconds = parseInt(seconds, 3);
+	  if (seconds == 1) {
+	    audio.pause();
+	    gameStart = document.getElementById('countdown');
+	    gameStart.innerHTML = "Play!";
+	    animate(gameLoop);
+	    return;
+	    }
+	  seconds--;
+	  gameStart = document.getElementById('countdown');
+	  gameStart.innerHTML = seconds;
+	  timeout = setTimeout(countdown, 1000);
+	}
+
 	function startGame(gameData){
+	  pong.style.display = 'none'
+	  countdown();
 	  console.log("Starting game:");
 	  canvas.style.display = 'block';
 	  waiting.style.display = 'none';
@@ -163,7 +185,7 @@
 	  localBall.setCoordinates(gameData.ballCoordinates);
 	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
 	  gameController.resetGame();
-	  animate(gameLoop);
+	  draw();
 	}
 
 	function gameLoop(){
@@ -211,6 +233,7 @@
 	  context = canvas.getContext('2d');
 	  gameBox = new GameBox(context);
 	  socket = io.connect(getUrl());
+	  audio.play();
 	  setEventHandlers();
 	})();
 
@@ -247,6 +270,7 @@
 	      this.opponent.setScore(opponentScore);
 	    }
 	  };
+
 
 	  GameController.prototype.endGame = function(){
 	    this.isGameEnded = true

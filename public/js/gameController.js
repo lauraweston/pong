@@ -27,6 +27,7 @@ var GameController = function(ball, gamebox, localPlayer, opponent){
     }
   };
 
+
   GameController.prototype.endGame = function(){
     this.isGameEnded = true
   }

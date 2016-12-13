@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
   </head>
   <body>
+    <h1 id="pong"> Pong </h1>
     <form id="signIn" method="post">
       <label for="playerName">Player name:</label>
       <input id="playerName" type="text" required></input><br>
@@ -21,6 +22,7 @@
     </div>
     <div id="winner" style="display: none;"></div>
     <button id="playAgain" type="button" style="display: none;">Play again!</button>
+    <div id="countdown" style="font-size:100px;">10</div>
     <canvas id="canvas" width="600" height="400"></canvas>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="bundle.js"></script>

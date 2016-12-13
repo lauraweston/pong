@@ -6,7 +6,8 @@ var ServerBall = function(){
 };
 
 ServerBall.prototype.bouncePaddle = function(){
-  this.xSpeed = -this.xSpeed;
+  this.xSpeed += 0.2
+  this.xSpeed = (-this.xSpeed);
 };
 
 ServerBall.prototype.bounceWall = function(){

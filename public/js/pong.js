@@ -6,7 +6,6 @@ var Paddle = require('./paddle.js');
 var keydown = require('./../../lib/key_status.js');
 var animate = require('./animationFrame.js');
 require('./../../lib/jquery.hotkeys.js');
-
 var socket;
 var localPlayer;
 var opponent;
@@ -16,13 +15,17 @@ var canvas;
 var gameBox;
 var gameController;
 var gameEnded = false;
+var gameStart;
+var audio = new Audio("pongSound.mp3");
 
+var pong = document.getElementById('pong');
 var signInForm = document.getElementById('signIn');
 var newPlayerName = document.getElementById('playerName');
 var waiting = document.getElementById('waiting');
 var disconnect = document.getElementById('disconnect');
 var winner = document.getElementById('winner');
 var playAgain = document.getElementById('playAgain');
+var seconds = document.getElementById('countdown').innerHTML;
 
 signInForm.onsubmit = function(event){
   event.preventDefault();
@@ -38,6 +41,7 @@ playAgain.onclick = function() {
   playAgain.style.display = 'none';
   canvas.style.display = 'none';
 }
+
 
 function onSocketConnected() {
   ("Connected to socket server");
@@ -73,6 +77,7 @@ function setEventHandlers() {
   socket.on("start game", startGame);
   socket.on("remove player", removePlayer)
   socket.on("game won", declareWinner)
+  socket.on("pong sound", pongSound)
 };
 
 function removePlayer(){
@@ -95,7 +100,24 @@ function myId() {
   return socket.io.engine.id;
 }
 
+function countdown(){
+  seconds = parseInt(seconds, 3);
+  if (seconds == 1) {
+    audio.pause();
+    gameStart = document.getElementById('countdown');
+    gameStart.innerHTML = "Play!";
+    animate(gameLoop);
+    return;
+    }
+  seconds--;
+  gameStart = document.getElementById('countdown');
+  gameStart.innerHTML = seconds;
+  timeout = setTimeout(countdown, 1000);
+}
+
 function startGame(gameData){
+  pong.style.display = 'none'
+  countdown();
   console.log("Starting game:");
   canvas.style.display = 'block';
   waiting.style.display = 'none';
@@ -117,7 +139,7 @@ function startGame(gameData){
   localBall.setCoordinates(gameData.ballCoordinates);
   gameController = new GameController(localBall, gameBox, localPlayer, opponent);
   gameController.resetGame();
-  animate(gameLoop);
+  draw();
 }
 
 function gameLoop(){
@@ -165,5 +187,6 @@ function getUrl() {
   context = canvas.getContext('2d');
   gameBox = new GameBox(context);
   socket = io.connect(getUrl());
+  audio.play();
   setEventHandlers();
 })();
