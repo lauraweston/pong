@@ -41,7 +41,7 @@ function addNewPlayerToGame(newPlayerId) {
 function updatePlayerName(data){
   var updateNamePlayer = playerById(this.id);
   updateNamePlayer.setName(data.playerName);
-  if (player1 && player2 && (player1.name.length > 0 ) && (player2.name.length > 0)) {
+  if (player1 && player2 && (player1.name.length > 0 ) && (player2.name.length > 0) && player1.isReady && player2.isReady) {
     console.log("Starting game");
     startGame();
   }
@@ -108,8 +108,13 @@ function endGame() {
 
 function playAgain() {
   var playerToReset = playerById(this.id);
+  console.log(gameController.player1.isReady);
+  console.log(gameController.player2.isReady);
+
   playerToReset.reset();
-  if (gameController.player1.isReady && gameController.player2.isReady) {
+  console.log(gameController.player1.isReady);
+  console.log(gameController.player2.isReady);
+  if (player1.isReady && player2.isReady) {
     startGame();
   }
 };
