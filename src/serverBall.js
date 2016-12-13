@@ -1,6 +1,6 @@
 var ServerBall = function(){
   this.x = 300;
-  this.y = 20;
+  this.y = 30;
   this.xSpeed = 3;
   this.ySpeed = 2;
 };
