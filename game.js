@@ -114,7 +114,7 @@ function playAgain() {
   playerToReset.reset();
   console.log(gameController.player1.isReady);
   console.log(gameController.player2.isReady);
-  if (player1.isReady && player2.isReady) {
+  if (player1 && player2 && player1.isReady && player2.isReady) {
     startGame();
   }
 };

@@ -36,6 +36,7 @@ signInForm.onsubmit = function(event){
 
 playAgain.onclick = function() {
   socket.emit("play again");
+  disconnect.style.display = 'none';
   waiting.style.display = 'inline';
   winner.style.display = 'none';
   playAgain.style.display = 'none';
@@ -83,7 +84,6 @@ function setEventHandlers() {
 function removePlayer(){
   gameController.endGame();
   disconnect.style.display = "inline";
-  waiting.style.display = 'inline';
   winner.style.display = 'none';
 }
 
@@ -101,7 +101,7 @@ function myId() {
 }
 
 function countdown(){
-  seconds = parseInt(seconds, 3);
+  seconds = parseInt(seconds, 10);
   if (seconds == 1) {
     audio.pause();
     gameStart = document.getElementById('countdown');
@@ -112,7 +112,7 @@ function countdown(){
   seconds--;
   gameStart = document.getElementById('countdown');
   gameStart.innerHTML = seconds;
-  timeout = setTimeout(countdown, 1000);
+  timeout = setTimeout(countdown, 500);
 }
 
 function startGame(gameData){
