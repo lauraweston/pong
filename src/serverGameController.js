@@ -31,6 +31,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
     this.isGameEnded = true;
   };
 
+
   ServerGameController.prototype.ballHitsPaddle = function(){
     if(this.ball.x > this.player1.paddle.x && this.ball.x < (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
       this.ball.bouncePaddle();

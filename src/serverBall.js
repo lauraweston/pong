@@ -5,9 +5,8 @@ var ServerBall = function(){
   this.ySpeed = 2;
 };
 
-ServerBall.prototype.bouncePaddle = function(speed){
+ServerBall.prototype.bouncePaddle = function(){
   this.xSpeed += 0.2
-  this.ySpeed = (Math.random() * 3) + (-3)
   this.xSpeed = (-this.xSpeed);
 };
 
