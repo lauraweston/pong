@@ -21,5 +21,11 @@ describe('serverPaddle', function() {
     expect(paddle.getX()).toEqual(570);
   });
 
-  
+  it("resets paddle x coordinates on play again", function() {
+    paddle.setY(0);
+    paddle.reset();
+    expect(paddle.y).toEqual(150);
+  });
+
+
 });
