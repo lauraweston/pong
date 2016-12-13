@@ -1,10 +1,12 @@
 var Player = require('../src/serverPlayer.js');
+var Paddle = require('../src/serverPaddle.js');
 
 describe('serverPlayer', function() {
   var paddle;
   var player;
 
   beforeEach(function() {
+    paddle = new Paddle(570, 150);
     player = new Player(paddle);
   });
 
@@ -29,10 +31,12 @@ describe('serverPlayer', function() {
   });
 
   it("resets the player", function() {
+    spyOn(player.paddle, 'reset');
     player.increaseScore();
     player.reset();
     expect(player.score).toEqual(0);
     expect(player.isReady).toEqual(true);
+    expect(player.paddle.reset).toHaveBeenCalled();
   });
 
   it("resets the score", function() {
