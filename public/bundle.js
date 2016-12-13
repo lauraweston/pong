@@ -61,7 +61,6 @@
 	var gameBox;
 	var gameController;
 	var gameEnded = false;
-	var gameStart;
 	var audio = new Audio("pongSound.mp3");
 
 	var pong = document.getElementById('pong');
@@ -123,7 +122,6 @@
 	  socket.on("start game", startGame);
 	  socket.on("remove player", removePlayer)
 	  socket.on("game won", declareWinner)
-	  socket.on("pong sound", pongSound)
 	};
 
 	function removePlayer(){
@@ -131,7 +129,8 @@
 	  disconnect.style.display = "inline";
 	  waiting.style.display = 'inline';
 	  winner.style.display = 'none';
-	}
+	  gameStart = document.getElementById('countdown');
+	  gameStart.innerHTML = "Game Over!"}
 
 	function declareWinner(data){
 	  gameController.endGame();
@@ -140,6 +139,8 @@
 	  winner.appendChild(textHolder)
 	  winner.style.display = 'inline';
 	  playAgain.style.display = 'inline';
+	  gameStart = document.getElementById('countdown');
+	  gameStart.innerHTML = "Game Over!";
 	}
 
 	function myId() {
@@ -147,7 +148,7 @@
 	}
 
 	function countdown(){
-	  seconds = parseInt(seconds, 3);
+	  seconds = parseInt(seconds, 10);
 	  if (seconds == 1) {
 	    audio.pause();
 	    gameStart = document.getElementById('countdown');
@@ -156,16 +157,15 @@
 	    return;
 	    }
 	  seconds--;
-	  gameStart = document.getElementById('countdown');
+	  var gameStart = document.getElementById('countdown');
 	  gameStart.innerHTML = seconds;
-	  timeout = setTimeout(countdown, 1000);
+	  timeout = setTimeout(countdown, 500);
 	}
 
 	function startGame(gameData){
 	  pong.style.display = 'none'
 	  countdown();
 	  console.log("Starting game:");
-	  canvas.style.display = 'block';
 	  waiting.style.display = 'none';
 	  disconnect.style.display = 'none';
 	  winner.innerHTML = "";
