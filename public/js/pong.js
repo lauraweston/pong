@@ -120,6 +120,7 @@ function startGame(gameData){
   pong.style.display = 'none'
   countdown();
   console.log("Starting game:");
+  canvas.style.display = 'inline';
   waiting.style.display = 'none';
   disconnect.style.display = 'none';
   winner.innerHTML = "";
@@ -185,7 +186,6 @@ function getUrl() {
 (function init(){
   canvas = document.getElementById("canvas");
   context = canvas.getContext('2d');
-  context.fillRect(this.width/2, 0, 2, this.height);
   gameBox = new GameBox(context);
   socket = io.connect(getUrl());
   audio.play();

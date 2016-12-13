@@ -166,6 +166,7 @@
 	  pong.style.display = 'none'
 	  countdown();
 	  console.log("Starting game:");
+	  canvas.style.display = 'inline';
 	  waiting.style.display = 'none';
 	  disconnect.style.display = 'none';
 	  winner.innerHTML = "";
@@ -231,7 +232,6 @@
 	(function init(){
 	  canvas = document.getElementById("canvas");
 	  context = canvas.getContext('2d');
-	  context.fillRect(this.width/2, 0, 2, this.height);
 	  gameBox = new GameBox(context);
 	  socket = io.connect(getUrl());
 	  audio.play();
@@ -301,7 +301,6 @@
 	  this.context.rect(this.x, this.y, this.width, this.height)
 	  this.context.fillStyle = "black";
 	  this.context.fill();
-
 	  this.context.beginPath();
 	  this.context.setLineDash([5, 3]);
 	  this.context.lineWidth = 4;
