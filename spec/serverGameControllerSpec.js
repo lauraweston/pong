@@ -1,7 +1,7 @@
 var GameController = require('../src/serverGameController.js');
 var Ball = require('../src/serverBall.js');
-var Paddle = require('../src/remotePaddle.js');
-var Player = require('../src/remotePlayer.js');
+var Paddle = require('../src/serverPaddle.js');
+var Player = require('../src/serverPlayer.js');
 
 describe("GameController", function(){
   var player;
@@ -18,7 +18,7 @@ describe("GameController", function(){
     player2 = new Player(paddle2, 2);
     gameController = new GameController(ball, player1, player2, gameLoopTickCallback);
   });
-  
+
   describe("ball moves", function() {
     it("when game updates", function(){
       gameController.update();
