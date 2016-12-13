@@ -62,6 +62,7 @@
 	var gameController;
 	var gameEnded = false;
 	var audio = new Audio("pongSound.mp3");
+	var gameOver = new Audio('game-over.wav')
 
 	var pong = document.getElementById('pong');
 	var signInForm = document.getElementById('signIn');
@@ -130,7 +131,9 @@
 	  disconnect.style.display = "inline";
 	  winner.style.display = 'none';
 	  gameStart = document.getElementById('countdown');
-	  gameStart.innerHTML = "Game Over!"}
+	  gameStart.innerHTML = "Game Over!"
+	  gameOver.play()
+	}
 
 	function declareWinner(data){
 	  gameController.endGame();
@@ -141,6 +144,7 @@
 	  playAgain.style.display = 'inline';
 	  gameStart = document.getElementById('countdown');
 	  gameStart.innerHTML = "Game Over!";
+	  gameOver.play()
 	}
 
 	function myId() {
@@ -159,7 +163,7 @@
 	  seconds--;
 	  var gameStart = document.getElementById('countdown');
 	  gameStart.innerHTML = seconds;
-	  timeout = setTimeout(countdown, 500);
+	  timeout = setTimeout(countdown, 1000);
 	}
 
 	function startGame(gameData){
