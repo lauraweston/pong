@@ -63,18 +63,17 @@
 	var gameController;
 	var gameEnded = false;
 
-	var signDiv = document.getElementById('signDiv');
-	var play = document.getElementById('signIn');
-	var newUsername = document.getElementById('username');
+	var signInForm = document.getElementById('signIn');
+	var newPlayerName = document.getElementById('playerName');
 	var waiting = document.getElementById('waiting');
 	var disconnect = document.getElementById('disconnect');
 	var winner = document.getElementById('winner');
 
-
-	play.onclick = function(){
+	signInForm.onsubmit = function(event){
+	  event.preventDefault();
 	  waiting.style.display = 'inline';
-	  signDiv.style.display = 'none';
-	  socket.emit('user sign in', {username: newUsername.value});
+	  signInForm.style.display = 'none';
+	  socket.emit('player sign in', {playerName: newPlayerName.value});
 	}
 
 	function onSocketConnected() {
@@ -155,7 +154,6 @@
 	  animate(gameLoop);
 	}
 
-
 	function gameLoop(){
 	  checkForPaddleMove();
 	  draw();
@@ -164,12 +162,12 @@
 	  }
 	}
 
-	var draw = function(){
+	function draw(){
 	  gameController.drawGame();
-	};
+	}
 
 	var lastPaddleMove = 0;
-	var checkForPaddleMove = function(){
+	function checkForPaddleMove(){
 	  var timeNow = new Date();
 	  var timeSinceLastMove = timeNow - lastPaddleMove;
 
@@ -190,7 +188,7 @@
 	    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
 	    lastPaddleMove = timeNow;
 	  }
-	};
+	}
 
 	function getUrl() {
 	  return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
