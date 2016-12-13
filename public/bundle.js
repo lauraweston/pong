@@ -231,6 +231,7 @@
 	(function init(){
 	  canvas = document.getElementById("canvas");
 	  context = canvas.getContext('2d');
+	  context.fillRect(this.width/2, 0, 2, this.height);
 	  gameBox = new GameBox(context);
 	  socket = io.connect(getUrl());
 	  audio.play();
@@ -300,7 +301,14 @@
 	  this.context.rect(this.x, this.y, this.width, this.height)
 	  this.context.fillStyle = "black";
 	  this.context.fill();
-	  this.context.closePath();
+
+	  this.context.beginPath();
+	  this.context.setLineDash([5, 3]);
+	  this.context.lineWidth = 4;
+	  this.context.strokeStyle = '#FFFFFF';
+	  this.context.moveTo(300,0);
+	  this.context.lineTo(300,400);
+	  this.context.stroke();
 	};
 
 	module.exports = GameBox;
@@ -345,7 +353,6 @@
 	Player.prototype.draw = function() {
 	  this.paddle.draw();
 	  this.paddle.draw();
-	  this.context.fillText("vs", 300, 10);
 	  this.context.fillText(this.name, this.paddle.x - 10, 10);
 	  this.context.fillText(this.score, this.paddle.x, 20);
 	};
