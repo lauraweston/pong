@@ -1,7 +1,7 @@
 var GameController = require('../src/serverGameController.js');
 var Ball = require('../src/serverBall.js');
-var Paddle = require('../src/remotePaddle.js');
-var Player = require('../src/remotePlayer.js');
+var Paddle = require('../src/serverPaddle.js');
+var Player = require('../src/serverPlayer.js');
 
 describe("GameController", function(){
   var player;
@@ -18,7 +18,25 @@ describe("GameController", function(){
     player2 = new Player(paddle2, 2);
     gameController = new GameController(ball, player1, player2, gameLoopTickCallback);
   });
-  
+
+  describe("game start", function() {
+
+    beforeEach(function() {
+      spyOn(gameController.player1, 'setPlayStatus');
+      spyOn(gameController.player2, 'setPlayStatus');
+    });
+
+    it("resets player1 ready state to false", function() {
+      gameController.resetPlayerReadyState();
+      expect(gameController.player1.setPlayStatus).toHaveBeenCalledWith(false);
+    });
+
+    it("resets player2 ready state to false", function() {
+      gameController.resetPlayerReadyState();
+      expect(gameController.player2.setPlayStatus).toHaveBeenCalledWith(false);
+    });
+  });
+
   describe("ball moves", function() {
     it("when game updates", function(){
       gameController.update();

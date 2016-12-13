@@ -4,8 +4,8 @@ var app = express();
 var server = require('http').Server(app);
 var util = require('util');
 var io = require('socket.io');
-var Player = require("./src/remotePlayer.js");
-var Paddle = require("./src/remotePaddle.js");
+var Player = require("./src/serverPlayer.js");
+var Paddle = require("./src/serverPaddle.js");
 var ServerBall = require('./src/serverBall.js');
 var ServerGameController = require('./src/serverGameController.js');
 
@@ -78,7 +78,7 @@ function onGameLoopTick() {
   socket.sockets.emit("server moves ball", ball.getCoordinates());
   socket.sockets.emit("server updates scores", gameController.getPlayerScores());
   if (gameController.winner){
-  socket.sockets.emit("game won", {winner: gameController.winner});
+    socket.sockets.emit("game won", {winner: gameController.winner});
   }
 }
 
@@ -106,11 +106,20 @@ function endGame() {
   }
 }
 
+function playAgain() {
+  var playerToReset = playerById(this.id);
+  playerToReset.reset();
+  if (gameController.player1.isReady && gameController.player2.isReady) {
+    startGame();
+  }
+};
+
 function onSocketConnection(client) {
    util.log("New player has connected: "+ client.id);
    client.on("player sign in", updatePlayerName);
    client.on("client moves player", onMovePlayer);
-   client.on('disconnect', onClientDisconnect)
+   client.on('disconnect', onClientDisconnect);
+   client.on('play again', playAgain);
    addNewPlayerToGame(client.id);
 }
 

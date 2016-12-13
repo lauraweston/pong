@@ -68,12 +68,21 @@
 	var waiting = document.getElementById('waiting');
 	var disconnect = document.getElementById('disconnect');
 	var winner = document.getElementById('winner');
+	var playAgain = document.getElementById('playAgain');
 
 	signInForm.onsubmit = function(event){
 	  event.preventDefault();
 	  waiting.style.display = 'inline';
 	  signInForm.style.display = 'none';
 	  socket.emit('player sign in', {playerName: newPlayerName.value});
+	}
+
+	playAgain.onclick = function() {
+	  socket.emit("play again");
+	  waiting.style.display = 'inline';
+	  winner.style.display = 'none';
+	  playAgain.style.display = 'none';
+	  canvas.style.display = 'none';
 	}
 
 	function onSocketConnected() {
@@ -125,6 +134,7 @@
 	  textHolder.innerHTML = data.winner.name + " wins!";
 	  winner.appendChild(textHolder)
 	  winner.style.display = 'inline';
+	  playAgain.style.display = 'inline';
 	}
 
 	function myId() {
@@ -133,8 +143,10 @@
 
 	function startGame(gameData){
 	  console.log("Starting game:");
+	  canvas.style.display = 'block';
 	  waiting.style.display = 'none';
 	  disconnect.style.display = 'none';
+	  winner.innerHTML = "";
 	  winner.style.display = 'none';
 	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
@@ -217,8 +229,6 @@
 
 	  GameController.prototype.drawGame = function(){
 	    this.gameBox.draw();
-	    console.log('ball in gameController')
-	    console.log(this.ball);
 	    this.ball.draw();
 	    this.localPlayer.draw();
 	    this.opponent.draw();
@@ -281,13 +291,11 @@
 	};
 
 	Ball.prototype.draw = function(){
-	  console.log('ball is being drawn');
 	  this.context.beginPath();
 	  this.context.arc(this.x, this.y, 7, 0, Math.PI*2, true)
 	  this.context.fillStyle = "white";
 	  this.context.closePath();
 	  this.context.fill();
-	  console.log('ball is still being drawn');
 	};
 
 	Ball.prototype.setCoordinates = function (ballCoordinates) {

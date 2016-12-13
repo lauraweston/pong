@@ -1,7 +1,7 @@
-var Paddle = require('../src/remotePaddle.js');
+var Paddle = require('../src/serverPaddle.js');
 
 
-describe('remotePaddle', function() {
+describe('serverPaddle', function() {
   var paddle;
 
   beforeEach(function() {
@@ -20,4 +20,6 @@ describe('remotePaddle', function() {
   it("gets x coordinates of paddle", function() {
     expect(paddle.getX()).toEqual(570);
   });
+
+  
 });

@@ -15,6 +15,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
 };
 
   ServerGameController.prototype.startGameLoop = function() {
+    this.resetPlayerReadyState();
     var self = this;
     var gameLoopTick = function() {
       if (!self.isGameEnded){
@@ -27,6 +28,11 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
     };
     gameLoopTick();
   }//this is untested
+
+  ServerGameController.prototype.resetPlayerReadyState = function() {
+    this.player1.setPlayStatus(false);
+    this.player2.setPlayStatus(false);
+  };
 
   ServerGameController.prototype.endGameLoop = function() {
     this.isGameEnded = true;
@@ -81,7 +87,5 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
      this.isGameEnded = true;
     }
   };
-
-
 
   module.exports = ServerGameController;
