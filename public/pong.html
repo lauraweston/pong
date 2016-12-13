@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>Pong</title>
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <link href="css/pong.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
   </head>
   <body>
@@ -17,8 +19,8 @@
     <div id="waiting" style="display: none;">
       <h2>Waiting for opponent</h2>
     </div>
-    <div id="winner" type="button" style="display: none;"></div>
-    <button id="playAgain" style="display: none;">Play again!</button>
+    <div id="winner" style="display: none;"></div>
+    <button id="playAgain" type="button" style="display: none;">Play again!</button>
     <canvas id="canvas" width="600" height="400"></canvas>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="bundle.js"></script>

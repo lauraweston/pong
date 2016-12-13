@@ -146,6 +146,7 @@
 	  canvas.style.display = 'block';
 	  waiting.style.display = 'none';
 	  disconnect.style.display = 'none';
+	  winner.innerHTML = "";
 	  winner.style.display = 'none';
 	  for(var i = 0; i < gameData.players.length; i++) {
 	    var player = gameData.players[i];
