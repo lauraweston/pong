@@ -21,7 +21,7 @@ SocketEventListener.prototype.onSocketConnection = function(socket) {
   gameController.addNewPlayerToGame(socket.id);
 
   socket.on("player sign in", function(data) {
-    gameController.updatePlayerName(data, socket);
+    gameController.updatePlayerName(data, socket.id);
   });
 
   socket.on("client moves player", function(data) {
@@ -29,7 +29,7 @@ SocketEventListener.prototype.onSocketConnection = function(socket) {
   });
 
   socket.on('play again', function() {
-    gameController.playAgain(socket);
+    gameController.playAgain(socket.id);
   });
 
   socket.on('disconnect', function() {

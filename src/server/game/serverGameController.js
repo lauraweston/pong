@@ -30,8 +30,8 @@ ServerGameController.prototype.addNewPlayerToGame = function(newPlayerId) {
   }
 };
 
-ServerGameController.prototype.updatePlayerName = function(data, client){
-  var playerToBeUpdated = this.playerById(client.id);
+ServerGameController.prototype.updatePlayerName = function(data, playerId){
+  var playerToBeUpdated = this.playerById(playerId);
   playerToBeUpdated.setName(data.playerName);
   if (this.player1 && this.player2 && (this.player1.name.length > 0 ) && (this.player2.name.length > 0) && this.player1.isReady && this.player2.isReady) {
     console.log("Starting game");
@@ -107,8 +107,8 @@ ServerGameController.prototype.removePlayer = function(playerId){
   this.endGameLoop();
 };
 
-ServerGameController.prototype.playAgain = function(client) {
-  var playerToReset = this.playerById(client.id);
+ServerGameController.prototype.playAgain = function(playerId) {
+  var playerToReset = this.playerById(playerId);
   playerToReset.reset();
   if (this.player1 && this.player2 && this.player1.isReady && this.player2.isReady) {
     this.startGame();
