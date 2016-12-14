@@ -27,9 +27,8 @@ ServerGameController.prototype.addNewPlayerToGame = function(newPlayerId) {
   }
 };
 
-ServerGameController.prototype.updatePlayerName = function(data){
-  //TODO: 'this.id' should be the client socket - needs changing
-  var playerToBeUpdated = this.playerById(this.id);
+ServerGameController.prototype.updatePlayerName = function(data, client){
+  var playerToBeUpdated = this.playerById(client.id);
   playerToBeUpdated.setName(data.playerName);
   if (this.player1 && this.player2 && (this.player1.name.length > 0 ) && (this.player2.name.length > 0) && this.player1.isReady && this.player2.isReady) {
     console.log("Starting game");
@@ -90,22 +89,21 @@ ServerGameController.prototype.endGameLoop = function() {
   this.isGameEnded = true;
 };
 
-ServerGameController.prototype.onClientDisconnect = function(){
-  //TODO: 'this.id' should be the client socket - needs changing
-  util.log("Player has disconnected: " + this.id);
-  var disconnectedPlayer = this.playerById(this.id);
+ServerGameController.prototype.onClientDisconnect = function(client){
+  util.log("Player has disconnected: " + client.id);
+  var disconnectedPlayer = this.playerById(client.id);
   if (disconnectedPlayer === this.player1) {
     this.player1 = undefined;
   } else {
     this.player2 = undefined;
   }
-  this.broadcast.emit("remove player");
+  //TODO: move to socketEventEmitter
+  client.broadcast.emit("remove player");
   this.endGameLoop();
 };
 
-ServerGameController.prototype.playAgain = function() {
-  //TODO: 'this.id' should be the client socket - needs changing
-  var playerToReset = this.playerById(this.id);
+ServerGameController.prototype.playAgain = function(client) {
+  var playerToReset = this.playerById(client.id);
   playerToReset.reset();
   if (this.player1 && this.player2 && this.player1.isReady && this.player2.isReady) {
     this.startGame();
@@ -117,12 +115,11 @@ ServerGameController.prototype.resetPlayerReadyState = function() {
   this.player2.setPlayStatus(false);
 };
 
-ServerGameController.prototype.movePlayer = function(data) {
-  //TODO: 'this.id' should be the client socket - needs changing
-  var movePlayer = this.playerById(this.id);
+ServerGameController.prototype.movePlayer = function(data, client) {
+  var movePlayer = this.playerById(client.id);
   movePlayer.paddle.setY(data.y);
-  //TODO: move to socketEventEmitter; 'this' should be the client socket
-  this.broadcast.emit("server moves player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
+  //TODO: move to socketEventEmitter
+  client.broadcast.emit("server moves player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
 };
 
 ServerGameController.prototype.update = function(){

@@ -18,16 +18,20 @@ SocketEventListener.prototype.onSocketConnection = function(client) {
    client.on('disconnect', this.onClientDisconnect);
 };
 
-SocketEventListener.prototype.onSignIn = function(data) {
+SocketEventListener.prototype.onSignIn = function(data, this) {
   this.gameController.updatePlayerName(data);
 };
-SocketEventListener.prototype.onMovePlayer = function(data) {
+
+SocketEventListener.prototype.onMovePlayer = function(data, this) {
   this.gameController.movePlayer(data);
 };
-SocketEventListener.prototype.onPlayAgain = function() {
+
+SocketEventListener.prototype.onPlayAgain = function(this) {
   this.gameController.playAgain();
 };
-SocketEventListener.prototype.onClientDisconnect = function() {
+
+SocketEventListener.prototype.onClientDisconnect = function(this) {
   this.gameController.onClientDisconnect();
 };
+
 module.exports = SocketEventListener;
