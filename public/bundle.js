@@ -72,6 +72,8 @@
 	var winner = document.getElementById('winner');
 	var playAgain = document.getElementById('playAgain');
 	var view;
+	var gameStatus = document.getElementById('countdown');
+
 
 	(function init(){
 	  view = new View();
@@ -144,10 +146,7 @@
 
 	function removePlayer(){
 	  gameController.endGame();
-	  disconnect.style.display = "inline";
-	  winner.style.display = 'none';
-	  gameStart = document.getElementById('countdown');
-	  gameStart.innerHTML = "Game Over!"
+	  view.removePlayerView();
 	}
 
 	function myId() {
@@ -155,15 +154,14 @@
 	}
 
 	function countdown() {
-	  var gameStart = document.getElementById('countdown');
-	  setTimeout(function() {gameStart.innerHTML="4"}, 1000);
-	  setTimeout(function() {gameStart.innerHTML="3"}, 2000);
-	  setTimeout(function() {gameStart.innerHTML="2"}, 3000);
-	  setTimeout(function() {gameStart.innerHTML="1"}, 4000);
+	  setTimeout(function() {gameStatus.innerHTML="4"}, 1000);
+	  setTimeout(function() {gameStatus.innerHTML="3"}, 2000);
+	  setTimeout(function() {gameStatus.innerHTML="2"}, 3000);
+	  setTimeout(function() {gameStatus.innerHTML="1"}, 4000);
 	  setTimeout(function() {
 	    audio.pause();
-	    gameStart = document.getElementById('countdown');
-	    gameStart.innerHTML = "Play!";
+	    gameStatus = document.getElementById('countdown');
+	    gameStatus.innerHTML = "Play!";
 	    animate(gameLoop);
 	    return;
 	  }, 5000);
@@ -203,18 +201,13 @@
 
 	signInForm.onsubmit = function(event){
 	  event.preventDefault();
-	  waiting.style.display = 'inline';
-	  signInForm.style.display = 'none';
+	  view.afterSignInFormView();
 	  socket.emit('player sign in', {playerName: newPlayerName.value});
 	}
 
 	playAgain.onclick = function() {
 	  socket.emit("play again");
-	  disconnect.style.display = 'none';
-	  waiting.style.display = 'inline';
-	  winner.style.display = 'none';
-	  playAgain.style.display = 'none';
-	  canvas.style.display = 'none';
+	  view.afterPlayAgain();
 	}
 
 	function getUrl() {
@@ -235,8 +228,7 @@
 	  this.winner = document.getElementById('winner');
 	  this.playAgain = document.getElementById('playAgain');
 	  this.canvas = document.getElementById("canvas");
-	  this.winnerHolder = document.getElementById("winnerHolder");
-	  this.gameStart = document.getElementById('countdown');
+	  this.gameStatus = document.getElementById('countdown');
 	}
 
 	View.prototype.startGameView = function() {
@@ -249,10 +241,38 @@
 	}
 
 	View.prototype.declareWinnerView = function(winner) {
-	  this.winnerHolder.innerHTML = winner + " wins!"
+	  this.winner.innerHTML = winner + " wins!"
 	  this._showWinner();
 	  this._showPlayAgain();
-	  this.gameStart.innerHTML = "Game Over!";
+	  this._setGameStatusToOver();
+	}
+
+	View.prototype.removePlayerView = function() {
+	  this._showDisconnect();
+	  this._hideWinner();
+	  this._showPlayAgain();
+	  this._setGameStatusToOver();
+	}
+
+	View.prototype.afterSignInFormView = function(){
+	  this._showWaiting();
+	  this._hideSignInForm();
+	}
+
+	View.prototype.afterPlayAgain = function(){
+	  this._hideDisconnect();
+	  this._showWaiting();
+	  this._hideWinner();
+	  this._hidePlayAgain();
+	  this._hideCanvas();
+	}
+
+	View._setGameStatusToOver = function(){
+	 this.gameStatus.innerHTML = "Game Over!";
+	 }
+
+	View._setGameStatusToCountdown = function(){
+	  //to complete laters
 	}
 
 	View.prototype._showHeading = function() {

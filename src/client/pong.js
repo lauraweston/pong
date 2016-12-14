@@ -26,6 +26,8 @@ var disconnect = document.getElementById('disconnect');
 var winner = document.getElementById('winner');
 var playAgain = document.getElementById('playAgain');
 var view;
+var gameStatus = document.getElementById('countdown');
+
 
 (function init(){
   view = new View();
@@ -98,10 +100,7 @@ function onSocketDisconnect() {
 
 function removePlayer(){
   gameController.endGame();
-  disconnect.style.display = "inline";
-  winner.style.display = 'none';
-  gameStart = document.getElementById('countdown');
-  gameStart.innerHTML = "Game Over!"
+  view.removePlayerView();
 }
 
 function myId() {
@@ -109,15 +108,14 @@ function myId() {
 }
 
 function countdown() {
-  var gameStart = document.getElementById('countdown');
-  setTimeout(function() {gameStart.innerHTML="4"}, 1000);
-  setTimeout(function() {gameStart.innerHTML="3"}, 2000);
-  setTimeout(function() {gameStart.innerHTML="2"}, 3000);
-  setTimeout(function() {gameStart.innerHTML="1"}, 4000);
+  setTimeout(function() {gameStatus.innerHTML="4"}, 1000);
+  setTimeout(function() {gameStatus.innerHTML="3"}, 2000);
+  setTimeout(function() {gameStatus.innerHTML="2"}, 3000);
+  setTimeout(function() {gameStatus.innerHTML="1"}, 4000);
   setTimeout(function() {
     audio.pause();
-    gameStart = document.getElementById('countdown');
-    gameStart.innerHTML = "Play!";
+    gameStatus = document.getElementById('countdown');
+    gameStatus.innerHTML = "Play!";
     animate(gameLoop);
     return;
   }, 5000);
@@ -157,18 +155,13 @@ function checkForPaddleMove(){
 
 signInForm.onsubmit = function(event){
   event.preventDefault();
-  waiting.style.display = 'inline';
-  signInForm.style.display = 'none';
+  view.afterSignInFormView();
   socket.emit('player sign in', {playerName: newPlayerName.value});
 }
 
 playAgain.onclick = function() {
   socket.emit("play again");
-  disconnect.style.display = 'none';
-  waiting.style.display = 'inline';
-  winner.style.display = 'none';
-  playAgain.style.display = 'none';
-  canvas.style.display = 'none';
+  view.afterPlayAgain();
 }
 
 function getUrl() {
