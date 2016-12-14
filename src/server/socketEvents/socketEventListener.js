@@ -1,5 +1,3 @@
-var util = require('util');
-
 function SocketEventListener(io, gameController) {
   this.io = io;
   this.gameController = gameController;
@@ -16,15 +14,15 @@ SocketEventListener.prototype.onSocketConnection = function(socket) {
   var io = this.io;
   var gameController = this.gameController;
 
-  util.log("New player has connected: " + socket.id);
+  console.log('New player has connected: ' + socket.id);
 
   gameController.addNewPlayerToGame(socket.id);
 
-  socket.on("player sign in", function(data) {
+  socket.on('player sign in', function(data) {
     gameController.updatePlayerName(data, socket.id);
   });
 
-  socket.on("client moves player", function(data) {
+  socket.on('client moves player', function(data) {
     gameController.movePlayer(data, socket.id);
   });
 

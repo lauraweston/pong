@@ -1,5 +1,4 @@
-var util = require('util');
-var Ball = require('./serverBall.js');
+var Ball = require("./serverBall.js");
 var Player = require("./serverPlayer.js");
 var Paddle = require("./serverPaddle.js");
 
@@ -20,7 +19,7 @@ var ServerGameController = function(socketEventEmitter){
 
 ServerGameController.prototype.addNewPlayerToGame = function(newPlayerId) {
   if (this.player1 && this.player2) {
-    console.log('Already 2 players in game so exiting');
+    console.log("Already 2 players in game so exiting");
     return;
   }
   if (!this.player1) {
@@ -82,7 +81,6 @@ ServerGameController.prototype.startGameLoop = function() {
   gameLoop();
 };//TODO: this is untested
 
-//TODO: extract & needs access to io
 ServerGameController.prototype.emitEvents = function() {
   this.eventEmitter.emitServerMoveBallEvent(this.ball.getCoordinates());
   this.eventEmitter.emitServerUpdateScoreEvent(this.getPlayerScores());
@@ -95,7 +93,7 @@ ServerGameController.prototype.endGameLoop = function() {
 };
 
 ServerGameController.prototype.removePlayer = function(playerId){
-  util.log("Player has disconnected: " + playerId);
+  console.log("Player has disconnected: " + playerId);
   var disconnectedPlayer = this.playerById(playerId);
   var remainingPlayer = this.getOpponent(playerId);
   if (disconnectedPlayer === this.player1) {
