@@ -44,14 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var GameController = __webpack_require__(1);
-	var GameBox = __webpack_require__(2);
-	var Ball = __webpack_require__(3);
-	var Player = __webpack_require__(4);
-	var Paddle = __webpack_require__(5);
-	var keydown = __webpack_require__(6);
-	var animate = __webpack_require__(7);
-	__webpack_require__(8);
+	var helper = __webpack_require__(1);
 	var socket;
 	var localPlayer;
 	var opponent;
@@ -62,7 +55,6 @@
 	var gameController;
 	var gameEnded = false;
 	var audio = new Audio("pongSound.mp3");
-
 	var pong = document.getElementById('pong');
 	var signInForm = document.getElementById('signIn');
 	var newPlayerName = document.getElementById('playerName');
@@ -185,15 +177,6 @@
 	      animate(gameLoop);
 	      return;
 	    }, 5000);
-
-
-	    // for(i = 5; i < 1; i--;){
-	    //   (setTimeout(function(){
-	    //     gameStart.innerHTML = i;
-	    //   },1000)()
-	    // }
-	    //check out self-calling functions as I think this needs to be one
-
 	  }
 
 
@@ -276,6 +259,23 @@
 
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	function Helper(){
+	var GameController = __webpack_require__(2);
+	var GameBox = __webpack_require__(3);
+	var Ball = __webpack_require__(4);
+	var Player = __webpack_require__(5);
+	var Paddle = __webpack_require__(6);
+	var keydown = __webpack_require__(7);
+	var animate = __webpack_require__(8);
+	__webpack_require__(9);
+	};
+	module.exports = Helper;
+
+
+/***/ },
+/* 2 */
 /***/ function(module, exports) {
 
 	var GameController = function(ball, gamebox, localPlayer, opponent){
@@ -320,7 +320,7 @@
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	function GameBox(context){
@@ -349,7 +349,7 @@
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	var Ball = function(context){
@@ -373,7 +373,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	function Player (paddle, context, name) {
@@ -403,7 +403,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	function Paddle(x, y, context) {
@@ -453,7 +453,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	 window.keydown = {};
@@ -475,7 +475,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	var animate = window.requestAnimationFrame ||
@@ -487,7 +487,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	/*

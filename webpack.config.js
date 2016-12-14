@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './public/js/pong.js',
+  entry: './src/client/pong.js',
   output: {
     path: __dirname + '/public',
     filename: 'bundle.js'
