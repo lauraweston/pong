@@ -90,7 +90,6 @@ ServerGameController.prototype.endGameLoop = function() {
   this.isGameEnded = true;
 };
 
-
 ServerGameController.prototype.onClientDisconnect = function(){
   //TODO: 'this.id' should be the client socket - needs changing
   util.log("Player has disconnected: " + this.id);
