@@ -48,7 +48,7 @@ function onSocketConnected() {
 }
 
 function onSocketDisconnect() {
-	console.log("Disconnected from socket server");
+  console.log("Disconnected from socket server");
 }
 
 function onServerMovePlayer(data) {
@@ -66,12 +66,12 @@ function onServerUpdatesScores(data) {
 }
 
 function setEventHandlers() {
-	// Socket connection successful
-	socket.on("connect", onSocketConnected);
-	// Socket disconnection
-	socket.on("disconnect", onSocketDisconnect);
-	// Player move message received
-	socket.on("server moves player", onServerMovePlayer);
+  // Socket connection successful
+  socket.on("connect", onSocketConnected);
+  // Socket disconnection
+  socket.on("disconnect", onSocketDisconnect);
+  // Player move message received
+  socket.on("server moves player", onServerMovePlayer);
   socket.on("server moves ball", onServerMovesBall);
   socket.on("server updates scores", onServerUpdatesScores);
   socket.on("start game", startGame);
@@ -89,6 +89,7 @@ function removePlayer(){
   gameStart.innerHTML = "Game Over!"
 }
 
+<<<<<<< dada827d4d7064be286c0fafeacd6cce3f2c8a7a
 function declareWinner(data){
   if(gameController) {
     gameController.endGame();
@@ -110,89 +111,121 @@ function countdown(){
   seconds = parseInt(seconds, 10);
   if (seconds == 1) {
     audio.pause();
+=======
+  function declareWinner(data){
+    gameController.endGame();
+    var textHolder = document.createElement("h2")
+    textHolder.innerHTML = data.winner.name + " wins!";
+    winner.appendChild(textHolder)
+    winner.style.display = 'inline';
+    playAgain.style.display = 'inline';
+>>>>>>> really nasty hacky way of getting countdown to countdown from 5 but it works
     gameStart = document.getElementById('countdown');
-    gameStart.innerHTML = "Play!";
-    animate(gameLoop);
-    return;
+    gameStart.innerHTML = "Game Over!";
+  }
+
+  function myId() {
+    return socket.io.engine.id;
+  }
+
+  function countdown() {
+
+    var gameStart = document.getElementById('countdown');
+    setTimeout(function() {gameStart.innerHTML="4"}, 1000);
+    setTimeout(function() {gameStart.innerHTML="3"}, 2000);
+    setTimeout(function() {gameStart.innerHTML="2"}, 3000);
+    setTimeout(function() {gameStart.innerHTML="1"}, 4000);
+    setTimeout(function() {
+      audio.pause();
+      gameStart = document.getElementById('countdown');
+      gameStart.innerHTML = "Play!";
+      animate(gameLoop);
+      return;
+    }, 5000);
+
+
+    // for(i = 5; i < 1; i--;){
+    //   (setTimeout(function(){
+    //     gameStart.innerHTML = i;
+    //   },1000)()
+    // }
+    //check out self-calling functions as I think this needs to be one
+
+  }
+
+
+    function startGame(gameData){
+      pong.style.display = 'none'
+      countdown();
+      console.log("Starting game:");
+      canvas.style.display = 'inline';
+      waiting.style.display = 'none';
+      disconnect.style.display = 'none';
+      winner.innerHTML = "";
+      winner.style.display = 'none';
+      for(var i = 0; i < gameData.players.length; i++) {
+        var player = gameData.players[i];
+        var paddle = new Paddle(player.x, player.y, context);
+        if (player.id === myId()) {
+          localPlayer = new Player(paddle, context, player.name);
+          localPlayer.id = myId();
+        } else {
+          opponent = new Player(paddle, context, player.name);
+          opponent.id = player.id;
+        }
+      }
+      localBall = new Ball(context);
+      localBall.setCoordinates(gameData.ballCoordinates);
+      gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+      gameController.resetGame();
+      draw();
     }
-  seconds--;
-  var gameStart = document.getElementById('countdown');
-  gameStart.innerHTML = seconds;
-  timeout = setTimeout(countdown, 500);
-}
 
-function startGame(gameData){
-  pong.style.display = 'none'
-  countdown();
-  console.log("Starting game:");
-  canvas.style.display = 'inline';
-  waiting.style.display = 'none';
-  disconnect.style.display = 'none';
-  winner.innerHTML = "";
-  winner.style.display = 'none';
-  for(var i = 0; i < gameData.players.length; i++) {
-    var player = gameData.players[i];
-    var paddle = new Paddle(player.x, player.y, context);
-    if (player.id === myId()) {
-      localPlayer = new Player(paddle, context, player.name);
-      localPlayer.id = myId();
-    } else {
-      opponent = new Player(paddle, context, player.name);
-      opponent.id = player.id;
+    function gameLoop(){
+      checkForPaddleMove();
+      draw();
+      if (gameController.isGameEnded === false) {
+        animate(gameLoop);
+      }
     }
-  }
-  localBall = new Ball(context);
-  localBall.setCoordinates(gameData.ballCoordinates);
-  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
-  gameController.resetGame();
-  draw();
-}
 
-function gameLoop(){
-  checkForPaddleMove();
-  draw();
-  if (gameController.isGameEnded === false) {
-    animate(gameLoop);
-  }
-}
+    function draw(){
+      gameController.drawGame();
+    }
 
-function draw(){
-  gameController.drawGame();
-}
+    var lastPaddleMove = 0;
+    function checkForPaddleMove(){
+      var timeNow = new Date();
+      var timeSinceLastMove = timeNow - lastPaddleMove;
 
-var lastPaddleMove = 0;
-function checkForPaddleMove(){
-  var timeNow = new Date();
-  var timeSinceLastMove = timeNow - lastPaddleMove;
+      if (timeSinceLastMove < 15) {
+        return;
+      }
 
-  if (timeSinceLastMove < 15) {
-    return;
-  }
+      var paddleMoved = false;
+      if (keydown.down) {
+        localPlayer.paddle.moveDown();
+        paddleMoved = true;
+      } else if (keydown.up) {
+        localPlayer.paddle.moveUp();
+        paddleMoved = true;
+      }
 
-  var paddleMoved = false;
-  if (keydown.down) {
-    localPlayer.paddle.moveDown();
-    paddleMoved = true;
-  } else if (keydown.up) {
-    localPlayer.paddle.moveUp();
-    paddleMoved = true;
-  }
+      if (paddleMoved) {
+        socket.emit("client moves player", {y: localPlayer.paddle.getY()});
+        lastPaddleMove = timeNow;
+      }
+    }
 
-  if (paddleMoved) {
-    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
-    lastPaddleMove = timeNow;
-  }
-}
+    function getUrl() {
+      return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+    }
 
-function getUrl() {
-  return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
-}
-
-(function init(){
-  canvas = document.getElementById("canvas");
-  context = canvas.getContext('2d');
-  gameBox = new GameBox(context);
-  socket = io.connect(getUrl());
-  audio.play();
-  setEventHandlers();
-})();
+    (function init(){
+      canvas = document.getElementById("canvas");
+      context = canvas.getContext('2d');
+      gameBox = new GameBox(context);
+      socket = io.connect(getUrl());
+      audio.play();
+      setEventHandlers();
+    })();
