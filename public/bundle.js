@@ -277,13 +277,15 @@
 	 }
 
 	View.prototype.setGameStatusToCountdown = function(){
-	  var self = this;
-	  setTimeout(function() {self.gameStatus.innerHTML="5"}, 1000);
-	  setTimeout(function() {self.gameStatus.innerHTML="4"}, 2000);
-	  setTimeout(function() {self.gameStatus.innerHTML="3"}, 3000);
-	  setTimeout(function() {self.gameStatus.innerHTML="2"}, 4000);
-	  setTimeout(function() {self.gameStatus.innerHTML="1"}, 5000);
+	  for(var i = 5; i > 0; i--){
+	    this._setDelay(i);
+	  }
 	}
+	  View.prototype._setDelay = function(i) {
+	    self = this;
+	    setTimeout(function() {self.gameStatus.innerHTML=i; console.log('hi')},(5000-((i-1)*1000)));
+	  }
+
 
 	View.prototype.setGameStatusToPlay = function() {
 	  this.gameStatus.innerHTML = "Play!";
