@@ -7,8 +7,7 @@ function View() {
   this.winner = document.getElementById('winner');
   this.playAgain = document.getElementById('playAgain');
   this.canvas = document.getElementById("canvas");
-  this.winnerHolder = document.getElementById("winnerHolder");
-  this.gameStart = document.getElementById('countdown');
+  this.gameStatus = document.getElementById('countdown');
 }
 
 View.prototype.startGameView = function() {
@@ -21,10 +20,38 @@ View.prototype.startGameView = function() {
 }
 
 View.prototype.declareWinnerView = function(winner) {
-  this.winnerHolder.innerHTML = winner + " wins!"
+  this.winner.innerHTML = winner + " wins!"
   this._showWinner();
   this._showPlayAgain();
-  this.gameStart.innerHTML = "Game Over!";
+  this._setGameStatusToOver();
+}
+
+View.prototype.removePlayerView = function() {
+  this._showDisconnect();
+  this._hideWinner();
+  this._showPlayAgain();
+  this._setGameStatusToOver();
+}
+
+View.prototype.afterSignInFormView = function(){
+  this._showWaiting();
+  this._hideSignInForm();
+}
+
+View.prototype.afterPlayAgain = function(){
+  this._hideDisconnect();
+  this._showWaiting();
+  this._hideWinner();
+  this._hidePlayAgain();
+  this._hideCanvas();
+}
+
+View._setGameStatusToOver = function(){
+ this.gameStatus.innerHTML = "Game Over!";
+ }
+
+View._setGameStatusToCountdown = function(){
+  //to complete laters
 }
 
 View.prototype._showHeading = function() {
