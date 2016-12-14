@@ -1,3 +1,5 @@
+var View = require('./view.js');
+
 var GameController = require('./gameController.js');
 var GameBox = require('./gameBox.js');
 var Ball = require('./ball.js');
@@ -11,7 +13,6 @@ var localPlayer;
 var opponent;
 var localBall;
 var context;
-var canvas;
 var gameBox;
 var gameController;
 var gameEnded = false;
@@ -24,10 +25,11 @@ var waiting = document.getElementById('waiting');
 var disconnect = document.getElementById('disconnect');
 var winner = document.getElementById('winner');
 var playAgain = document.getElementById('playAgain');
+var view;
 
 (function init(){
-  canvas = document.getElementById("canvas");
-  context = canvas.getContext('2d');
+  view = new View();
+  context = view.canvas.getContext('2d');
   gameBox = new GameBox(context);
   socket = io.connect(getUrl());
   audio.play();
@@ -50,12 +52,7 @@ function onSocketConnected() {
 }
 
 function startGame(gameData){
-  pong.style.display = 'none'
-  canvas.style.display = 'inline';
-  waiting.style.display = 'none';
-  disconnect.style.display = 'none';
-  winner.innerHTML = "";
-  winner.style.display = 'none';
+  view.startGameView();
   for(var i = 0; i < gameData.players.length; i++) {
     var player = gameData.players[i];
     var paddle = new Paddle(player.x, player.y, context);
@@ -92,13 +89,7 @@ function onServerUpdatesScores(data) {
 
 function declareWinner(data){
   gameController.endGame();
-  var textHolder = document.createElement("h2")
-  textHolder.innerHTML = data.winner.name + " wins!";
-  winner.appendChild(textHolder)
-  winner.style.display = 'inline';
-  playAgain.style.display = 'inline';
-  gameStart = document.getElementById('countdown');
-  gameStart.innerHTML = "Game Over!";
+  view.declareWinnerView(data.winner.name);
 }
 
 function onSocketDisconnect() {

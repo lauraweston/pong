@@ -44,16 +44,25 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var helper = __webpack_require__(1);
+	var View = __webpack_require__(1);
+
+	var GameController = __webpack_require__(2);
+	var GameBox = __webpack_require__(3);
+	var Ball = __webpack_require__(4);
+	var Player = __webpack_require__(5);
+	var Paddle = __webpack_require__(6);
+	var keydown = __webpack_require__(7);
+	var animate = __webpack_require__(8);
+	__webpack_require__(9);
 	var socket;
 	var localPlayer;
 	var opponent;
 	var localBall;
 	var context;
-	var canvas;
 	var gameBox;
 	var gameController;
 	var gameEnded = false;
+	var lastPaddleMove = 0;
 	var audio = new Audio("pongSound.mp3");
 	var pong = document.getElementById('pong');
 	var signInForm = document.getElementById('signIn');
@@ -62,7 +71,135 @@
 	var disconnect = document.getElementById('disconnect');
 	var winner = document.getElementById('winner');
 	var playAgain = document.getElementById('playAgain');
-	var seconds = document.getElementById('countdown').innerHTML;
+	var view;
+
+	(function init(){
+	  view = new View();
+	  context = view.canvas.getContext('2d');
+	  gameBox = new GameBox(context);
+	  socket = io.connect(getUrl());
+	  audio.play();
+	  setEventHandlers();
+	})();
+
+	function setEventHandlers() {
+	  socket.on("connect", onSocketConnected);
+	  socket.on("start game", startGame);
+	  socket.on("server moves ball", onServerMovesBall);
+	  socket.on("server moves player", onServerMovePlayer);
+	  socket.on("server updates scores", onServerUpdatesScores);
+	  socket.on("game won", declareWinner);
+	  socket.on("disconnect", onSocketDisconnect);
+	  socket.on("remove player", removePlayer);
+	}
+
+	function onSocketConnected() {
+	  console.log("Connected to socket server");
+	}
+
+	function startGame(gameData){
+	  view.startGameView();
+	  for(var i = 0; i < gameData.players.length; i++) {
+	    var player = gameData.players[i];
+	    var paddle = new Paddle(player.x, player.y, context);
+	    if (player.id === myId()) {
+	      localPlayer = new Player(paddle, context, player.name);
+	      localPlayer.id = myId();
+	    } else {
+	      opponent = new Player(paddle, context, player.name);
+	      opponent.id = player.id;
+	    }
+	  }
+	  localBall = new Ball(context);
+	  localBall.setCoordinates(gameData.ballCoordinates);
+	  gameController = new GameController(localBall, gameBox, localPlayer, opponent);
+	  gameController.resetGame();
+	  countdown();
+	  draw();
+	}
+
+
+	function onServerMovesBall(data) {
+	  localBall.setCoordinates(data);
+	}
+
+	function onServerMovePlayer(data) {
+	  if (data.id === opponent.id) {
+	    opponent.paddle.setY(data.y);
+	  }
+	}
+
+	function onServerUpdatesScores(data) {
+	  gameController.setScores(data);
+	}
+
+	function declareWinner(data){
+	  gameController.endGame();
+	  view.declareWinnerView(data.winner.name);
+	}
+
+	function onSocketDisconnect() {
+	  console.log("Disconnected from socket server");
+	}
+
+	function removePlayer(){
+	  gameController.endGame();
+	  disconnect.style.display = "inline";
+	  winner.style.display = 'none';
+	  gameStart = document.getElementById('countdown');
+	  gameStart.innerHTML = "Game Over!"
+	}
+
+	function myId() {
+	  return socket.io.engine.id;
+	}
+
+	function countdown() {
+	  var gameStart = document.getElementById('countdown');
+	  setTimeout(function() {gameStart.innerHTML="4"}, 1000);
+	  setTimeout(function() {gameStart.innerHTML="3"}, 2000);
+	  setTimeout(function() {gameStart.innerHTML="2"}, 3000);
+	  setTimeout(function() {gameStart.innerHTML="1"}, 4000);
+	  setTimeout(function() {
+	    audio.pause();
+	    gameStart = document.getElementById('countdown');
+	    gameStart.innerHTML = "Play!";
+	    animate(gameLoop);
+	    return;
+	  }, 5000);
+	}
+
+	function gameLoop(){
+	  checkForPaddleMove();
+	  draw();
+	  if (gameController.isGameEnded === false) {
+	    animate(gameLoop);
+	  }
+	}
+
+	function draw(){
+	  gameController.drawGame();
+	}
+
+	function checkForPaddleMove(){
+	  var timeNow = new Date();
+	  var timeSinceLastMove = timeNow - lastPaddleMove;
+	  if (timeSinceLastMove < 15) {
+	    return;
+	  }
+	  var paddleMoved = false;
+	  if (keydown.down) {
+	    localPlayer.paddle.moveDown();
+	    paddleMoved = true;
+	  } else if (keydown.up) {
+	    localPlayer.paddle.moveUp();
+	    paddleMoved = true;
+	  }
+	  if (paddleMoved) {
+	    socket.emit("client moves player", {y: localPlayer.paddle.getY()});
+	    lastPaddleMove = timeNow;
+	  }
+	}
 
 	signInForm.onsubmit = function(event){
 	  event.preventDefault();
@@ -80,198 +217,104 @@
 	  canvas.style.display = 'none';
 	}
 
-
-	function onSocketConnected() {
-	  ("Connected to socket server");
+	function getUrl() {
+	  return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
 	}
-
-	function onSocketDisconnect() {
-	  console.log("Disconnected from socket server");
-	}
-
-	function onServerMovePlayer(data) {
-	  if (data.id === opponent.id) {
-	    opponent.paddle.setY(data.y);
-	  }
-	}
-
-	function onServerMovesBall(data) {
-	  localBall.setCoordinates(data);
-	}
-
-	function onServerUpdatesScores(data) {
-	  gameController.setScores(data);
-	}
-
-	function setEventHandlers() {
-	  // Socket connection successful
-	  socket.on("connect", onSocketConnected);
-	  // Socket disconnection
-	  socket.on("disconnect", onSocketDisconnect);
-	  // Player move message received
-	  socket.on("server moves player", onServerMovePlayer);
-	  socket.on("server moves ball", onServerMovesBall);
-	  socket.on("server updates scores", onServerUpdatesScores);
-	  socket.on("start game", startGame);
-	  socket.on("remove player", removePlayer)
-	  socket.on("game won", declareWinner)
-	};
-
-	function removePlayer(){
-	  console.log("remove player from client");
-	  if(gameController) {
-	    gameController.endGame();
-	  }
-	  disconnect.style.display = "inline";
-	  winner.style.display = 'none';
-	  gameStart = document.getElementById('countdown');
-	  gameStart.innerHTML = "Game Over!"}
-
-	function declareWinner(data){
-	  if(gameController) {
-	    gameController.endGame();
-	  }
-	  var textHolder = document.createElement("h2")
-	  textHolder.innerHTML = data.winner.name + " wins!";
-	  winner.appendChild(textHolder)
-	  winner.style.display = 'inline';
-	  playAgain.style.display = 'inline';
-	  gameStart = document.getElementById('countdown');
-	  gameStart.innerHTML = "Game Over!";
-	}
-
-	function myId() {
-	  return socket.io.engine.id;
-	}
-
-	function countdown(){
-	  seconds = parseInt(seconds, 10);
-	  if (seconds == 1) {
-	    audio.pause();
-	  function declareWinner(data){
-	    gameController.endGame();
-	    var textHolder = document.createElement("h2")
-	    textHolder.innerHTML = data.winner.name + " wins!";
-	    winner.appendChild(textHolder)
-	    winner.style.display = 'inline';
-	    playAgain.style.display = 'inline';
-	    gameStart = document.getElementById('countdown');
-	    gameStart.innerHTML = "Game Over!";
-	  }
-
-	  function myId() {
-	    return socket.io.engine.id;
-	  }
-
-	  function countdown() {
-
-	    var gameStart = document.getElementById('countdown');
-	    setTimeout(function() {gameStart.innerHTML="4"}, 1000);
-	    setTimeout(function() {gameStart.innerHTML="3"}, 2000);
-	    setTimeout(function() {gameStart.innerHTML="2"}, 3000);
-	    setTimeout(function() {gameStart.innerHTML="1"}, 4000);
-	    setTimeout(function() {
-	      audio.pause();
-	      gameStart = document.getElementById('countdown');
-	      gameStart.innerHTML = "Play!";
-	      animate(gameLoop);
-	      return;
-	    }, 5000);
-	  }
-
-
-	    function startGame(gameData){
-	      pong.style.display = 'none'
-	      countdown();
-	      console.log("Starting game:");
-	      canvas.style.display = 'inline';
-	      waiting.style.display = 'none';
-	      disconnect.style.display = 'none';
-	      winner.innerHTML = "";
-	      winner.style.display = 'none';
-	      for(var i = 0; i < gameData.players.length; i++) {
-	        var player = gameData.players[i];
-	        var paddle = new Paddle(player.x, player.y, context);
-	        if (player.id === myId()) {
-	          localPlayer = new Player(paddle, context, player.name);
-	          localPlayer.id = myId();
-	        } else {
-	          opponent = new Player(paddle, context, player.name);
-	          opponent.id = player.id;
-	        }
-	      }
-	      localBall = new Ball(context);
-	      localBall.setCoordinates(gameData.ballCoordinates);
-	      gameController = new GameController(localBall, gameBox, localPlayer, opponent);
-	      gameController.resetGame();
-	      draw();
-	    }
-
-	    function gameLoop(){
-	      checkForPaddleMove();
-	      draw();
-	      if (gameController.isGameEnded === false) {
-	        animate(gameLoop);
-	      }
-	    }
-
-	    function draw(){
-	      gameController.drawGame();
-	    }
-
-	    var lastPaddleMove = 0;
-	    function checkForPaddleMove(){
-	      var timeNow = new Date();
-	      var timeSinceLastMove = timeNow - lastPaddleMove;
-
-	      if (timeSinceLastMove < 15) {
-	        return;
-	      }
-
-	      var paddleMoved = false;
-	      if (keydown.down) {
-	        localPlayer.paddle.moveDown();
-	        paddleMoved = true;
-	      } else if (keydown.up) {
-	        localPlayer.paddle.moveUp();
-	        paddleMoved = true;
-	      }
-
-	      if (paddleMoved) {
-	        socket.emit("client moves player", {y: localPlayer.paddle.getY()});
-	        lastPaddleMove = timeNow;
-	      }
-	    }
-
-	    function getUrl() {
-	      return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
-	    }
-
-	    (function init(){
-	      canvas = document.getElementById("canvas");
-	      context = canvas.getContext('2d');
-	      gameBox = new GameBox(context);
-	      socket = io.connect(getUrl());
-	      audio.play();
-	      setEventHandlers();
-	    })();
 
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	function Helper(){
-	var GameController = __webpack_require__(2);
-	var GameBox = __webpack_require__(3);
-	var Ball = __webpack_require__(4);
-	var Player = __webpack_require__(5);
-	var Paddle = __webpack_require__(6);
-	var keydown = __webpack_require__(7);
-	var animate = __webpack_require__(8);
-	__webpack_require__(9);
-	};
-	module.exports = Helper;
+	function View() {
+	  this.pong = document.getElementById('pong');
+	  this.signInForm = document.getElementById('signIn');
+	  this.newPlayerName = document.getElementById('playerName');
+	  this.waiting = document.getElementById('waiting');
+	  this.disconnect = document.getElementById('disconnect');
+	  this.winner = document.getElementById('winner');
+	  this.playAgain = document.getElementById('playAgain');
+	  this.canvas = document.getElementById("canvas");
+	  this.winnerHolder = document.getElementById("winnerHolder");
+	  this.gameStart = document.getElementById('countdown');
+	}
+
+	View.prototype.startGameView = function() {
+	  this._showCanvas();
+	  this._hideHeading();
+	  this._hideWaiting();
+	  this._hideDisconnect();
+	  this._hideWinner();
+	  this._wipeWinner();
+	}
+
+	View.prototype.declareWinnerView = function(winner) {
+	  this.winnerHolder.innerHTML = winner + " wins!"
+	  this._showWinner();
+	  this._showPlayAgain();
+	  this.gameStart.innerHTML = "Game Over!";
+	}
+
+	View.prototype._showHeading = function() {
+	  this.pong.style.display = 'inline';
+	}
+
+	View.prototype._hideHeading = function() {
+	  this.pong.style.display = 'none';
+	}
+
+	View.prototype._showSignInForm = function() {
+	  this.signInForm.style.display = 'inline';
+	}
+
+	View.prototype._hideSignInForm = function() {
+	  this.signInForm.style.display = 'none';
+	}
+
+	View.prototype._showWaiting = function() {
+	  this.waiting.style.display = 'inline';
+	}
+
+	View.prototype._hideWaiting = function() {
+	  this.waiting.style.display = 'none';
+	}
+
+	View.prototype._showDisconnect = function() {
+	  this.disconnect.style.display = 'inline';
+	}
+
+	View.prototype._hideDisconnect = function() {
+	  this.disconnect.style.display = 'none';
+	}
+
+	View.prototype._showWinner = function() {
+	  this.winner.style.display = 'inline';
+	}
+
+	View.prototype._hideWinner = function() {
+	  this.winner.style.display = 'none';
+	}
+
+	View.prototype._wipeWinner = function() {
+	  this.winner.innerHTML = "";
+	}
+
+	View.prototype._showPlayAgain = function() {
+	  this.playAgain.style.display = 'inline';
+	}
+
+	View.prototype._hidePlayAgain = function() {
+	  this.playAgain.style.display = 'none';
+	}
+
+	View.prototype._hideCanvas = function() {
+	  this.canvas.style.display = 'none';
+	}
+	View.prototype._showCanvas = function() {
+	  this.canvas.style.display = 'inline';
+	}
+
+	module.exports = View;
 
 
 /***/ },
