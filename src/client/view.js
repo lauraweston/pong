@@ -47,14 +47,20 @@ View.prototype.afterPlayAgain = function(){
 }
 
 View.prototype._setGameStatusToOver = function(){
-  console.log(1);
  this.gameStatus.innerHTML = "Game Over!";
- console.log(2);
-
  }
 
-View.prototype._setGameStatusToCountdown = function(){
-  //to complete laters
+View.prototype.setGameStatusToCountdown = function(){
+  var self = this;
+  setTimeout(function() {self.gameStatus.innerHTML="5"}, 1000);
+  setTimeout(function() {self.gameStatus.innerHTML="4"}, 2000);
+  setTimeout(function() {self.gameStatus.innerHTML="3"}, 3000);
+  setTimeout(function() {self.gameStatus.innerHTML="2"}, 4000);
+  setTimeout(function() {self.gameStatus.innerHTML="1"}, 5000);
+}
+
+View.prototype.setGameStatusToPlay = function() {
+  this.gameStatus.innerHTML = "Play!";
 }
 
 View.prototype._showHeading = function() {

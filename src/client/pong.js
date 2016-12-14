@@ -18,15 +18,8 @@ var gameController;
 var gameEnded = false;
 var lastPaddleMove = 0;
 var audio = new Audio("pongSound.mp3");
-var pong = document.getElementById('pong');
-var signInForm = document.getElementById('signIn');
-var newPlayerName = document.getElementById('playerName');
-var waiting = document.getElementById('waiting');
-var disconnect = document.getElementById('disconnect');
-var winner = document.getElementById('winner');
-var playAgain = document.getElementById('playAgain');
 var view;
-var gameStatus = document.getElementById('countdown');
+
 
 
 (function init(){
@@ -108,17 +101,13 @@ function myId() {
 }
 
 function countdown() {
-  setTimeout(function() {gameStatus.innerHTML="4"}, 1000);
-  setTimeout(function() {gameStatus.innerHTML="3"}, 2000);
-  setTimeout(function() {gameStatus.innerHTML="2"}, 3000);
-  setTimeout(function() {gameStatus.innerHTML="1"}, 4000);
+  view.setGameStatusToCountdown();
   setTimeout(function() {
     audio.pause();
-    gameStatus = document.getElementById('countdown');
-    gameStatus.innerHTML = "Play!";
+    view.setGameStatusToPlay();
     animate(gameLoop);
     return;
-  }, 5000);
+  }, 6000);
 }
 
 function gameLoop(){
@@ -153,13 +142,13 @@ function checkForPaddleMove(){
   }
 }
 
-signInForm.onsubmit = function(event){
+view.signInForm.onsubmit = function(event){
   event.preventDefault();
   view.afterSignInFormView();
   socket.emit('player sign in', {playerName: newPlayerName.value});
 }
 
-playAgain.onclick = function() {
+view.playAgain.onclick = function() {
   socket.emit("play again");
   view.afterPlayAgain();
 }
