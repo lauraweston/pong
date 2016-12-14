@@ -103,7 +103,7 @@ ServerGameController.prototype.onClientDisconnect = function(){
   this.endGameLoop();
 };
 
-ServerGameController.prototype.onPlayAgain = function() {
+ServerGameController.prototype.playAgain = function() {
   //TODO: 'this.id' should be the client socket - needs changing
   var playerToReset = this.playerById(this.id);
   playerToReset.reset();
@@ -117,7 +117,7 @@ ServerGameController.prototype.resetPlayerReadyState = function() {
   this.player2.setPlayStatus(false);
 };
 
-ServerGameController.prototype.onMovePlayer = function(data) {
+ServerGameController.prototype.movePlayer = function(data) {
   //TODO: 'this.id' should be the client socket - needs changing
   var movePlayer = this.playerById(this.id);
   movePlayer.paddle.setY(data.y);

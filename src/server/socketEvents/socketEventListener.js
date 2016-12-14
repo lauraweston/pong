@@ -12,10 +12,22 @@ SocketEventListener.prototype.setEventHandlers = function(gameController) {
 SocketEventListener.prototype.onSocketConnection = function(client) {
    util.log("New player has connected: "+ client.id);
    this.gameController.addNewPlayerToGame(client.id);
-   client.on("player sign in", this.gameController.updatePlayerName);
-   client.on("client moves player", this.gameController.onMovePlayer);
-   client.on('play again', this.gameController.onPlayAgain);
-   client.on('disconnect', this.gameController.onClientDisconnect);
+   client.on("player sign in", this.onSignIn);
+   client.on("client moves player", this.onMovePlayer);
+   client.on('play again', this.onPlayAgain);
+   client.on('disconnect', this.onClientDisconnect);
 };
 
+SocketEventListener.prototype.onSignIn = function(data) {
+  this.gameController.updatePlayerName(data);
+};
+SocketEventListener.prototype.onMovePlayer = function(data) {
+  this.gameController.movePlayer(data);
+};
+SocketEventListener.prototype.onPlayAgain = function() {
+  this.gameController.playAgain();
+};
+SocketEventListener.prototype.onClientDisconnect = function() {
+  this.gameController.onClientDisconnect();
+};
 module.exports = SocketEventListener;
