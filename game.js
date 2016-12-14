@@ -28,7 +28,6 @@ function addNewPlayerToGame(newPlayerId) {
     console.log('Already 2 players in game so exiting');
     return;
   }
-
   if (!player1) {
     var paddle = new Paddle(15, 150);
     player1 = new Player(paddle, newPlayerId);
@@ -71,17 +70,22 @@ function startGame() {
 
   gameController = new ServerGameController(ball, player1, player2, onGameLoopTick);
   socket.sockets.emit("start game", startingGameData);
-  gameController.startGameLoop();
+  gameController.startGameLoop(); // this is being called twice by each client.
 }
+
+// function startLoop(){
+//   gameController.startGameLoop(); // this is being called twice by each client.
+// }
 
 function onGameLoopTick() {
   if(gameController.ball.paddleSound === true){
     socket.sockets.emit("paddle sound");
-    console.log('paddle sound');
+    console.log("paddle sound");
   }
   if(gameController.ball.wallSound === true){
     socket.sockets.emit("wall sound");
-    console.log('wall sound');
+    console.log("wall sound");
+
   }
   socket.sockets.emit("server moves ball", ball.getCoordinates());
   socket.sockets.emit("server updates scores", gameController.getPlayerScores());
@@ -128,6 +132,7 @@ function onSocketConnection(client) {
    client.on("client moves player", onMovePlayer);
    client.on('disconnect', onClientDisconnect);
    client.on('play again', playAgain);
+  //  client.on('start game loop', startLoop)
    addNewPlayerToGame(client.id);
 }
 

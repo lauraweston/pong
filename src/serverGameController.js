@@ -27,7 +27,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
       }
     };
     gameLoopTick();
-  }//this is untested
+  }
 
   ServerGameController.prototype.resetPlayerReadyState = function() {
     this.player1.setPlayStatus(false);
