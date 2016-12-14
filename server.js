@@ -3,7 +3,7 @@ var path = require("path");
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io');
-var gameInit = require('./src/server/game/game.js');
+var init = require('./src/server/game/game.js');
 
 server.listen(3000, '0.0.0.0');
 
@@ -15,4 +15,4 @@ app.get('/', function(req, res) {
 
 var socket = io.listen(server);
 
-gameInit(socket);
+init(socket);

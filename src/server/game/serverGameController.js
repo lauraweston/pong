@@ -1,6 +1,9 @@
 var util = require('util');
+var Ball = require('./serverBall.js');
+var Player = require("./serverPlayer.js");
+var Paddle = require("./serverPaddle.js");
 
-var ServerGameController = function(Ball, Player, Paddle){
+var ServerGameController = function(){
   this.ball = new Ball();
   this.paddle1 = new Paddle(15, 150);
   this.paddle2 = new Paddle(570, 150);
