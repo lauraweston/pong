@@ -18,4 +18,12 @@ SocketEventEmitter.prototype.emitGameWonEvent = function(winner) {
   this.io.sockets.emit("game won", winner);
 };
 
+SocketEventEmitter.prototype.emitRemoveOpponentEventToPlayer = function(playerId) {
+  this.io.to(playerId).emit("remove player");
+};
+
+SocketEventEmitter.prototype.emitOpponentMoveEventToPlayer = function(playerId, opponentMoveData) {
+  this.io.to(playerId).emit("server moves player", opponentMoveData);
+};
+
 module.exports = SocketEventEmitter;

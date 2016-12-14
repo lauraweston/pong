@@ -80,14 +80,14 @@ function setEventHandlers() {
 };
 
 function removePlayer(){
-  console.log("remove player from client");
   if(gameController) {
     gameController.endGame();
   }
   disconnect.style.display = "inline";
   winner.style.display = 'none';
   gameStart = document.getElementById('countdown');
-  gameStart.innerHTML = "Game Over!"}
+  gameStart.innerHTML = "Game Over!"
+}
 
 function declareWinner(data){
   if(gameController) {

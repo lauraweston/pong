@@ -94,18 +94,16 @@ ServerGameController.prototype.endGameLoop = function() {
   }
 };
 
-ServerGameController.prototype.removePlayer = function(client){
-  util.log("Player has disconnected: " + client.id);
-  var disconnectedPlayer = this.playerById(client.id);
+ServerGameController.prototype.removePlayer = function(playerId){
+  util.log("Player has disconnected: " + playerId);
+  var disconnectedPlayer = this.playerById(playerId);
+  var remainingPlayer = this.getOpponent(playerId);
   if (disconnectedPlayer === this.player1) {
     this.player1 = undefined;
   } else {
     this.player2 = undefined;
   }
-  //TODO: move to socketEventEmitter
-  console.log("In remove player:")
-  console.log(client);
-  client.broadcast.emit("remove player");
+  this.eventEmitter.emitRemoveOpponentEventToPlayer(remainingPlayer.id);
   this.endGameLoop();
 };
 
@@ -122,11 +120,14 @@ ServerGameController.prototype.resetPlayerReadyState = function() {
   this.player2.setPlayerReady(false);
 };
 
-ServerGameController.prototype.movePlayer = function(data, client) {
-  var movePlayer = this.playerById(client.id);
+ServerGameController.prototype.movePlayer = function(data, playerId) {
+  var movePlayer = this.playerById(playerId);
   movePlayer.paddle.setY(data.y);
-  //TODO: move to socketEventEmitter
-  client.broadcast.emit("server moves player", {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()});
+
+  var playerToBeNotified = this.getOpponent(playerId);
+
+  var playerMoveData = {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()};
+  this.eventEmitter.emitOpponentMoveEventToPlayer(playerToBeNotified.id, playerMoveData);
 };
 
 ServerGameController.prototype.update = function(){
@@ -176,6 +177,16 @@ ServerGameController.prototype.getPlayerScores = function() {
     player1:{id: this.player1.id, score: this.player1.getScore()},
     player2:{id: this.player2.id, score: this.player2.getScore()}
   };
+};
+
+ServerGameController.prototype.getOpponent = function(id) {
+  var player = this.playerById(id);
+  if (player === this.player1) {
+    return this.player2;
+  } else if(player === this.player2){
+    return this.player1;
+  }
+	return false;
 };
 
 ServerGameController.prototype.playerById = function(id) {

@@ -25,7 +25,7 @@ SocketEventListener.prototype.onSocketConnection = function(socket) {
   });
 
   socket.on("client moves player", function(data) {
-    gameController.movePlayer(data, socket);
+    gameController.movePlayer(data, socket.id);
   });
 
   socket.on('play again', function() {
@@ -33,7 +33,7 @@ SocketEventListener.prototype.onSocketConnection = function(socket) {
   });
 
   socket.on('disconnect', function() {
-    gameController.removePlayer(socket);
+    gameController.removePlayer(socket.id);
   });
 };
 
