@@ -129,6 +129,7 @@ ServerGameController.prototype.movePlayer = function(data, playerId) {
 };
 
 ServerGameController.prototype.update = function(){
+  this.ball.resetSounds();
   this.ball.update();
   this.ballHitsWall();
   this.ballHitsPaddle();

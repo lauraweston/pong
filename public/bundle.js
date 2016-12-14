@@ -65,6 +65,8 @@
 	var lastPaddleMove = 0;
 	var audio = new Audio("sounds/pongSound.mp3");
 	var paddleSound = new Audio("sounds/PaddlePong.wav")
+	var wallSound = new Audio("sounds/wallBounce.wav")
+
 	var view;
 
 
@@ -88,6 +90,8 @@
 	  socket.on("disconnect", onSocketDisconnect);
 	  socket.on("remove player", removePlayer);
 	  socket.on("paddle sound", onPaddleSmack);
+	  socket.on("wall sound", onWallSmack);
+
 	}
 
 	function onSocketConnected() {
@@ -148,6 +152,11 @@
 	  paddleSound.play();
 	}
 
+	function onWallSmack(){
+	  wallSound.play();
+	}
+
+
 	function myId() {
 	  return socket.io.engine.id;
 	}
@@ -157,8 +166,9 @@
 	  setTimeout(function() {
 	    audio.pause();
 	    view.setGameStatusToPlay();
+	    // socket.emit("start game loop")
 	    animate(gameLoop);
-	    return;
+	     return;
 	  }, 6000);
 	}
 
