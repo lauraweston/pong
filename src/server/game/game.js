@@ -1,13 +1,8 @@
-var express = require("express");
-var path = require("path");
-var app = express();
-var server = require('http').Server(app);
 var util = require('util');
-var io = require('socket.io');
-var Player = require("./src/serverPlayer.js");
-var Paddle = require("./src/serverPaddle.js");
-var ServerBall = require('./src/serverBall.js');
-var ServerGameController = require('./src/serverGameController.js');
+var Player = require("./serverPlayer.js");
+var Paddle = require("./serverPaddle.js");
+var ServerBall = require('./serverBall.js');
+var ServerGameController = require('./serverGameController.js');
 
 var socket;
 var player1;
@@ -15,13 +10,10 @@ var player2;
 var ball;
 var gameController;
 
-server.listen(3000, '0.0.0.0');
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/public/pong.html');
-});
+function init(s) {
+  socket = s;
+  setEventHandlers();
+};
 
 function addNewPlayerToGame(newPlayerId) {
   if (player1 && player2) {
@@ -127,11 +119,6 @@ function setEventHandlers() {
   socket.sockets.on('connection', onSocketConnection);
 }
 
-(function init() {
-  socket = io.listen(server);
-  setEventHandlers();
-})();
-
 function playerById(id) {
 	if (player1 && player1.id === id) {
     return player1;
@@ -141,3 +128,5 @@ function playerById(id) {
   }
 	return false;
 }
+
+module.exports = init;
