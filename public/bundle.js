@@ -267,11 +267,14 @@
 	  this._hideCanvas();
 	}
 
-	View._setGameStatusToOver = function(){
+	View.prototype._setGameStatusToOver = function(){
+	  console.log(1);
 	 this.gameStatus.innerHTML = "Game Over!";
+	 console.log(2);
+
 	 }
 
-	View._setGameStatusToCountdown = function(){
+	View.prototype._setGameStatusToCountdown = function(){
 	  //to complete laters
 	}
 
