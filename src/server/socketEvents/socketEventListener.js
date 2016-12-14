@@ -1,37 +1,41 @@
 var util = require('util');
+var SocketEventEmitter = require('./socketEventEmitter.js');
 
-function SocketEventListener (socket) {
-  this.socket = socket;
+function SocketEventListener(io, gameController) {
+  this.io = io;
+  this.gameController = gameController;
 }
 
-SocketEventListener.prototype.setEventHandlers = function(gameController) {
-  this.gameController = gameController;
-  this.socket.sockets.on('connection', this.onSocketConnection);
+SocketEventListener.prototype.setEventHandlers = function() {
+  var eventListener = this;
+  this.io.sockets.on('connection', function(socket) {
+    eventListener.onSocketConnection(socket);
+  });
 };
 
-SocketEventListener.prototype.onSocketConnection = function(client) {
-   util.log("New player has connected: "+ client.id);
-   this.gameController.addNewPlayerToGame(client.id);
-   client.on("player sign in", this.onSignIn);
-   client.on("client moves player", this.onMovePlayer);
-   client.on('play again', this.onPlayAgain);
-   client.on('disconnect', this.onClientDisconnect);
-};
+SocketEventListener.prototype.onSocketConnection = function(socket) {
+  var io = this.io;
+  var gameController = this.gameController;
 
-SocketEventListener.prototype.onSignIn = function(data, this) {
-  this.gameController.updatePlayerName(data);
-};
+  util.log("New player has connected: " + socket.id);
 
-SocketEventListener.prototype.onMovePlayer = function(data, this) {
-  this.gameController.movePlayer(data);
-};
+  gameController.addNewPlayerToGame(socket.id);
 
-SocketEventListener.prototype.onPlayAgain = function(this) {
-  this.gameController.playAgain();
-};
+  socket.on("player sign in", function(data) {
+    gameController.updatePlayerName(data, io, socket);
+  });
 
-SocketEventListener.prototype.onClientDisconnect = function(this) {
-  this.gameController.onClientDisconnect();
+  socket.on("client moves player", function(data) {
+    gameController.movePlayer(data, socket);
+  });
+
+  socket.on('play again', function() {
+    gameController.playAgain(io, socket);
+  });
+
+  socket.on('disconnect', function() {
+    gameController.removePlayer(socket);
+  });
 };
 
 module.exports = SocketEventListener;

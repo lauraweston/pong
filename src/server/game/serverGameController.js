@@ -13,7 +13,6 @@ var ServerGameController = function(){
                   x:        0,
                   y:        0
   };
-
   this.gameLoopInterval = 8;
   this.isGameEnded = false;
 };
@@ -30,16 +29,16 @@ ServerGameController.prototype.addNewPlayerToGame = function(newPlayerId) {
   }
 };
 
-ServerGameController.prototype.updatePlayerName = function(data, client){
+ServerGameController.prototype.updatePlayerName = function(data, io, client){
   var playerToBeUpdated = this.playerById(client.id);
   playerToBeUpdated.setName(data.playerName);
   if (this.player1 && this.player2 && (this.player1.name.length > 0 ) && (this.player2.name.length > 0) && this.player1.isReady && this.player2.isReady) {
     console.log("Starting game");
-    this.startGame();
+    this.startGame(io);
   }
 };
 
-ServerGameController.prototype.startGame = function() {
+ServerGameController.prototype.startGame = function(io) {
   var playerData = [
     {
       id: this.player1.id,
@@ -60,31 +59,31 @@ ServerGameController.prototype.startGame = function() {
     ballCoordinates: this.ball.getCoordinates()
   };
   //TODO: extract to SocketEventEmitter
-  socket.sockets.emit("start game", startingGameData);
-  this.startGameLoop();
+  io.sockets.emit("start game", startingGameData);
+  this.startGameLoop(io);
 };
 
-ServerGameController.prototype.startGameLoop = function() {
+ServerGameController.prototype.startGameLoop = function(io) {
   this.resetPlayerReadyState();
   var self = this;
   var gameLoopTick = function() {
     if (!self.isGameEnded){
       self.update();
-      self.gameLoopTickCallback();
+      self.gameLoopTickCallback(io);
       self.gameLoop = setTimeout(gameLoopTick, self.gameLoopInterval);
     } else {
       clearTimeout(self.gameLoop);
     }
   };
   gameLoopTick();
-};//this is untested
+};//TODO: this is untested
 
-//TODO: needs access to socket.sockets
-ServerGameController.prototype.gameLoopTickCallback = function() {
-  socket.sockets.emit("server moves ball", this.ball.getCoordinates());
-  socket.sockets.emit("server updates scores", this.getPlayerScores());
+//TODO: extract & needs access to io
+ServerGameController.prototype.gameLoopTickCallback = function(io) {
+  io.sockets.emit("server moves ball", this.ball.getCoordinates());
+  io.sockets.emit("server updates scores", this.getPlayerScores());
   if (this.winner){
-    socket.sockets.emit("game won", {winner: this.winner});
+    io.sockets.emit("game won", {winner: this.winner});
   }
 };
 
@@ -92,7 +91,7 @@ ServerGameController.prototype.endGameLoop = function() {
   this.isGameEnded = true;
 };
 
-ServerGameController.prototype.onClientDisconnect = function(client){
+ServerGameController.prototype.removePlayer = function(client){
   util.log("Player has disconnected: " + client.id);
   var disconnectedPlayer = this.playerById(client.id);
   if (disconnectedPlayer === this.player1) {
@@ -105,11 +104,11 @@ ServerGameController.prototype.onClientDisconnect = function(client){
   this.endGameLoop();
 };
 
-ServerGameController.prototype.playAgain = function(client) {
+ServerGameController.prototype.playAgain = function(io, client) {
   var playerToReset = this.playerById(client.id);
   playerToReset.reset();
   if (this.player1 && this.player2 && this.player1.isReady && this.player2.isReady) {
-    this.startGame();
+    this.startGame(io);
   }
 };
 

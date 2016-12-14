@@ -1,12 +1,12 @@
 var ServerGameController = require('./serverGameController.js');
 var SocketEventListener = require('../socketEvents/socketEventListener.js');
-var SocketEventEmitter = require('../socketEvents/socketEventEmitter.js');
 
-function init(s) {
+function init(io) {
   var gameController = new ServerGameController();
-  var socket = s;
-  var socketEventListener = new SocketEventListener(socket);
-  socketEventListener.setEventHandlers(gameController);
+  var socketEventListener = new SocketEventListener(io, gameController);
+  socketEventListener.setEventHandlers();
 };
 
-module.exports = init;
+module.exports = {
+  init: init
+};
