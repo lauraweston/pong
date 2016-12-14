@@ -65,6 +65,7 @@ var ServerGameController = function(ball, player1, player2, gameLoopTickCallback
   };
 
   ServerGameController.prototype.update = function(){
+    this.ball.resetSounds();
     this.ball.update();
     this.ballHitsWall();
     this.ballHitsPaddle();

@@ -17,7 +17,8 @@ var gameBox;
 var gameController;
 var gameEnded = false;
 var lastPaddleMove = 0;
-var audio = new Audio("pongSound.mp3");
+var audio = new Audio("sounds/pongSound.mp3");
+var paddleSound = new Audio("sounds/PaddlePong.wav")
 var view;
 
 
@@ -40,6 +41,7 @@ function setEventHandlers() {
   socket.on("game won", declareWinner);
   socket.on("disconnect", onSocketDisconnect);
   socket.on("remove player", removePlayer);
+  socket.on("paddle sound", onPaddleSmack);
 }
 
 function onSocketConnected() {
@@ -96,6 +98,10 @@ function removePlayer(){
   view.removePlayerView();
 }
 
+function onPaddleSmack(){
+  paddleSound.play();
+}
+
 function myId() {
   return socket.io.engine.id;
 }
@@ -145,7 +151,7 @@ function checkForPaddleMove(){
 view.signInForm.onsubmit = function(event){
   event.preventDefault();
   view.afterSignInFormView();
-  socket.emit('player sign in', {playerName: newPlayerName.value});
+  socket.emit('player sign in', {playerName: view.newPlayerName.value});
 }
 
 view.playAgain.onclick = function() {

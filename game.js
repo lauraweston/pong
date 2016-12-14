@@ -75,6 +75,14 @@ function startGame() {
 }
 
 function onGameLoopTick() {
+  if(gameController.ball.paddleSound === true){
+    socket.sockets.emit("paddle sound");
+    console.log('paddle sound');
+  }
+  if(gameController.ball.wallSound === true){
+    socket.sockets.emit("wall sound");
+    console.log('wall sound');
+  }
   socket.sockets.emit("server moves ball", ball.getCoordinates());
   socket.sockets.emit("server updates scores", gameController.getPlayerScores());
   if (gameController.winner){
