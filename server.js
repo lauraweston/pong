@@ -13,6 +13,4 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/pong.html');
 });
 
-//var socket = io.listen(server);
-
 game.init(io);

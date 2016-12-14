@@ -3,7 +3,8 @@ var Ball = require('./serverBall.js');
 var Player = require("./serverPlayer.js");
 var Paddle = require("./serverPaddle.js");
 
-var ServerGameController = function(){
+var ServerGameController = function(socketEventEmitter){
+  this.eventEmitter = socketEventEmitter;
   this.ball = new Ball();
   this.paddle1 = new Paddle(15, 150);
   this.paddle2 = new Paddle(570, 150);
@@ -29,16 +30,17 @@ ServerGameController.prototype.addNewPlayerToGame = function(newPlayerId) {
   }
 };
 
-ServerGameController.prototype.updatePlayerName = function(data, io, client){
+ServerGameController.prototype.updatePlayerName = function(data, client){
   var playerToBeUpdated = this.playerById(client.id);
   playerToBeUpdated.setName(data.playerName);
   if (this.player1 && this.player2 && (this.player1.name.length > 0 ) && (this.player2.name.length > 0) && this.player1.isReady && this.player2.isReady) {
     console.log("Starting game");
-    this.startGame(io);
+    this.startGame();
   }
 };
 
-ServerGameController.prototype.startGame = function(io) {
+ServerGameController.prototype.startGame = function() {
+  this.ball.reset();
   var playerData = [
     {
       id: this.player1.id,
@@ -58,37 +60,38 @@ ServerGameController.prototype.startGame = function(io) {
     players: playerData,
     ballCoordinates: this.ball.getCoordinates()
   };
-  //TODO: extract to SocketEventEmitter
-  io.sockets.emit("start game", startingGameData);
-  this.startGameLoop(io);
+  this.eventEmitter.emitStartGameEvent(startingGameData);
+  this.startGameLoop();
 };
 
-ServerGameController.prototype.startGameLoop = function(io) {
+ServerGameController.prototype.startGameLoop = function() {
   this.resetPlayerReadyState();
   var self = this;
-  var gameLoopTick = function() {
-    if (!self.isGameEnded){
-      self.update();
-      self.gameLoopTickCallback(io);
-      self.gameLoop = setTimeout(gameLoopTick, self.gameLoopInterval);
+  var gameLoop = function() {
+    self.update();
+    self.emitEvents();
+
+    var winner = self.getWinner();
+    if (winner){
+      self.eventEmitter.emitGameWonEvent({winner: winner});
+      self.endGameLoop();
     } else {
-      clearTimeout(self.gameLoop);
+      self.gameLoopTimeout = setTimeout(gameLoop, self.gameLoopInterval);
     }
   };
-  gameLoopTick();
+  gameLoop();
 };//TODO: this is untested
 
 //TODO: extract & needs access to io
-ServerGameController.prototype.gameLoopTickCallback = function(io) {
-  io.sockets.emit("server moves ball", this.ball.getCoordinates());
-  io.sockets.emit("server updates scores", this.getPlayerScores());
-  if (this.winner){
-    io.sockets.emit("game won", {winner: this.winner});
-  }
+ServerGameController.prototype.emitEvents = function() {
+  this.eventEmitter.emitServerMoveBallEvent(this.ball.getCoordinates());
+  this.eventEmitter.emitServerUpdateScoreEvent(this.getPlayerScores());
 };
 
 ServerGameController.prototype.endGameLoop = function() {
-  this.isGameEnded = true;
+  if(this.gameLoopTimeout) {
+    clearTimeout(this.gameLoopTimeout);
+  }
 };
 
 ServerGameController.prototype.removePlayer = function(client){
@@ -100,21 +103,23 @@ ServerGameController.prototype.removePlayer = function(client){
     this.player2 = undefined;
   }
   //TODO: move to socketEventEmitter
+  console.log("In remove player:")
+  console.log(client);
   client.broadcast.emit("remove player");
   this.endGameLoop();
 };
 
-ServerGameController.prototype.playAgain = function(io, client) {
+ServerGameController.prototype.playAgain = function(client) {
   var playerToReset = this.playerById(client.id);
   playerToReset.reset();
   if (this.player1 && this.player2 && this.player1.isReady && this.player2.isReady) {
-    this.startGame(io);
+    this.startGame();
   }
 };
 
 ServerGameController.prototype.resetPlayerReadyState = function() {
-  this.player1.setPlayStatus(false);
-  this.player2.setPlayStatus(false);
+  this.player1.setPlayerReady(false);
+  this.player2.setPlayerReady(false);
 };
 
 ServerGameController.prototype.movePlayer = function(data, client) {
@@ -129,7 +134,6 @@ ServerGameController.prototype.update = function(){
   this.ballHitsWall();
   this.ballHitsPaddle();
   this.ballGoesOutOfPlay();
-  this.assignWinner();
 };
 
 ServerGameController.prototype.ballHitsWall = function(){
@@ -157,14 +161,14 @@ ServerGameController.prototype.ballGoesOutOfPlay = function(){
   }
 };
 
-ServerGameController.prototype.assignWinner = function(){
+ServerGameController.prototype.getWinner = function(){
   if (this.player1.score > 9) {
-    this.winner = this.player1;
-    this.isGameEnded = true;
-  } else if (this.player2.score > 9) {
-    this.winner = this.player2;
-    this.isGameEnded = true;
+    return this.player1;
   }
+  if (this.player2.score > 9) {
+    return this.player2;
+  }
+  return null;
 };
 
 ServerGameController.prototype.getPlayerScores = function() {

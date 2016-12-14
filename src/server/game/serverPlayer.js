@@ -24,7 +24,7 @@ Player.prototype.getScore = function() {
 
 Player.prototype.reset = function() {
   this.resetScore();
-  this.setPlayStatus(true);
+  this.setPlayerReady(true);
   this.paddle.reset();
 };
 
@@ -32,10 +32,8 @@ Player.prototype.resetScore = function() {
   this.score = 0;
 };
 
-Player.prototype.setPlayStatus = function(boolean) {
+Player.prototype.setPlayerReady = function(boolean) {
   this.isReady = boolean;
 };
-
-
 
 module.exports = Player;

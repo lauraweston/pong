@@ -1,5 +1,4 @@
 var util = require('util');
-var SocketEventEmitter = require('./socketEventEmitter.js');
 
 function SocketEventListener(io, gameController) {
   this.io = io;
@@ -22,7 +21,7 @@ SocketEventListener.prototype.onSocketConnection = function(socket) {
   gameController.addNewPlayerToGame(socket.id);
 
   socket.on("player sign in", function(data) {
-    gameController.updatePlayerName(data, io, socket);
+    gameController.updatePlayerName(data, socket);
   });
 
   socket.on("client moves player", function(data) {
@@ -30,7 +29,7 @@ SocketEventListener.prototype.onSocketConnection = function(socket) {
   });
 
   socket.on('play again', function() {
-    gameController.playAgain(io, socket);
+    gameController.playAgain(socket);
   });
 
   socket.on('disconnect', function() {
