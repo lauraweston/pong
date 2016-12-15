@@ -34,4 +34,8 @@ SocketEventEmitter.prototype.emitWallSound = function() {
   this.io.sockets.emit("wall sound");
 }
 
+SocketEventEmitter.prototype.emitOutSound = function() {
+  this.io.sockets.emit("out sound");
+}
+
 module.exports = SocketEventEmitter;

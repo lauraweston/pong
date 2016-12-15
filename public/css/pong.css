@@ -1,3 +1,8 @@
+@font-face{
+ font-family:"PongFont";
+ src:url(https://fonts.googleapis.com/css?family=Press+Start+2P);
+}
+
 body {
   margin-top: 20px;
   font-family: 'Press Start 2P', cursive;
@@ -23,6 +28,7 @@ h1 {
   margin-top: 50px;
 }
 
-#countdown {
+#gameStatus {
   margin-bottom: 40px;
+  font-size: 100px;
 }

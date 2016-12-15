@@ -29,6 +29,7 @@ ServerBall.prototype.getCoordinates = function () {
 };
 
 ServerBall.prototype.reset = function(){
+  this.outSound = true;
   this.x = 300;
   this.y = 20;
   this.xSpeed = 3;
@@ -38,6 +39,7 @@ ServerBall.prototype.reset = function(){
 ServerBall.prototype.resetSounds = function() {
   this.paddleSound = false;
   this.wallSound = false;
+  this.outSound = false;
 }
 
 module.exports = ServerBall;

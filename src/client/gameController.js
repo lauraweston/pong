@@ -4,6 +4,7 @@ var GameController = function(ball, gamebox, localPlayer, opponent){
   this.localPlayer = localPlayer;
   this.opponent = opponent;
   this.isGameEnded = false
+  this.playing = false
 };
 
   GameController.prototype.drawGame = function(){

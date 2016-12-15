@@ -16,14 +16,17 @@ var gameBox;
 var gameController;
 var gameEnded = false;
 var lastPaddleMove = 0;
-var audio = new Audio("sounds/pongSound.mp3");
-var paddleSound = new Audio("sounds/PaddlePong.wav");
-var wallSound = new Audio("sounds/wallBounce.wav");
+var audio = new Audio("sounds/march.mp3");
+var outSound = new Audio("sounds/OutPong.wav");
+var wallSound = new Audio("sounds/plop.ogg");
+var paddleSound = new Audio("sounds/plop.ogg");
+var gameOverSound = new Audio("sounds/game-over.wav");
 var view;
 
 (function init(){
   view = new View();
   context = view.canvas.getContext('2d');
+  context.font = '40px';
   gameBox = new GameBox(context);
   socket = io.connect(getUrl());
   audio.play();
@@ -41,6 +44,7 @@ function setEventHandlers() {
   socket.on("remove player", removePlayer);
   socket.on("paddle sound", onPaddleSmack);
   socket.on("wall sound", onWallSmack);
+  socket.on("out sound", onOutOfBounds);
 
 }
 
@@ -69,7 +73,6 @@ function startGame(gameData){
   draw();
 }
 
-
 function onServerMovesBall(data) {
   localBall.setCoordinates(data);
 }
@@ -87,8 +90,9 @@ function onServerUpdatesScores(data) {
 function declareWinner(data){
   if(gameController) {
     gameController.endGame();
+    view.declareWinnerView(data.winner.name);
+    gameOverSound.play()
   }
-  view.declareWinnerView(data.winner.name);
 }
 
 function onSocketDisconnect() {
@@ -98,8 +102,9 @@ function onSocketDisconnect() {
 function removePlayer(){
   if(gameController) {
     gameController.endGame();
+    view.removePlayerView();
+    gameOverSound.play()
   }
-  view.removePlayerView();
 }
 
 function onPaddleSmack(){
@@ -108,6 +113,10 @@ function onPaddleSmack(){
 
 function onWallSmack(){
   wallSound.play();
+}
+
+function onOutOfBounds(){
+  outSound.play();
 }
 
 function myId() {
