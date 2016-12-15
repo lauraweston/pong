@@ -60,8 +60,15 @@ ServerGameController.prototype.startGame = function() {
     ballCoordinates: this.ball.getCoordinates()
   };
   this.eventEmitter.emitStartGameEvent(startingGameData);
-  this.startGameLoop();
+  this._afterCountdownGameStart();
 };
+
+ServerGameController.prototype._afterCountdownGameStart = function(){
+  var self = this;
+  setTimeout(function() {
+    self.startGameLoop();
+  }, 6000);
+}
 
 ServerGameController.prototype.startGameLoop = function() {
   this.resetPlayerReadyState();
