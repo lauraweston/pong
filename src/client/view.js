@@ -20,7 +20,7 @@ View.prototype.startGameView = function() {
 }
 
 View.prototype.declareWinnerView = function(winner) {
-  this.winner.innerHTML = winner + " wins!"
+  this.winner.innerHTML = winner + " wins"
   this._showWinner();
   this._showPlayAgain();
   this._setGameStatusToOver();
@@ -47,7 +47,7 @@ View.prototype.afterPlayAgain = function(){
 }
 
 View.prototype._setGameStatusToOver = function(){
- this.gameStatus.innerHTML = "Game Over!";
+ this.gameStatus.innerHTML = "Game Over";
  }
 
 View.prototype.setGameStatusToCountdown = function(){
@@ -63,7 +63,7 @@ View.prototype.setGameStatusToCountdown = function(){
   }
 
 View.prototype.setGameStatusToPlay = function() {
-  this.gameStatus.innerHTML = "Play!";
+  this.gameStatus.innerHTML = "Play";
 }
 
 View.prototype._showHeading = function() {

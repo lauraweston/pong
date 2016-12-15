@@ -64,6 +64,10 @@
 	var lastPaddleMove = 0;
 	var audio = new Audio("sounds/pongSound.mp3");
 	var paddleSound = new Audio("sounds/PaddlePong.wav")
+<<<<<<< HEAD
+=======
+	var wallSound = new Audio("sounds/wallBounce.wav")
+>>>>>>> 8db53988c7fab857fa82c04de4b995f1812f00f7
 	var view;
 
 	(function init(){
@@ -149,6 +153,13 @@
 	  paddleSound.play();
 	}
 
+<<<<<<< HEAD
+=======
+	function onWallSmack(){
+	  wallSound.play();
+	}
+
+>>>>>>> 8db53988c7fab857fa82c04de4b995f1812f00f7
 	function myId() {
 	  return socket.io.engine.id;
 	}
