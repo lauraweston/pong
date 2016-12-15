@@ -6,6 +6,13 @@ describe("ServerGameController", function(){
   var player1;
   var player2;
   var ball;
+  var ballPhysicsEngine;
+  var gameBox = {
+                  height: 400,
+                  width:  600,
+                  x:        0,
+                  y:        0
+                };
 
   beforeEach(function(){
     socketEventEmitter = jasmine.createSpyObj('socketEventEmitter', ['emitStartGameEvent', 'emitServerMoveBallEvent', 'emitServerUpdateScoreEvent', 'emitGameWonEvent', 'emitRemoveOpponentEventToPlayer', 'emitOpponentMoveEventToPlayer']);
@@ -17,6 +24,7 @@ describe("ServerGameController", function(){
     player1 = gameController.player1;
     player2 = gameController.player2;
     ball = gameController.ball;
+    ballPhysicsEngine = gameController.ballPhysicsEngine;
   });
 
   describe("game start", function() {
@@ -34,6 +42,33 @@ describe("ServerGameController", function(){
     it("resets player2 ready state to false", function() {
       gameController.resetPlayerReadyState();
       expect(gameController.player2.setPlayerReady).toHaveBeenCalledWith(false);
+    });
+
+    describe("update", function() {
+      beforeEach(function() {
+        spyOn(gameController.ball, 'update');
+        spyOn(gameController.ball, 'resetSounds');
+        spyOn(gameController.ballPhysicsEngine, 'ballHitsWall');
+        spyOn(gameController.ballPhysicsEngine, 'ballHitsPaddle');
+        spyOn(gameController.ballPhysicsEngine, 'ballGoesOutOfPlay');
+        gameController.update();
+      });
+
+      it("calls update on ball", function() {
+        expect(ball.update).toHaveBeenCalled();
+      });
+      it("calls resetSounds on ball", function() {
+        expect(ball.resetSounds).toHaveBeenCalled();
+      });
+      it("calls ballHitsWall on ballPhysicsEngine", function() {
+        expect(ballPhysicsEngine.ballHitsWall).toHaveBeenCalledWith(ball, gameBox);
+      });
+      it("calls ballHitsPaddle on ballPhysicsEngine", function() {
+        expect(ballPhysicsEngine.ballHitsPaddle).toHaveBeenCalledWith(ball, player1, player2);
+      });
+      it("calls ballGoesOutOfPlay on ballPhysicsEngine", function() {
+        expect(ballPhysicsEngine.ballGoesOutOfPlay).toHaveBeenCalledWith(ball, gameBox, player1, player2);
+      });
     });
   });
 
@@ -76,37 +111,37 @@ describe("ServerGameController", function(){
   //   });
   // });
 
-  describe("ball goes out of play", function() {
-    describe("when misses player1 paddle", function() {
-      beforeEach(function() {
-        gameController.ball.x = (gameController.gameBox.x - gameController.ball.xSpeed);
-        gameController.ball.y = (gameController.gameBox.y - gameController.ball.ySpeed);
-      });
+  // describe("ball goes out of play", function() {
+  //   describe("when misses player1 paddle", function() {
+  //     beforeEach(function() {
+  //       gameController.ball.x = (gameController.gameBox.x - gameController.ball.xSpeed);
+  //       gameController.ball.y = (gameController.gameBox.y - gameController.ball.ySpeed);
+  //     });
       // it("ball resets", function() {
       //   gameController.update();
       //   expect(gameController.ball.x).toEqual(300);
       //   expect(gameController.ball.y).toEqual(20);
       // });
-      it("increments player2's score", function() {
-        gameController.update();
-        expect(player2.score).toEqual(1);
-      });
-    });
-
-    describe("when misses player2 paddle", function() {
-      beforeEach(function() {
-        gameController.ball.x = (gameController.gameBox.width - gameController.ball.xSpeed);
-        gameController.ball.y = (gameController.gameBox.y - gameController.ball.ySpeed);
-      });
-      it("ball resets", function() {
-        gameController.update();
-        expect(gameController.ball.x).toEqual(300);
-        expect(gameController.ball.y).toEqual(20);
-      });
-      it("increments player1's score", function() {
-        gameController.update();
-        expect(player1.score).toEqual(1);
-      });
-    });
-  });
+    //   it("increments player2's score", function() {
+    //     gameController.update();
+    //     expect(player2.score).toEqual(1);
+    //   });
+    // });
+    //
+    // describe("when misses player2 paddle", function() {
+    //   beforeEach(function() {
+    //     gameController.ball.x = (gameController.gameBox.width - gameController.ball.xSpeed);
+    //     gameController.ball.y = (gameController.gameBox.y - gameController.ball.ySpeed);
+    //   });
+    //   it("ball resets", function() {
+    //     gameController.update();
+    //     expect(gameController.ball.x).toEqual(300);
+    //     expect(gameController.ball.y).toEqual(20);
+    //   });
+    //   it("increments player1's score", function() {
+    //     gameController.update();
+    //     expect(player1.score).toEqual(1);
+    //   });
+    // });
+  // });
 });

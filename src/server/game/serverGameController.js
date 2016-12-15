@@ -17,6 +17,7 @@ var ServerGameController = function(socketEventEmitter){
   };
   this.gameLoopInterval = 8;
   this.isGameEnded = false;
+  this.ballPhysicsEngine = ballPhysicsEngine;
 };
 
 ServerGameController.prototype.addNewPlayerToGame = function(newPlayerId) {
@@ -157,9 +158,9 @@ ServerGameController.prototype.movePlayer = function(data, playerId) {
 ServerGameController.prototype.update = function(){
   this.ball.resetSounds();
   this.ball.update();
-  ballPhysicsEngine.ballHitsWall(this.ball, this.gameBox);
-  ballPhysicsEngine.ballHitsPaddle(this.ball, this.player1, this.player2);
-  ballPhysicsEngine.ballGoesOutOfPlay(this.ball, this.gameBox, this.player1, this.player2);
+  this.ballPhysicsEngine.ballHitsWall(this.ball, this.gameBox);
+  this.ballPhysicsEngine.ballHitsPaddle(this.ball, this.player1, this.player2);
+  this.ballPhysicsEngine.ballGoesOutOfPlay(this.ball, this.gameBox, this.player1, this.player2);
 };
 
 module.exports = ServerGameController;
