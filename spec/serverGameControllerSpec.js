@@ -37,13 +37,6 @@ describe("ServerGameController", function(){
     });
   });
 
-  describe("ball moves", function() {
-    it("when game updates", function(){
-      expect(gameController.ball.x).toEqual(303);
-      expect(gameController.ball.y).toEqual(22);
-    });
-  });
-
   describe("ball changes course", function() {
     it("when hits top of paddle 1", function() {
       gameController.ball.x = (player1.paddle.x + player1.paddle.width + ball.xSpeed);

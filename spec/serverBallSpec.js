@@ -8,12 +8,12 @@ describe('serverBall', function() {
     serverBall = new ServerBall();
   });
 
-  it("changes direction when bounches off padde", function() {
+  it("changes direction when bounces off paddle", function() {
     serverBall.bouncePaddle();
-    expect(serverBall.xSpeed).toEqual(-3);
+    expect(serverBall.xSpeed).toEqual(-3.2);
   });
 
-  it("changes direction when bounches off wall", function() {
+  it("changes direction when bounces off wall", function() {
     serverBall.bounceWall();
     expect(serverBall.ySpeed).toEqual(-2);
   });
@@ -34,6 +34,4 @@ describe('serverBall', function() {
   it("returns the balls coordinates", function() {
     expect(serverBall.getCoordinates()).toEqual({x: 300, y: 20});
   });
-
-
 });
