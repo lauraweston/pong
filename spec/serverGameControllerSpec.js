@@ -43,6 +43,30 @@ describe("ServerGameController", function(){
       expect(gameController.player1.id).toEqual(1);
       expect(gameController.player2.id).toEqual(2);
     });
+    it("emits start game event when two players have joined and entered names", function() {
+      gameController.addNewPlayerToGame(1);
+      gameController.addNewPlayerToGame(2);
+      gameController.updatePlayerName({playerName: "John"}, 1);
+      gameController.updatePlayerName({playerName: "Sally"}, 2);
+      var expectedGameData = {
+        players: [
+          {
+            id: 1,
+            name: "John",
+            x: 15,
+            y: 150
+          },
+          {
+            id: 2,
+            name: "Sally",
+            x: 570,
+            y: 150
+          }
+        ],
+        ballCoordinates: {x: 300, y: 20}
+      };
+      expect(gameController.eventEmitter.emitStartGameEvent).toHaveBeenCalledWith(expectedGameData);
+    });
   });
 
   describe("game in progress", function() {
