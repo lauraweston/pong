@@ -15,21 +15,47 @@ describe("ServerGameController", function(){
                 };
 
   beforeEach(function(){
-    socketEventEmitter = jasmine.createSpyObj('socketEventEmitter', ['emitStartGameEvent', 'emitServerMoveBallEvent', 'emitServerUpdateScoreEvent', 'emitGameWonEvent', 'emitRemoveOpponentEventToPlayer', 'emitOpponentMoveEventToPlayer']);
+    socketEventEmitter = jasmine.createSpyObj('socketEventEmitter', [
+      'emitStartGameEvent',
+      'emitServerMoveBallEvent',
+      'emitServerUpdateScoreEvent',
+      'emitGameWonEvent',
+      'emitRemoveOpponentEventToPlayer',
+      'emitOpponentMoveEventToPlayer'
+    ]);
     gameController = new GameController(socketEventEmitter);
-    gameController.addNewPlayerToGame(1);
-    gameController.addNewPlayerToGame(2);
-    gameController.updatePlayerName({playerName: "John"}, 1);
-    gameController.updatePlayerName({playerName: "Sally"}, 2);
-    player1 = gameController.player1;
-    player2 = gameController.player2;
-    ball = gameController.ball;
-    ballPhysicsEngine = gameController.ballPhysicsEngine;
   });
 
-  describe("game start", function() {
+  describe("game setup", function() {
+    it("adds the first player to the game", function() {
+      gameController.addNewPlayerToGame(1);
+      expect(gameController.player1.id).toEqual(1);
+    });
+    it("adds the second player to the game", function() {
+      gameController.addNewPlayerToGame(1);
+      gameController.addNewPlayerToGame(2);
+      expect(gameController.player2.id).toEqual(2);
+    });
+    it("does not add more than two players to a game", function() {
+      gameController.addNewPlayerToGame(1);
+      gameController.addNewPlayerToGame(2);
+      gameController.addNewPlayerToGame(3);
+      expect(gameController.player1.id).toEqual(1);
+      expect(gameController.player2.id).toEqual(2);
+    });
+  });
 
+  describe("game in progress", function() {
     beforeEach(function() {
+      gameController.addNewPlayerToGame(1);
+      gameController.addNewPlayerToGame(2);
+      gameController.updatePlayerName({playerName: "John"}, 1);
+      gameController.updatePlayerName({playerName: "Sally"}, 2);
+      player1 = gameController.player1;
+      player2 = gameController.player2;
+      ball = gameController.ball;
+      ballPhysicsEngine = gameController.ballPhysicsEngine;
+
       spyOn(gameController.player1, 'setPlayerReady');
       spyOn(gameController.player2, 'setPlayerReady');
     });
@@ -71,6 +97,8 @@ describe("ServerGameController", function(){
       });
     });
   });
+
+
 
   // describe("ball changes course", function() {
   //   it("when hits top of paddle 1", function() {
