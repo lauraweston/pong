@@ -17,8 +17,8 @@ var gameController;
 var gameEnded = false;
 var lastPaddleMove = 0;
 var audio = new Audio("sounds/pongSound.mp3");
-var paddleSound = new Audio("sounds/PaddlePong.wav")
-var wallSound = new Audio("sounds/wallBounce.wav")
+var paddleSound = new Audio("sounds/PaddlePong.wav");
+var wallSound = new Audio("sounds/wallBounce.wav");
 var view;
 
 (function init(){

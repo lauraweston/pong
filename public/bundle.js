@@ -63,11 +63,8 @@
 	var gameEnded = false;
 	var lastPaddleMove = 0;
 	var audio = new Audio("sounds/pongSound.mp3");
-	var paddleSound = new Audio("sounds/PaddlePong.wav")
-<<<<<<< HEAD
-=======
-	var wallSound = new Audio("sounds/wallBounce.wav")
->>>>>>> 8db53988c7fab857fa82c04de4b995f1812f00f7
+	var paddleSound = new Audio("sounds/PaddlePong.wav");
+	var wallSound = new Audio("sounds/wallBounce.wav");
 	var view;
 
 	(function init(){
@@ -89,6 +86,8 @@
 	  socket.on("disconnect", onSocketDisconnect);
 	  socket.on("remove player", removePlayer);
 	  socket.on("paddle sound", onPaddleSmack);
+	  socket.on("wall sound", onWallSmack);
+
 	}
 
 	function onSocketConnected() {
@@ -153,13 +152,10 @@
 	  paddleSound.play();
 	}
 
-<<<<<<< HEAD
-=======
 	function onWallSmack(){
 	  wallSound.play();
 	}
 
->>>>>>> 8db53988c7fab857fa82c04de4b995f1812f00f7
 	function myId() {
 	  return socket.io.engine.id;
 	}
@@ -248,7 +244,7 @@
 	}
 
 	View.prototype.declareWinnerView = function(winner) {
-	  this.winner.innerHTML = winner + " wins!"
+	  this.winner.innerHTML = winner + " wins"
 	  this._showWinner();
 	  this._showPlayAgain();
 	  this._setGameStatusToOver();
@@ -275,7 +271,7 @@
 	}
 
 	View.prototype._setGameStatusToOver = function(){
-	 this.gameStatus.innerHTML = "Game Over!";
+	 this.gameStatus.innerHTML = "Game Over";
 	 }
 
 	View.prototype.setGameStatusToCountdown = function(){
@@ -291,7 +287,7 @@
 	  }
 
 	View.prototype.setGameStatusToPlay = function() {
-	  this.gameStatus.innerHTML = "Play!";
+	  this.gameStatus.innerHTML = "Play";
 	}
 
 	View.prototype._showHeading = function() {
