@@ -57,9 +57,10 @@ View.prototype.setGameStatusToCountdown = function(){
 }
   View.prototype._setDelay = function(i) {
     self = this;
-    setTimeout(function() {self.gameStatus.innerHTML=i; console.log('hi')},(5000-((i-1)*1000)));
+    setTimeout(function() {
+      self.gameStatus.innerHTML=i;
+    },(5000-((i-1)*1000)));
   }
-
 
 View.prototype.setGameStatusToPlay = function() {
   this.gameStatus.innerHTML = "Play!";
