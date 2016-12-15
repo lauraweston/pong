@@ -1,8 +1,8 @@
 function getWinner(player1, player2){
-  if (player1.score > 9) {
+  if (player1 && player1.score > 9) {
     return player1;
   }
-  if (player2.score > 9) {
+  if (player2 && player2.score > 9) {
     return player2;
   }
   return null;
@@ -10,8 +10,8 @@ function getWinner(player1, player2){
 
 function getPlayerScores(player1, player2) {
   return {
-    player1:{id: player1.id, score: player1.getScore()},
-    player2:{id: player2.id, score: player2.getScore()}
+    player1: {id: player1.id, score: player1.getScore()},
+    player2: {id: player2.id, score: player2.getScore()}
   };
 };
 
