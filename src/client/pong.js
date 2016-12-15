@@ -82,7 +82,9 @@ function onServerUpdatesScores(data) {
 }
 
 function declareWinner(data){
-  gameController.endGame();
+  if(gameController) {
+    gameController.endGame();
+  }
   view.declareWinnerView(data.winner.name);
 }
 
@@ -91,7 +93,9 @@ function onSocketDisconnect() {
 }
 
 function removePlayer(){
-  gameController.endGame();
+  if(gameController) {
+    gameController.endGame();
+  }
   view.removePlayerView();
 }
 
