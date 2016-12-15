@@ -1,4 +1,4 @@
-const Paddle = require('../public/js/paddle');
+const Paddle = require('../src/client/paddle');
 var paddle;
 
 describe("Paddle", function() {
