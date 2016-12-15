@@ -78,8 +78,6 @@ ServerGameController.prototype.startGameLoop = function() {
   this.resetPlayerReadyState();
   var self = this;
   var gameLoop = function() {
-    console.log("In game loop")
-    console.log(self.ball);
     self.update();
     self.emitEvents();
 
@@ -148,8 +146,6 @@ ServerGameController.prototype.movePlayer = function(data, playerId) {
 };
 
 ServerGameController.prototype.update = function(){
-  console.log("In gameController update");
-  console.log(this.ball);
   this.ball.resetSounds();
   this.ball.update();
   ballHitsWall(this.ball, this.gameBox);
