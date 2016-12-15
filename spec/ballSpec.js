@@ -1,4 +1,4 @@
-var Ball = require('../public/js/ball.js');
+var Ball = require('../src/client/ball.js');
 var ball;
 var context;
 

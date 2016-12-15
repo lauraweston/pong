@@ -1,5 +1,5 @@
-var Player = require('../public/js/player.js');
-var Paddle = require('../public/js/paddle.js');
+var Player = require('../src/client/player.js');
+var Paddle = require('../src/client/paddle.js');
 
 describe("Player", function() {
   var player;
