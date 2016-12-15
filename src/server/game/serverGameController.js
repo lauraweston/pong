@@ -97,6 +97,9 @@ ServerGameController.prototype.emitEvents = function() {
   if(this.ball.wallSound === true){
     this.eventEmitter.emitWallSound();
   }
+  if(this.ball.outSound === true){
+    this.eventEmitter.emitOutSound();
+  }
 };
 
 ServerGameController.prototype.endGameLoop = function() {

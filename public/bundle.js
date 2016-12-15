@@ -62,14 +62,19 @@
 	var gameController;
 	var gameEnded = false;
 	var lastPaddleMove = 0;
-	var audio = new Audio("sounds/pongSound.mp3");
-	var paddleSound = new Audio("sounds/PaddlePong.wav");
-	var wallSound = new Audio("sounds/wallBounce.wav");
+	var audio = new Audio("sounds/march.mp3");
+	var outSound = new Audio("sounds/OutPong.wav");
+	var wallSound = new Audio("sounds/plop.ogg");
+	var paddleSound = new Audio("sounds/plop.ogg");
+	var gameOverSound = new Audio("sounds/game-over.wav");
+
+
 	var view;
 
 	(function init(){
 	  view = new View();
 	  context = view.canvas.getContext('2d');
+	  context.font = '40px';
 	  gameBox = new GameBox(context);
 	  socket = io.connect(getUrl());
 	  audio.play();
@@ -87,6 +92,7 @@
 	  socket.on("remove player", removePlayer);
 	  socket.on("paddle sound", onPaddleSmack);
 	  socket.on("wall sound", onWallSmack);
+	  socket.on("out sound", onOutOfBounds);
 
 	}
 
@@ -115,7 +121,6 @@
 	  draw();
 	}
 
-
 	function onServerMovesBall(data) {
 	  localBall.setCoordinates(data);
 	}
@@ -133,8 +138,9 @@
 	function declareWinner(data){
 	  if(gameController) {
 	    gameController.endGame();
+	    view.declareWinnerView(data.winner.name);
+	    gameOverSound.play()
 	  }
-	  view.declareWinnerView(data.winner.name);
 	}
 
 	function onSocketDisconnect() {
@@ -144,8 +150,9 @@
 	function removePlayer(){
 	  if(gameController) {
 	    gameController.endGame();
+	    view.removePlayerView();
+	    gameOverSound.play()
 	  }
-	  view.removePlayerView();
 	}
 
 	function onPaddleSmack(){
@@ -154,6 +161,10 @@
 
 	function onWallSmack(){
 	  wallSound.play();
+	}
+
+	function onOutOfBounds(){
+	  outSound.play();
 	}
 
 	function myId() {
@@ -231,7 +242,7 @@
 	  this.winner = document.getElementById('winner');
 	  this.playAgain = document.getElementById('playAgain');
 	  this.canvas = document.getElementById("canvas");
-	  this.gameStatus = document.getElementById('countdown');
+	  this.gameStatus = document.getElementById('gameStatus');
 	}
 
 	View.prototype.startGameView = function() {
@@ -255,6 +266,7 @@
 	  this._hideWinner();
 	  this._showPlayAgain();
 	  this._setGameStatusToOver();
+	  this._hideGameStatus();
 	}
 
 	View.prototype.afterSignInFormView = function(){
@@ -345,9 +357,15 @@
 	View.prototype._hideCanvas = function() {
 	  this.canvas.style.display = 'none';
 	}
+
 	View.prototype._showCanvas = function() {
 	  this.canvas.style.display = 'inline';
 	}
+
+	View.prototype._hideGameStatus = function() {
+	  this.gameStatus.style.visibility = 'hidden';
+	}
+
 
 	module.exports = View;
 
@@ -362,6 +380,7 @@
 	  this.localPlayer = localPlayer;
 	  this.opponent = opponent;
 	  this.isGameEnded = false
+	  this.playing = false
 	};
 
 	  GameController.prototype.drawGame = function(){
@@ -465,8 +484,9 @@
 	Player.prototype.draw = function() {
 	  this.paddle.draw();
 	  this.paddle.draw();
-	  this.context.fillText(this.name, this.paddle.x - 10, 10);
-	  this.context.fillText(this.score, this.paddle.x, 20);
+	  this.context.font = '15px PongFont';
+	  this.context.fillText(this.name, this.paddle.x -10, 15);
+	  this.context.fillText(this.score, this.paddle.x, 30);
 	};
 
 	Player.prototype.setName = function(name){

@@ -7,7 +7,7 @@ function View() {
   this.winner = document.getElementById('winner');
   this.playAgain = document.getElementById('playAgain');
   this.canvas = document.getElementById("canvas");
-  this.gameStatus = document.getElementById('countdown');
+  this.gameStatus = document.getElementById('gameStatus');
 }
 
 View.prototype.startGameView = function() {
@@ -31,6 +31,7 @@ View.prototype.removePlayerView = function() {
   this._hideWinner();
   this._showPlayAgain();
   this._setGameStatusToOver();
+  this._hideGameStatus();
 }
 
 View.prototype.afterSignInFormView = function(){
@@ -121,8 +122,14 @@ View.prototype._hidePlayAgain = function() {
 View.prototype._hideCanvas = function() {
   this.canvas.style.display = 'none';
 }
+
 View.prototype._showCanvas = function() {
   this.canvas.style.display = 'inline';
 }
+
+View.prototype._hideGameStatus = function() {
+  this.gameStatus.style.visibility = 'hidden';
+}
+
 
 module.exports = View;
