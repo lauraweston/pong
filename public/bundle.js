@@ -126,14 +126,19 @@
 	};
 
 	function removePlayer(){
-	  gameController.endGame();
+	  console.log("remove player from client");
+	  if(gameController) {
+	    gameController.endGame();
+	  }
 	  disconnect.style.display = "inline";
 	  winner.style.display = 'none';
 	  gameStart = document.getElementById('countdown');
 	  gameStart.innerHTML = "Game Over!"}
 
 	function declareWinner(data){
-	  gameController.endGame();
+	  if(gameController) {
+	    gameController.endGame();
+	  }
 	  var textHolder = document.createElement("h2")
 	  textHolder.innerHTML = data.winner.name + " wins!";
 	  winner.appendChild(textHolder)

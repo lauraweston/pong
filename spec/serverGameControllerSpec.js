@@ -1,45 +1,44 @@
-var GameController = require('../src/serverGameController.js');
-var Ball = require('../src/serverBall.js');
-var Paddle = require('../src/serverPaddle.js');
-var Player = require('../src/serverPlayer.js');
+var GameController = require('../src/server/game/serverGameController.js');
 
-describe("GameController", function(){
-  var player;
-  var paddle;
-  var ball;
+describe("ServerGameController", function(){
   var gameController;
-  var gameLoopTickCallback;
+  var socketEventEmitter;
+  var player1;
+  var player2;
+  var ball;
 
   beforeEach(function(){
-    ball = new Ball();
-    paddle1 = new Paddle(15, 150);
-    paddle2 = new Paddle(570, 150);
-    player1 = new Player(paddle1, 1);
-    player2 = new Player(paddle2, 2);
-    gameController = new GameController(ball, player1, player2, gameLoopTickCallback);
+    socketEventEmitter = jasmine.createSpyObj('socketEventEmitter', ['emitStartGameEvent', 'emitServerMoveBallEvent', 'emitServerUpdateScoreEvent', 'emitGameWonEvent', 'emitRemoveOpponentEventToPlayer', 'emitOpponentMoveEventToPlayer']);
+    gameController = new GameController(socketEventEmitter);
+    gameController.addNewPlayerToGame(1);
+    gameController.addNewPlayerToGame(2);
+    gameController.updatePlayerName({playerName: "John"}, 1);
+    gameController.updatePlayerName({playerName: "Sally"}, 2);
+    player1 = gameController.player1;
+    player2 = gameController.player2;
+    ball = gameController.ball;
   });
 
   describe("game start", function() {
 
     beforeEach(function() {
-      spyOn(gameController.player1, 'setPlayStatus');
-      spyOn(gameController.player2, 'setPlayStatus');
+      spyOn(gameController.player1, 'setPlayerReady');
+      spyOn(gameController.player2, 'setPlayerReady');
     });
 
     it("resets player1 ready state to false", function() {
       gameController.resetPlayerReadyState();
-      expect(gameController.player1.setPlayStatus).toHaveBeenCalledWith(false);
+      expect(gameController.player1.setPlayerReady).toHaveBeenCalledWith(false);
     });
 
     it("resets player2 ready state to false", function() {
       gameController.resetPlayerReadyState();
-      expect(gameController.player2.setPlayStatus).toHaveBeenCalledWith(false);
+      expect(gameController.player2.setPlayerReady).toHaveBeenCalledWith(false);
     });
   });
 
   describe("ball moves", function() {
     it("when game updates", function(){
-      gameController.update();
       expect(gameController.ball.x).toEqual(303);
       expect(gameController.ball.y).toEqual(22);
     });
@@ -100,6 +99,7 @@ describe("GameController", function(){
         expect(player2.score).toEqual(1);
       });
     });
+
     describe("when misses player2 paddle", function() {
       beforeEach(function() {
         gameController.ball.x = (gameController.gameBox.width - gameController.ball.xSpeed);
@@ -115,6 +115,7 @@ describe("GameController", function(){
         expect(player1.score).toEqual(1);
       });
     });
+    
     it("shows player's scores", function() {
       expect(gameController.getPlayerScores()).toEqual({player1:{id: 1, score: 0}, player2:{id: 2, score:0}});
     });

@@ -1,4 +1,4 @@
-var ServerBall = require('../src/serverBall.js');
+var ServerBall = require('../src/server/game/serverBall.js');
 
 describe('serverBall', function() {
   var serverBall;

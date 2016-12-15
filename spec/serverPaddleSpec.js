@@ -1,4 +1,4 @@
-var Paddle = require('../src/serverPaddle.js');
+var Paddle = require('../src/server/game/serverPaddle.js');
 
 
 describe('serverPaddle', function() {

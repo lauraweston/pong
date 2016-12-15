@@ -1,5 +1,5 @@
-var Player = require('../src/serverPlayer.js');
-var Paddle = require('../src/serverPaddle.js');
+var Player = require('../src/server/game/serverPlayer.js');
+var Paddle = require('../src/server/game/serverPaddle.js');
 
 describe('serverPlayer', function() {
   var paddle;
@@ -46,7 +46,7 @@ describe('serverPlayer', function() {
   });
 
   it("sets isReady to true when player has clicked Play again", function() {
-    player.setPlayStatus(true);
+    player.setPlayerReady(true);
     expect(player.isReady).toEqual(true);
   });
 });
