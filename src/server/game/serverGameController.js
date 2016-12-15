@@ -1,6 +1,13 @@
 var Ball = require("./serverBall.js");
 var Player = require("./serverPlayer.js");
 var Paddle = require("./serverPaddle.js");
+
+var gamePlayerHelpers = require("./gamePlayerHelpers.js");
+var getPlayerScores = gamePlayerHelpers.getPlayerScores;
+var getWinner = gamePlayerHelpers.getWinner;
+var getOpponent = gamePlayerHelpers.getOpponent;
+var getPlayerById = gamePlayerHelpers.getPlayerById;
+
 var ballPhysicsEngine = require("./ballPhysicsEngine.js");
 var ballHitsWall = ballPhysicsEngine.ballHitsWall;
 var ballHitsPaddle = ballPhysicsEngine.ballHitsPaddle;
@@ -34,7 +41,7 @@ ServerGameController.prototype.addNewPlayerToGame = function(newPlayerId) {
 };
 
 ServerGameController.prototype.updatePlayerName = function(data, playerId){
-  var playerToBeUpdated = this.getPlayerById(playerId);
+  var playerToBeUpdated = getPlayerById(playerId, this.player1, this.player2);
   playerToBeUpdated.setName(data.playerName);
   if (this.player1 && this.player2 && (this.player1.name.length > 0) && (this.player2.name.length > 0) && this.player1.isReady && this.player2.isReady) {
     console.log("Starting game");
@@ -81,7 +88,7 @@ ServerGameController.prototype.startGameLoop = function() {
     self.update();
     self.emitEvents();
 
-    var winner = self.getWinner();
+    var winner = getWinner(self.player1, self.player2);
     if (winner){
       self.eventEmitter.emitGameWonEvent({winner: winner});
       self.endGameLoop();
@@ -94,7 +101,7 @@ ServerGameController.prototype.startGameLoop = function() {
 
 ServerGameController.prototype.emitEvents = function() {
   this.eventEmitter.emitServerMoveBallEvent(this.ball.getCoordinates());
-  this.eventEmitter.emitServerUpdateScoreEvent(this.getPlayerScores());
+  this.eventEmitter.emitServerUpdateScoreEvent(getPlayerScores(this.player1, this.player2));
   if(this.ball.paddleSound === true){
     this.eventEmitter.emitPaddleSound();
   }
@@ -111,8 +118,8 @@ ServerGameController.prototype.endGameLoop = function() {
 
 ServerGameController.prototype.removePlayer = function(playerId){
   console.log("Player has disconnected: " + playerId);
-  var disconnectedPlayer = this.getPlayerById(playerId);
-  var remainingPlayer = this.getOpponent(playerId);
+  var disconnectedPlayer = getPlayerById(playerId, this.player1, this.player2);
+  var remainingPlayer = getOpponent(playerId, this.player1, this.player2);
   if (disconnectedPlayer === this.player1) {
     this.player1 = undefined;
   } else {
@@ -123,7 +130,7 @@ ServerGameController.prototype.removePlayer = function(playerId){
 };
 
 ServerGameController.prototype.playAgain = function(playerId) {
-  var playerToReset = this.getPlayerById(playerId);
+  var playerToReset = getPlayerById(playerId, this.player1, this.player2);
   playerToReset.reset();
   if (this.player1 && this.player2 && this.player1.isReady && this.player2.isReady) {
     this.startGame();
@@ -136,10 +143,10 @@ ServerGameController.prototype.resetPlayerReadyState = function() {
 };
 
 ServerGameController.prototype.movePlayer = function(data, playerId) {
-  var movePlayer = this.getPlayerById(playerId);
+  var movePlayer = getPlayerById(playerId, this.player1, this.player2);
   movePlayer.paddle.setY(data.y);
 
-  var playerToBeNotified = this.getOpponent(playerId);
+  var playerToBeNotified = getOpponent(playerId, this.player1, this.player2);
 
   var playerMoveData = {id: movePlayer.id, x: movePlayer.paddle.getX(), y: movePlayer.paddle.getY()};
   this.eventEmitter.emitOpponentMoveEventToPlayer(playerToBeNotified.id, playerMoveData);
@@ -151,43 +158,6 @@ ServerGameController.prototype.update = function(){
   ballHitsWall(this.ball, this.gameBox);
   ballHitsPaddle(this.ball, this.player1, this.player2);
   ballGoesOutOfPlay(this.ball, this.gameBox, this.player1, this.player2);
-};
-
-ServerGameController.prototype.getWinner = function(){
-  if (this.player1.score > 9) {
-    return this.player1;
-  }
-  if (this.player2.score > 9) {
-    return this.player2;
-  }
-  return null;
-};
-
-ServerGameController.prototype.getPlayerScores = function() {
-  return {
-    player1:{id: this.player1.id, score: this.player1.getScore()},
-    player2:{id: this.player2.id, score: this.player2.getScore()}
-  };
-};
-
-ServerGameController.prototype.getOpponent = function(id) {
-  var player = this.getPlayerById(id);
-  if (player === this.player1) {
-    return this.player2;
-  } else if(player === this.player2){
-    return this.player1;
-  }
-	return false;
-};
-
-ServerGameController.prototype.getPlayerById = function(id) {
-	if (this.player1 && this.player1.id === id) {
-    return this.player1;
-  }
-  if (this.player2 && this.player2.id === id) {
-    return this.player2;
-  }
-	return false;
 };
 
 module.exports = ServerGameController;
