@@ -34,9 +34,9 @@ ServerGameController.prototype.addNewPlayerToGame = function(newPlayerId) {
 };
 
 ServerGameController.prototype.updatePlayerName = function(data, playerId){
-  var playerToBeUpdated = this.playerById(playerId);
+  var playerToBeUpdated = this.getPlayerById(playerId);
   playerToBeUpdated.setName(data.playerName);
-  if (this.player1 && this.player2 && (this.player1.name.length > 0 ) && (this.player2.name.length > 0) && this.player1.isReady && this.player2.isReady) {
+  if (this.player1 && this.player2 && (this.player1.name.length > 0) && (this.player2.name.length > 0) && this.player1.isReady && this.player2.isReady) {
     console.log("Starting game");
     this.startGame();
   }
@@ -113,7 +113,7 @@ ServerGameController.prototype.endGameLoop = function() {
 
 ServerGameController.prototype.removePlayer = function(playerId){
   console.log("Player has disconnected: " + playerId);
-  var disconnectedPlayer = this.playerById(playerId);
+  var disconnectedPlayer = this.getPlayerById(playerId);
   var remainingPlayer = this.getOpponent(playerId);
   if (disconnectedPlayer === this.player1) {
     this.player1 = undefined;
@@ -125,7 +125,7 @@ ServerGameController.prototype.removePlayer = function(playerId){
 };
 
 ServerGameController.prototype.playAgain = function(playerId) {
-  var playerToReset = this.playerById(playerId);
+  var playerToReset = this.getPlayerById(playerId);
   playerToReset.reset();
   if (this.player1 && this.player2 && this.player1.isReady && this.player2.isReady) {
     this.startGame();
@@ -138,7 +138,7 @@ ServerGameController.prototype.resetPlayerReadyState = function() {
 };
 
 ServerGameController.prototype.movePlayer = function(data, playerId) {
-  var movePlayer = this.playerById(playerId);
+  var movePlayer = this.getPlayerById(playerId);
   movePlayer.paddle.setY(data.y);
 
   var playerToBeNotified = this.getOpponent(playerId);
@@ -175,7 +175,7 @@ ServerGameController.prototype.getPlayerScores = function() {
 };
 
 ServerGameController.prototype.getOpponent = function(id) {
-  var player = this.playerById(id);
+  var player = this.getPlayerById(id);
   if (player === this.player1) {
     return this.player2;
   } else if(player === this.player2){
@@ -184,7 +184,7 @@ ServerGameController.prototype.getOpponent = function(id) {
 	return false;
 };
 
-ServerGameController.prototype.playerById = function(id) {
+ServerGameController.prototype.getPlayerById = function(id) {
 	if (this.player1 && this.player1.id === id) {
     return this.player1;
   }
