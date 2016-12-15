@@ -10,14 +10,14 @@ describe('serverPlayer', function() {
     player = new Player(paddle);
   });
 
-  it("sets the name", function() {
-    player.setName("Bob");
-    expect(player.name).toEqual("Bob");
-  });
-
-  it("gets the name", function() {
+  it("gets the name of the player", function() {
     player.setName("Bob");
     expect(player.getName()).toEqual("Bob");
+  });
+
+  it("sets the name of the player", function() {
+    player.setName("Bob");
+    expect(player.name).toEqual("Bob");
   });
 
   it("checks if a name has been assigned and return false if not", function() {
@@ -29,13 +29,14 @@ describe('serverPlayer', function() {
     expect(player.isAssignedName()).toEqual(true);
   });
 
-  it("increases the score", function() {
+  it("increases the score by 1", function() {
     player.increaseScore();
     expect(player.score).toEqual(1);
   });
 
-  it("gets the score", function() {
-    expect(player.getScore()).toEqual(0);
+  it("gets the current score", function() {
+    player.increaseScore();
+    expect(player.getScore()).toEqual(1);
   });
 
   it("resets the player", function() {
@@ -53,8 +54,13 @@ describe('serverPlayer', function() {
     expect(player.score).toEqual(0);
   });
 
-  it("sets isReady to true when player has clicked Play again", function() {
+  it("sets isReady to true when setPlayerReady is called with true", function() {
     player.setPlayerReady(true);
     expect(player.isReady).toEqual(true);
+  });
+
+  it("sets isReady to false when setPlayerReady is called with false", function() {
+    player.setPlayerReady(false);
+    expect(player.isReady).toEqual(false);
   });
 });
