@@ -26,4 +26,12 @@ SocketEventEmitter.prototype.emitOpponentMoveEventToPlayer = function(playerId, 
   this.io.to(playerId).emit("server moves player", opponentMoveData);
 };
 
+SocketEventEmitter.prototype.emitPaddleSound = function() {
+  this.io.sockets.emit("paddle sound");
+}
+
+SocketEventEmitter.prototype.emitWallSound = function() {
+  this.io.sockets.emit("wall sound");
+}
+
 module.exports = SocketEventEmitter;

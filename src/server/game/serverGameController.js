@@ -84,6 +84,12 @@ ServerGameController.prototype.startGameLoop = function() {
 ServerGameController.prototype.emitEvents = function() {
   this.eventEmitter.emitServerMoveBallEvent(this.ball.getCoordinates());
   this.eventEmitter.emitServerUpdateScoreEvent(this.getPlayerScores());
+  if(this.ball.paddleSound === true){
+    this.eventEmitter.emitPaddleSound();
+  }
+  if(this.ball.wallSound === true){
+    this.eventEmitter.emitWallSound();
+  }
 };
 
 ServerGameController.prototype.endGameLoop = function() {

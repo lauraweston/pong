@@ -102,6 +102,10 @@ function onPaddleSmack(){
   paddleSound.play();
 }
 
+function onWallSmack(){
+  wallSound.play();
+}
+
 function myId() {
   return socket.io.engine.id;
 }

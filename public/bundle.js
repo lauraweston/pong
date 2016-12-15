@@ -45,7 +45,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var View = __webpack_require__(1);
-
 	var GameController = __webpack_require__(2);
 	var GameBox = __webpack_require__(3);
 	var Ball = __webpack_require__(4);
@@ -66,10 +65,7 @@
 	var audio = new Audio("sounds/pongSound.mp3");
 	var paddleSound = new Audio("sounds/PaddlePong.wav")
 	var wallSound = new Audio("sounds/wallBounce.wav")
-
 	var view;
-
-
 
 	(function init(){
 	  view = new View();
@@ -156,7 +152,6 @@
 	  wallSound.play();
 	}
 
-
 	function myId() {
 	  return socket.io.engine.id;
 	}
@@ -166,9 +161,8 @@
 	  setTimeout(function() {
 	    audio.pause();
 	    view.setGameStatusToPlay();
-	    // socket.emit("start game loop")
 	    animate(gameLoop);
-	     return;
+	    return;
 	  }, 6000);
 	}
 
@@ -283,9 +277,10 @@
 	}
 	  View.prototype._setDelay = function(i) {
 	    self = this;
-	    setTimeout(function() {self.gameStatus.innerHTML=i; console.log('hi')},(5000-((i-1)*1000)));
+	    setTimeout(function() {
+	      self.gameStatus.innerHTML=i;
+	    },(5000-((i-1)*1000)));
 	  }
-
 
 	View.prototype.setGameStatusToPlay = function() {
 	  this.gameStatus.innerHTML = "Play!";
