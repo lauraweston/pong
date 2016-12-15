@@ -10,7 +10,6 @@ describe('serverPlayer', function() {
     player = new Player(paddle);
   });
 
-
   it("sets the name", function() {
     player.setName("Bob");
     expect(player.name).toEqual("Bob");
@@ -19,6 +18,15 @@ describe('serverPlayer', function() {
   it("gets the name", function() {
     player.setName("Bob");
     expect(player.getName()).toEqual("Bob");
+  });
+
+  it("checks if a name has been assigned and return false if not", function() {
+    expect(player.isAssignedName()).toEqual(false);
+  });
+
+  it("checks if a name has been assigned and return true if it has", function() {
+    player.setName("Bob");
+    expect(player.isAssignedName()).toEqual(true);
   });
 
   it("increases the score", function() {

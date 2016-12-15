@@ -2,7 +2,6 @@ function Player(paddle, id) {
   this.score = 0;
   this.paddle = paddle;
   this.id = id;
-  this.name = "";
   this.isReady = true;
 };
 
@@ -12,6 +11,13 @@ Player.prototype.getName = function(){
 
 Player.prototype.setName = function(name){
   this.name = name;
+};
+
+Player.prototype.isAssignedName = function() {
+  if (this.name) {
+    return true;
+  };
+  return false;
 };
 
 Player.prototype.increaseScore = function() {
