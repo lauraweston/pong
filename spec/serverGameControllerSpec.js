@@ -108,9 +108,5 @@ describe("ServerGameController", function(){
         expect(player1.score).toEqual(1);
       });
     });
-    //TODO: Move to gamePlayerHelperSpec.js
-    // it("shows player's scores", function() {
-    //   expect(gameController.getPlayerScores()).toEqual({player1:{id: 1, score: 0}, player2:{id: 2, score:0}});
-    // });
   });
 });
