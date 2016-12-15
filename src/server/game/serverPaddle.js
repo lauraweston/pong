@@ -1,4 +1,4 @@
-function Paddle(x, y) {
+function ServerPaddle(x, y) {
   this.color = "white";
   this.width = 15;
   this.height = 70;
@@ -8,21 +8,20 @@ function Paddle(x, y) {
   this.ySpeed = 5;
 };
 
-Paddle.prototype.setY = function(y) {
+ServerPaddle.prototype.setY = function(y) {
   this.y = y;
 };
 
-Paddle.prototype.getY = function() {
+ServerPaddle.prototype.getY = function() {
   return this.y;
 };
 
-Paddle.prototype.getX = function() {
+ServerPaddle.prototype.getX = function() {
   return this.x;
 };
 
-Paddle.prototype.reset = function() {
+ServerPaddle.prototype.reset = function() {
   this.y = this.startingY;
 };
 
-
-module.exports = Paddle;
+module.exports = ServerPaddle;

@@ -1,6 +1,5 @@
 var Paddle = require('../src/server/game/serverPaddle.js');
 
-
 describe('serverPaddle', function() {
   var paddle;
 
@@ -21,11 +20,9 @@ describe('serverPaddle', function() {
     expect(paddle.getX()).toEqual(570);
   });
 
-  it("resets paddle x coordinates on play again", function() {
+  it("resets paddle y coordinates to starting y coordinate", function() {
     paddle.setY(0);
     paddle.reset();
     expect(paddle.y).toEqual(150);
   });
-
-
 });

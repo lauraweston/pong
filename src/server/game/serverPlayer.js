@@ -1,45 +1,45 @@
-function Player(paddle, id) {
+function ServerPlayer(paddle, id) {
   this.score = 0;
   this.paddle = paddle;
   this.id = id;
   this.isReady = true;
 };
 
-Player.prototype.getName = function(){
+ServerPlayer.prototype.getName = function(){
   return this.name;
 };
 
-Player.prototype.setName = function(name){
+ServerPlayer.prototype.setName = function(name){
   this.name = name;
 };
 
-Player.prototype.isAssignedName = function() {
+ServerPlayer.prototype.isAssignedName = function() {
   if (this.name) {
     return true;
   };
   return false;
 };
 
-Player.prototype.increaseScore = function() {
+ServerPlayer.prototype.increaseScore = function() {
   this.score++;
 };
 
-Player.prototype.getScore = function() {
+ServerPlayer.prototype.getScore = function() {
   return this.score;
 };
 
-Player.prototype.reset = function() {
+ServerPlayer.prototype.reset = function() {
   this.resetScore();
   this.setPlayerReady(true);
   this.paddle.reset();
 };
 
-Player.prototype.resetScore = function() {
+ServerPlayer.prototype.resetScore = function() {
   this.score = 0;
 };
 
-Player.prototype.setPlayerReady = function(boolean) {
+ServerPlayer.prototype.setPlayerReady = function(boolean) {
   this.isReady = boolean;
 };
 
-module.exports = Player;
+module.exports = ServerPlayer;

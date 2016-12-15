@@ -47,14 +47,17 @@ describe('serverBall', function() {
       serverBall.bouncePaddle();
       expect(serverBall.paddleSound).toEqual(true);
     });
+
     it("changes wallSound to true when ball bounces off wall", function() {
       serverBall.bounceWall();
       expect(serverBall.wallSound).toEqual(true);
     });
+
     it("changes outSound to true when ball is reset", function() {
       serverBall.reset();
       expect(serverBall.outSound).toEqual(true);
     });
+    
     it("resets ball sound properties to false", function() {
       serverBall.bouncePaddle();
       serverBall.bounceWall();
