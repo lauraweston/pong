@@ -1,6 +1,10 @@
 var Ball = require("./serverBall.js");
 var Player = require("./serverPlayer.js");
 var Paddle = require("./serverPaddle.js");
+var ballPhysicsEngine = require("./ballPhysicsEngine.js");
+var ballHitsWall = ballPhysicsEngine.ballHitsWall;
+var ballHitsPaddle = ballPhysicsEngine.ballHitsPaddle;
+var ballGoesOutOfPlay = ballPhysicsEngine.ballGoesOutOfPlay;
 
 var ServerGameController = function(socketEventEmitter){
   this.eventEmitter = socketEventEmitter;
@@ -74,6 +78,8 @@ ServerGameController.prototype.startGameLoop = function() {
   this.resetPlayerReadyState();
   var self = this;
   var gameLoop = function() {
+    console.log("In game loop")
+    console.log(self.ball);
     self.update();
     self.emitEvents();
 
@@ -142,36 +148,13 @@ ServerGameController.prototype.movePlayer = function(data, playerId) {
 };
 
 ServerGameController.prototype.update = function(){
+  console.log("In gameController update");
+  console.log(this.ball);
   this.ball.resetSounds();
   this.ball.update();
-  this.ballHitsWall();
-  this.ballHitsPaddle();
-  this.ballGoesOutOfPlay();
-};
-
-ServerGameController.prototype.ballHitsWall = function(){
-  if(this.ball.y <= this.gameBox.y || this.ball.y >= this.gameBox.height) {
-    this.ball.bounceWall();
-  }
-};
-
-ServerGameController.prototype.ballHitsPaddle = function(){
-  if(this.ball.x >= this.player1.paddle.x && this.ball.x <= (this.player1.paddle.x + this.player1.paddle.width) && (this.ball.y >= this.player1.paddle.y && this.ball.y <= (this.player1.paddle.y + this.player1.paddle.height))) {
-    this.ball.bouncePaddle();
-  }
-  if(this.ball.x >= this.player2.paddle.x && this.ball.x <= (this.player2.paddle.x + this.player2.paddle.width) && (this.ball.y >= this.player2.paddle.y && this.ball.y <= (this.player2.paddle.y + this.player2.paddle.height))) {
-    this.ball.bouncePaddle();
-  }
-};
-
-ServerGameController.prototype.ballGoesOutOfPlay = function(){
-  if (this.ball.x >= this.gameBox.width) {
-    this.player1.increaseScore();
-    this.ball.reset();
-  } else if (this.ball.x <= this.gameBox.x) {
-    this.player2.increaseScore();
-    this.ball.reset();
-  }
+  ballHitsWall(this.ball, this.gameBox);
+  ballHitsPaddle(this.ball, this.player1, this.player2);
+  ballGoesOutOfPlay(this.ball, this.gameBox, this.player1, this.player2);
 };
 
 ServerGameController.prototype.getWinner = function(){
